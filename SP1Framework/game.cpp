@@ -235,22 +235,22 @@ void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_W].keyReleased && g_sChar.m_cLocation.Y > 0)
+    if (g_skKeyEvent[K_W].keyDown && g_sChar.m_cLocation.Y > 0)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.Y--;       
     }
-    if (g_skKeyEvent[K_A].keyReleased && g_sChar.m_cLocation.X > 0)
+    if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.X--;        
     }
-    if (g_skKeyEvent[K_S].keyReleased && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+    if (g_skKeyEvent[K_S].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.Y++;        
     }
-    if (g_skKeyEvent[K_D].keyReleased && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+    if (g_skKeyEvent[K_D].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.X++;        
