@@ -1,5 +1,9 @@
 #ifndef _GAME_H
 #define _GAME_H
+#define VK_KEY_W	0x57
+#define VK_KEY_A	0x41
+#define VK_KEY_S	0x53
+#define VK_KEY_D	0x44
 
 #include "Framework\timer.h"
 
@@ -26,13 +30,14 @@ struct SMouseEvent
 // Enumeration to store the control keys that your game will have
 enum EKEYS
 {
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
+    K_W, //K_UP
+    K_S, //K_DOWN
+    K_A, //K_LEFT
+    K_D, //K_RIGHT
     K_ESCAPE,
     K_SPACE,
-    K_COUNT
+    K_COUNT,
+    
 };
 
 // Enumeration for the different screen states
