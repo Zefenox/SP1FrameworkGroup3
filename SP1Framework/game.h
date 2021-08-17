@@ -1,10 +1,5 @@
 #ifndef _GAME_H
 #define _GAME_H
-#define VK_KEY_W	0x57
-#define VK_KEY_A	0x41
-#define VK_KEY_S	0x53
-#define VK_KEY_D	0x44
-
 #include "Framework\timer.h"
 
 extern CStopWatch g_swTimer;

@@ -7,6 +7,11 @@
 #include <iomanip>
 #include <sstream>
 
+
+#define VK_KEY_W	0x57
+#define VK_KEY_A	0x41
+#define VK_KEY_S	0x53
+#define VK_KEY_D	0x44
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
