@@ -360,13 +360,14 @@ void renderCharacter()
 
 void setPlayer(COORD position)
 {
+    // moves the player to position
     g_sChar.m_cLocation.X = position.X;
     g_sChar.m_cLocation.Y = position.Y;
 }
 
 COORD getPlayerPosition()
 {
-    
+    // returns player position
     return g_sChar.m_cLocation;
 }
 
