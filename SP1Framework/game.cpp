@@ -358,6 +358,18 @@ void renderCharacter()
     g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
 }
 
+void setPlayer(COORD position)
+{
+    g_sChar.m_cLocation.X = position.X;
+    g_sChar.m_cLocation.Y = position.Y;
+}
+
+COORD getPlayerPosition()
+{
+    
+    return g_sChar.m_cLocation;
+}
+
 void renderFramerate()
 {
     COORD c;
