@@ -1,5 +1,20 @@
 #include "Player.h"
 
+
+Player::Player()
+{
+    health = 100;
+    maxHealth = 100;
+    lives = 3;
+    position = { 0, 0 };
+    spawnPoint = { 0, 0 };
+    active = true;
+}
+
+Player::~Player()
+{
+}
+
 SHORT Player::getHealth()
 {
     return health;
@@ -94,12 +109,16 @@ void Player::setActive(bool active)
 
 void Player::PlayerUpdate()
 {
-}
+    if (health <= 0 && lives <= 0)
+    {
+        active = false;
+        return;
+    }
 
-Player::Player()
-{
-}
-
-Player::~Player()
-{
+    if (health <= 0 && active)
+    {
+        lives--;
+        health = maxHealth;
+        position = spawnPoint;
+    }
 }
