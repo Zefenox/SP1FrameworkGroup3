@@ -2,11 +2,11 @@
 //
 //
 #include "game.h"
+#include "Player.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include "checkpoint.h"
 
 //define WASD keys.
 #define VK_KEY_W	0x57
@@ -20,14 +20,12 @@ SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
 // Game specific variables here
-SGameChar   g_sChar;
+//SGameChar   g_sChar;
+Player* player = new Player;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
 Console g_Console(300, 100, "ESCAPE THE DUNGEON");
-
-
-checkpoint Checkpoint;
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -44,9 +42,9 @@ void init( void )
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
+    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2);
+    player->setPosition(player->getSpawnPoint());
+    player->setActive(true);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -253,29 +251,29 @@ void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_W].keyDown && g_sChar.m_cLocation.Y > 0)
+    if (g_skKeyEvent[K_W].keyDown && player->getY() > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y--;       
+        player->setPosition(player->getX(), player->getY() - 1);
     }
-    if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
+    if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X--;        
+        player->setPosition(player->getX() - 1, player->getY());
     }
-    if (g_skKeyEvent[K_S].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+    if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y++;        
+        player->setPosition(player->getX(), player->getY() + 1);
     }
-    if (g_skKeyEvent[K_D].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+    if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X++;        
+        player->setPosition(player->getX() + 1, player->getY());
     }
     if (g_skKeyEvent[K_SPACE].keyReleased)
     {
-        g_sChar.m_bActive = !g_sChar.m_bActive;        
+        player->setActive(false);
     }
 
    
@@ -431,18 +429,11 @@ void renderCharacter()
 {
     // Draw the location of the character
     WORD charColor = 0x0C;
-    if (g_sChar.m_bActive)
+    if (player->getActive())
     {
         charColor = 0x0A;
     }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
-}
-
-void setPlayer(COORD position)
-{
-    // moves the player to position
-    g_sChar.m_cLocation.X = position.X;
-    g_sChar.m_cLocation.Y = position.Y;
+    g_Console.writeToBuffer(player->getPosition(), (char)1, charColor);
 }
 
 //COORD getPlayerPosition()
