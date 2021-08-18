@@ -1,4 +1,4 @@
-// This is the main file for the game logic and function
+﻿// This is the main file for the game logic and function
 //
 //
 #include "game.h"
@@ -6,7 +6,10 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
+#define VK_KEY_W    0x57
+#define VK_KEY_A    0x41
+#define VK_KEY_S    0x53
+#define VK_KEY_D    0x44
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
@@ -338,69 +341,146 @@ void renderMap()
 {
     renderstart(); //render first to last room
     //renderL1();
-    renderL2();
-    renderL3();
-    renderlast();
+    //renderL2();
+    //renderL3();
+    //renderlast();
 }
 
 void renderstart()
 {
-    renderlines(30, 10, 31, 51, "##");
-    renderlines(30, 10, 111, 11, "#");
-    renderlines(110, 10, 111, 51, "##");
-    renderlines(30, 50, 111, 11, "#");
+    //gate
+    renderlines(66, 11, 76, 12, 35); 
+    renderlines(64, 11, 66, 12, 219);
+    renderlines(76, 11, 78, 12, 219);
+
+    //walls
+    renderlines(30, 10, 31, 51, 219);
+    renderlines(31, 10, 32, 51, 219);
+    renderlines(30, 10, 111, 11, 219);
+    renderlines(110, 10, 111, 51, 219);
+    renderlines(111, 10, 112, 51, 219);
+    renderlines(30, 50, 111, 11, 219);
+    renderlines(66, 50, 76, 51, 43);
+
+    //obstacles 1
+    renderlines(43, 14, 59, 15, 254);
+    renderlines(42, 14, 44, 15, 219);
+    renderlines(59, 14, 61, 15, 219);
+    renderlines(42, 15, 43, 18, 222);
+    renderlines(43, 15, 44, 17, 221);
+    renderlines(42, 17, 44, 18, 219);
+    renderlines(38, 17, 42, 18, 254);
+    renderlines(36, 17, 38, 18, 219);
+    renderlines(36, 18, 37, 20, 222);
+    renderlines(36, 18, 37, 20, 222);
+    renderlines(37, 18, 38, 20, 221);
+    renderlines(36, 20, 38, 21, 219);
+    renderlines(38, 20, 42, 21, 254);
+    renderlines(42, 18, 43, 20, 222);
+    renderlines(43, 18, 44, 20, 221);
+    renderlines(42, 20, 44, 21, 219);
+
+    //obstacles 2
+    renderlines(102, 20, 104, 21, 219);
+    renderlines(96, 20, 98, 21, 219);
+    renderlines(102, 17, 104, 18, 219);
+    renderlines(96, 17, 98, 18, 219);
+    renderlines(96, 14, 98, 15, 219);
+    renderlines(80, 14, 82, 15, 219);
+    renderlines(82, 14, 96, 15, 254);
+    renderlines(98, 20, 102, 21, 254);
+    renderlines(98, 17, 102, 18, 254);
+    renderlines(96, 15, 97, 17, 222);
+    renderlines(97, 15, 98, 17, 221);
+    renderlines(96, 18, 97, 20, 222);
+    renderlines(97, 18, 98, 20, 221);
+    renderlines(102, 18, 103, 20, 222);
+    renderlines(103, 18, 104, 20, 221);
+
+    //torch 1
+    renderblock(80, 20, 186);
+    renderblock(80, 19, 206);
+    renderblock(80, 18, 178);
 }
 
 void renderL1()
 {
-    renderlines(1, 1, 2, 31, "##");
-    renderlines(61, 1, 62, 31, "##");
-    renderlines(1, 1, 61, 2, "#");
-    renderlines(1, 30, 75, 31, "#");
-    renderlines(61, 13, 80, 14, "#");
-    renderlines(61, 18, 80, 19, "#");
-    renderlines(80, 1, 81, 61, "##");
-    renderlines(200, 1, 201, 61, "##");
-    renderlines(80, 14, 81, 18, "  ");
-    renderlines(80, 51, 81, 55,  "  ");
-    renderlines(61, 14, 62, 18, "  ");
-    renderlines(80, 1, 200, 2, "#");
-    renderlines(80, 60, 215, 61, "#");
-    renderlines(40, 30, 41, 81, "##");
-    renderlines(40, 80, 210, 81, "#");
-    renderlines(210, 63, 211, 81, "##");
-    renderlines(210, 63, 221, 64, "#");
-    renderlines(220, 50, 221, 64, "##");
-    renderlines(200, 50, 220, 51, "#");
+    renderlines(1, 1, 2, 31, 219);
+    renderlines(2, 1, 3, 31, 219);
+    renderlines(61, 1, 62, 31, 219);
+    renderlines(62, 1, 63, 31, 219);
+    renderlines(1, 1, 61, 2, 219);
+    renderlines(1, 30, 75, 31, 219);
+    renderlines(61, 13, 80, 14, 219);
+    renderlines(61, 18, 80, 19, 219);
+    renderlines(80, 1, 81, 61, 219);
+    renderlines(81, 1, 82, 61, 219);
+    renderlines(200, 1, 201, 61, 219);
+    renderlines(201, 1, 202, 61, 219);
+    renderlines(80, 14, 81, 18, 255);
+    renderlines(81, 14, 82, 18, 255);
+    renderlines(80, 51, 81, 55, 255);
+    renderlines(81, 51, 82, 55, 255);
+    renderlines(61, 14, 62, 18, 255);
+    renderlines(62, 14, 63, 18, 255);
+    renderlines(80, 1, 200, 2, 219);
+    renderlines(80, 60, 215, 61, 219);
+    renderlines(40, 30, 41, 81, 219);
+    renderlines(41, 30, 42, 81, 219);
+    renderlines(40, 80, 210, 81, 219);
+    renderlines(210, 63, 211, 81, 219);
+    renderlines(211, 63, 212, 81, 219);
+    renderlines(210, 63, 221, 64, 219);
+    renderlines(220, 50, 221, 64, 219);
+    renderlines(221, 50, 222, 64, 219);
+    renderlines(200, 50, 220, 51, 219);
 }
 
 void renderL2()
 {
 }
 
-void renderL3()
-{
-}
-
-void renderlast()
-{
-}
-
-void renderlines(int xstart, int ystart, int xend, int yend, std::string symbol)
+void renderlines(int xstart, int ystart, int xend, int yend, int symbol)
 {
     for (int x = xstart; x < xend; x++)
     {
         c.Y = ystart;
         c.X = x;
+        
         colour(colors[8]);
-        g_Console.writeToBuffer(c, symbol, colors[0]);
+        g_Console.writeToBuffer(c, (char)symbol, colors[0]);
     }
     for (int y = ystart; y < yend; y++)
     {
         c.X = xstart;
         c.Y = y;
         colour(colors[8]);
-        g_Console.writeToBuffer(c, symbol, colors[0]);
+        g_Console.writeToBuffer(c, (char)symbol, colors[0]);
+    }
+}
+
+void renderblock(int xpos, int ypos, int hexa)
+{
+    c.X = xpos;
+    c.Y = ypos;
+    colour(colors[8]);
+    g_Console.writeToBuffer(c, (char)hexa, colors[0]);
+}
+
+void renderarea(int xstart, int ystart, int xend, int yend, int symbol)
+{
+    for (int x = xstart; x < xend; x++)
+    {
+        for (int y = ystart; y < yend; y++)
+        {
+            c.X = xstart;
+            c.Y = ystart;
+            c.X = x;
+            c.Y = y;
+
+            colour(colors[8]);
+            g_Console.writeToBuffer(c, (char)symbol, colors[0]);
+        }
     }
 }
 
