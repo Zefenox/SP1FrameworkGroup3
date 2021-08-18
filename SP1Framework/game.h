@@ -5,6 +5,7 @@
 #define VK_KEY_S	0x53
 #define VK_KEY_D	0x44
 
+#include <string>
 #include "Framework\timer.h"
 
 extern CStopWatch g_swTimer;
@@ -69,6 +70,14 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
+
+void renderstart();
+void renderL1();
+void renderL2();
+void renderL3();
+void renderlast();
+void renderlines(int xstart, int ystart, int xend, int yend, std::string symbol);
+
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game

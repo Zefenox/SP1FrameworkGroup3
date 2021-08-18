@@ -12,12 +12,22 @@ double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
+
+// Set up sample colours, and output shadings
+const WORD colors[] = {
+    0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+    0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+};
+
+COORD c;
+
+
 // Game specific variables here
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
-Console g_Console(80, 25, "ESCAPE THE DUNGEON");
+Console g_Console(300, 100, "ESCAPE THE DUNGEON");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -326,21 +336,75 @@ void renderGame()
 
 void renderMap()
 {
-    // Set up sample colours, and output shadings
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
+    renderstart(); //render first to last room
+    //renderL1();
+    renderL2();
+    renderL3();
+    renderlast();
+}
 
-    COORD c;
-    for (int i = 0; i < 12; ++i)
+void renderstart()
+{
+    renderlines(30, 10, 31, 51, "##");
+    renderlines(30, 10, 111, 11, "#");
+    renderlines(110, 10, 111, 51, "##");
+    renderlines(30, 50, 111, 11, "#");
+}
+
+void renderL1()
+{
+    renderlines(1, 1, 2, 31, "##");
+    renderlines(61, 1, 62, 31, "##");
+    renderlines(1, 1, 61, 2, "#");
+    renderlines(1, 30, 75, 31, "#");
+    renderlines(61, 13, 80, 14, "#");
+    renderlines(61, 18, 80, 19, "#");
+    renderlines(80, 1, 81, 61, "##");
+    renderlines(200, 1, 201, 61, "##");
+    renderlines(80, 14, 81, 18, "  ");
+    renderlines(80, 51, 81, 55,  "  ");
+    renderlines(61, 14, 62, 18, "  ");
+    renderlines(80, 1, 200, 2, "#");
+    renderlines(80, 60, 215, 61, "#");
+    renderlines(40, 30, 41, 81, "##");
+    renderlines(40, 80, 210, 81, "#");
+    renderlines(210, 63, 211, 81, "##");
+    renderlines(210, 63, 221, 64, "#");
+    renderlines(220, 50, 221, 64, "##");
+    renderlines(200, 50, 220, 51, "#");
+}
+
+void renderL2()
+{
+}
+
+void renderL3()
+{
+}
+
+void renderlast()
+{
+}
+
+void renderlines(int xstart, int ystart, int xend, int yend, std::string symbol)
+{
+    for (int x = xstart; x < xend; x++)
     {
-        c.X = 5 * i;
-        c.Y = i + 1;
-        colour(colors[i]);
-        g_Console.writeToBuffer(c, " °±²Û", colors[i]);
+        c.Y = ystart;
+        c.X = x;
+        colour(colors[8]);
+        g_Console.writeToBuffer(c, symbol, colors[0]);
+    }
+    for (int y = ystart; y < yend; y++)
+    {
+        c.X = xstart;
+        c.Y = y;
+        colour(colors[8]);
+        g_Console.writeToBuffer(c, symbol, colors[0]);
     }
 }
+
+
 
 void renderCharacter()
 {
@@ -376,7 +440,7 @@ void renderFramerate()
 void renderInputEvents()
 {
     // keyboard events
-    COORD startPos = {50, 2};
+    COORD startPos = {210, 2};
     std::ostringstream ss;
     std::string key;
     for (int i = 0; i < K_COUNT; ++i)
