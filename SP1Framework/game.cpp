@@ -39,8 +39,8 @@ void init( void )
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
+    g_sChar.spawnPoint = { g_Console.getConsoleSize().X / 2 , g_Console.getConsoleSize().Y / 2 };
+    g_sChar.m_cLocation = g_sChar.spawnPoint;
     g_sChar.m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
@@ -234,6 +234,7 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+    updateCharacter();  // checks for changes to the player's status
 }
 
 void moveCharacter()
@@ -267,6 +268,22 @@ void moveCharacter()
 
    
 }
+
+void updateCharacter()
+{
+    if (g_sChar.lives <= 0 && g_sChar.health <= 0)
+    {
+        g_sChar.m_bActive = false;
+    }
+
+    if (g_sChar.health <= 0 && g_sChar.m_bActive)
+    {
+        g_sChar.lives--;
+        g_sChar.health = 100;
+        g_sChar.m_cLocation = g_sChar.spawnPoint;
+    }
+}
+
 void processUserInput()
 {
     // quits the game if player hits the escape key
