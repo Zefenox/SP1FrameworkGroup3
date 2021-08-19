@@ -8,6 +8,10 @@
 #include <iomanip>
 #include <sstream>
 
+#include <fstream>
+#include <string>
+
+
 //define WASD keys.
 #define VK_KEY_W	0x57
 #define VK_KEY_A	0x41
@@ -412,20 +416,58 @@ void renderGame()
 
 void renderMap()
 {
+    std::ifstream infile("Map1stTest.txt");
+    std::string var;
     // Set up sample colours, and output shadings
     const WORD colors[] = {
         0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
         0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
     };
 
-    COORD c;
+    // Init and store Map
+    char map[65][300];
+    int y = 0;
+    while (getline(infile, var)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < var.length(); ++i)
+        {
+            map[y][i] = var.at(i);
+
+        }
+        y++;
+    }
+
+
+    //render Map
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '*')
+            {
+                g_Console.writeToBuffer(x, y, '#', 0x0F);
+               
+            }
+            else if (map[y][x] == '#')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+            else
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
+        }
+    }
+
+    /*COORD c;
     for (int i = 0; i < 12; ++i)
     {
         c.X = 5 * i;
         c.Y = i + 1;
         colour(colors[i]);
         g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-    }
+    }*/
 }
 
 void renderCharacter()
