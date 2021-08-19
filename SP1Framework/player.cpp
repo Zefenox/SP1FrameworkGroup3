@@ -9,6 +9,11 @@ Player::Player()
     position = { 0, 0 };
     spawnPoint = { 0, 0 };
     active = true;
+    inventory[0] = new HealthPotion;
+    inventory[1] = nullptr;
+    inventory[2] = nullptr;
+    inventory[3] = nullptr;
+    inventory[4] = nullptr;
 }
 
 Player::~Player()
@@ -81,6 +86,56 @@ void Player::setY(SHORT Y)
     position.Y = Y;
 }
 
+Consumable* Player::getInventory1()
+{
+    return inventory[0];
+}
+
+void Player::setInventory1(Consumable* consumable)
+{
+    inventory[0] = consumable;
+}
+
+Consumable* Player::getInventory2()
+{
+    return inventory[1];
+}
+
+void Player::setInventory2(Consumable* consumable)
+{
+    inventory[1] = consumable;
+}
+
+Consumable* Player::getInventory3()
+{
+    return inventory[2];
+}
+
+void Player::setInventory3(Consumable* consumable)
+{
+    inventory[2] = consumable;
+}
+
+Consumable* Player::getInventory4()
+{
+    return inventory[3];
+}
+
+void Player::setInventory4(Consumable* consumable)
+{
+    inventory[3] = consumable;
+}
+
+Consumable* Player::getInventory5()
+{
+    return inventory[4];
+}
+
+void Player::setInventory5(Consumable* consumable)
+{
+    inventory[4] = consumable;
+}
+
 COORD Player::getSpawnPoint()
 {
     return spawnPoint;
@@ -105,6 +160,12 @@ bool Player::getActive()
 void Player::setActive(bool active)
 {
     this->active = active;
+}
+
+void Player::consume(Consumable* consumable)
+{
+    if (consumable->getId() == 1)
+        health += 30;
 }
 
 void Player::PlayerUpdate()

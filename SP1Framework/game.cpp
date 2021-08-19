@@ -139,6 +139,8 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
         break;
     case S_GAME: gameplayMouseHandler(mouseEvent); // handle gameplay mouse event
         break;
+    case S_PAUSESCREEN: pauseMouseHandler(mouseEvent);
+        break;
     }
 }
 
@@ -157,16 +159,17 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     EKEYS key = K_COUNT;
     switch (keyboardEvent.wVirtualKeyCode)
     {
-    /*case VK_UP: key = K_UP; break;
-    case VK_DOWN: key = K_DOWN; break;
-    case VK_LEFT: key = K_LEFT; break; 
-    case VK_RIGHT: key = K_RIGHT; break; */
     case VK_SPACE: key = K_SPACE; break;
     case VK_KEY_W: key = K_W; break;
     case VK_KEY_S: key = K_S; break;
     case VK_KEY_A: key = K_A; break;
     case VK_KEY_D: key = K_D; break;
     case VK_ESCAPE: key = K_ESCAPE; break; 
+    case 0x31: key = K_1; break;
+    case 0x32: key = K_2; break;
+    case 0x33: key = K_3; break;
+    case 0x34: key = K_4; break;
+    case 0x35: key = K_5; break;
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -208,6 +211,17 @@ void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
 // Output   : void
 //--------------------------------------------------------------
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
+
+void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
     {
@@ -285,6 +299,7 @@ void moveCharacter()
     {
         //Beep(1440, 30);
         player->setPosition(player->getX(), player->getY() - 1);
+        player->setHealth(player->getHealth() - 10);
     }
     if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
     {
@@ -324,6 +339,22 @@ void processUserInput()
             g_eGameState = S_GAME;
             return;
         }
+    }
+
+    if (g_eGameState == S_GAME) // inventory usage
+    {
+        if (g_skKeyEvent[K_1].keyDown)
+        {
+            if (player->getInventory1() != nullptr && player->getInventory1()->getCanBeConsumed())
+            {
+                player->consume(player->getInventory1());
+                player->setInventory1(nullptr);
+            }
+        }
+
+        if (g_skKeyEvent[K_2].keyDown) // for debugging
+            player->setHealth(player->getHealth() - 10);
+
     }
         
           
@@ -492,10 +523,38 @@ void renderGUI() // render game user inferface
     std::string objective = "Objective: Escape the Dungeon";
     std::string lifeBar = "Lives: " + std::to_string(player->getLives());
     std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
+    std::string inventoryList = "Inventory: ";
+    std::string inventory1;
+    std::string inventory2;
+    std::string inventory3;
+    std::string inventory4;
+    std::string inventory5;
+    if (player->getInventory1() != nullptr)
+        inventory1 = player->getInventory1()->getName();
+    if (player->getInventory2() != nullptr)
+        inventory2 = player->getInventory2()->getName();
+    if (player->getInventory3() != nullptr)
+        inventory3 = player->getInventory3()->getName();
+    if (player->getInventory4() != nullptr)
+        inventory4 = player->getInventory4()->getName();
+    if (player->getInventory5() != nullptr)
+        inventory5 = player->getInventory5()->getName();
+
     g_Console.writeToBuffer(1, 1, objective, 0x0C, objective.length());
     g_Console.writeToBuffer(1, 2, lifeBar, 0x0C, lifeBar.length());
     g_Console.writeToBuffer(1, 3, healthBar, 0x0C, healthBar.length());
-
+    g_Console.writeToBuffer(1, 6, inventoryList, 0x0C, inventoryList.length());
+    if (player->getInventory1() != nullptr)
+        g_Console.writeToBuffer(1, 7, inventory1, 0x0C, inventory1.length());
+    if (player->getInventory2() != nullptr)
+        g_Console.writeToBuffer(1, 8, inventory2, 0x0C, inventory2.length());
+    if (player->getInventory3() != nullptr)
+        g_Console.writeToBuffer(1, 9, inventory3, 0x0C, inventory3.length());
+    if (player->getInventory4() != nullptr)
+        g_Console.writeToBuffer(1, 10, inventory4, 0x0C, inventory4.length());
+    if (player->getInventory5() != nullptr)
+        g_Console.writeToBuffer(1, 11, inventory5, 0x0C, inventory5.length());
+    
 }
 
 void renderCharacter()

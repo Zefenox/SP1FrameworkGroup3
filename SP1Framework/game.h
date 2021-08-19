@@ -29,6 +29,11 @@ enum EKEYS
     K_S, //K_DOWN
     K_A, //K_LEFT
     K_D, //K_RIGHT
+    K_1,
+    K_2, 
+    K_3,
+    K_4,
+    K_5,
     K_ESCAPE,
     K_SPACE,
     K_COUNT,
@@ -84,4 +89,5 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyb
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mouse events for gameplay 
 
 void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H
