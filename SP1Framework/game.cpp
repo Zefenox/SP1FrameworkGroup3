@@ -30,7 +30,7 @@ SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
-Console g_Console(300, 100, "ESCAPE THE DUNGEON");
+Console g_Console(300, 64, "ESCAPE THE DUNGEON");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -339,8 +339,23 @@ void renderGame()
 
 void renderMap()
 {
-    renderstart(); //render first to last room
-    //renderL1();
+    char map[300][65];
+    for (int x = 0; x < 300; x++)
+    {
+        for (int y = 0; y < 65; y++)
+        {
+            map[x][y] = ' ';
+        }
+    }
+    for (int x = 0; x < 300; x++)
+    {
+        for (int y = 0; y < 65; y++)
+        {
+            g_Console.writeToBuffer(x, y, (char)219, 0x0F); 
+        }
+    }
+    //renderstart(); //render first to last room
+    renderL1();
     //renderL2();
     //renderL3();
     //renderlast();
@@ -381,7 +396,7 @@ void renderstart()
     renderlines(42, 20, 44, 21, 219);
 
     //obstacles 2
-    renderlines(102, 20, 104, 21, 219);
+    renderlines(102, 20, 104, 21, 219); 
     renderlines(96, 20, 98, 21, 219);
     renderlines(102, 17, 104, 18, 219);
     renderlines(96, 17, 98, 18, 219);
@@ -413,27 +428,28 @@ void renderL1()
     renderlines(1, 30, 75, 31, 219);
     renderlines(61, 13, 80, 14, 219);
     renderlines(61, 18, 80, 19, 219);
-    renderlines(80, 1, 81, 61, 219);
-    renderlines(81, 1, 82, 61, 219);
-    renderlines(200, 1, 201, 61, 219);
-    renderlines(201, 1, 202, 61, 219);
+    renderlines(80, 1, 81, 51, 219);
+    renderlines(81, 1, 82, 51, 219);
+    renderlines(200, 1, 201, 46, 219);
+    renderlines(201, 1, 202, 46, 219);
+    renderlines(80, 1, 200, 2, 219);
+    renderlines(80, 30, 215, 31, 219);
+    renderlines(40, 30, 41, 51, 219);
+    renderlines(41, 30, 42, 51, 219);
+    renderlines(40, 50, 210, 51, 219);
+    renderlines(210, 33, 211, 51, 219);
+    renderlines(211, 33, 212, 51, 219);
+    renderlines(210, 33, 221, 34, 219);
+    renderlines(220, 20, 221, 34, 219);
+    renderlines(221, 20, 222, 34, 219);
+    renderlines(200, 20, 220, 21, 219);
+    renderlines(90, 30, 96, 31, 255);
     renderlines(80, 14, 81, 18, 255);
     renderlines(81, 14, 82, 18, 255);
-    renderlines(80, 51, 81, 55, 255);
-    renderlines(81, 51, 82, 55, 255);
+    renderlines(80, 41, 81, 45, 255);
+    renderlines(81, 41, 82, 45, 255);
     renderlines(61, 14, 62, 18, 255);
     renderlines(62, 14, 63, 18, 255);
-    renderlines(80, 1, 200, 2, 219);
-    renderlines(80, 60, 215, 61, 219);
-    renderlines(40, 30, 41, 81, 219);
-    renderlines(41, 30, 42, 81, 219);
-    renderlines(40, 80, 210, 81, 219);
-    renderlines(210, 63, 211, 81, 219);
-    renderlines(211, 63, 212, 81, 219);
-    renderlines(210, 63, 221, 64, 219);
-    renderlines(220, 50, 221, 64, 219);
-    renderlines(221, 50, 222, 64, 219);
-    renderlines(200, 50, 220, 51, 219);
 }
 
 void renderL2()
