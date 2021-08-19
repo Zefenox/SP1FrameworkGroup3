@@ -9,3 +9,5 @@ ipch/
 *.db
 *.db-shm
 *.db
+.vs/SP1Framework/v16/Browse.VC.db
+*.db-shm

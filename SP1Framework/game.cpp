@@ -5,6 +5,8 @@
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
+#include <string>
+#include <fstream>
 #include <sstream>
 #define VK_KEY_W    0x57
 #define VK_KEY_A    0x41
@@ -339,23 +341,44 @@ void renderGame()
 
 void renderMap()
 {
-    char map[300][65];
-    for (int x = 0; x < 300; x++)
-    {
-        for (int y = 0; y < 65; y++)
+    std::ifstream infile("Map1stTest.txt");
+    std::string var;
+    // Init and store Map
+    char map[65][300];
+    int y = 0;
+    while (getline(infile, var)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < var.length(); ++i)
         {
-            map[x][y] = ' ';
+            map[y][i] = var.at(i);
+
         }
+        y++;
     }
-    for (int x = 0; x < 300; x++)
+
+
+    //render Map
+    for (int y = 0; y < 65; y++)
     {
-        for (int y = 0; y < 65; y++)
+        for (int x = 0; x < 300; x++)
         {
-            g_Console.writeToBuffer(x, y, (char)219, 0x0F); 
+            if (map[y][x] == '*')
+            {
+                g_Console.writeToBuffer(x, y, '#', 0x0F);
+
+            }
+            else if (map[y][x] == '#')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+            else
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
         }
-    }
-    //renderstart(); //render first to last room
-    renderL1();
+    }    //renderstart(); //render first to last room
+    //renderL1();
     //renderL2();
     //renderL3();
     //renderlast();
