@@ -322,15 +322,57 @@ void renderToScreen()
 void renderSplashScreen()  // renders the splash screen
 {
     COORD c = g_Console.getConsoleSize();
-    c.Y /= 3;
-    c.X = c.X / 2 - 9;
-    g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
+    c.Y /= 20;
+    c.X = c.X / 10;
+
+    // ESCAPE
+    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", 0x0F);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 20;
-    g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
+    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", 0x0F);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
+    g_Console.writeToBuffer(c, "  / ____       ", 0x0F);
+    c.X += 15;
+    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    c.X += 1;
+    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    c.X += 1;
+    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", 0x0F);
+    c.X -= 17;
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", 0x0F);
+
+
+    // THE
+    c.Y += 2;
+    c.X += 15;
+    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " / /    //    / / //          ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", 0x0F);
+
+
+    // DUNGEON
+    c.Y += 2;
+    c.X -= 20;
+    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", 0x0F);
+    c.Y += 1;
+
+
 }
 
 void renderGame()
