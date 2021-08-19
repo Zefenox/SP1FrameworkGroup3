@@ -110,6 +110,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
+    case S_PAUSESCREEN: pauseKBHandler(keyboardEvent);
+        break;
     }
 }
 
@@ -177,6 +179,25 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     }    
 }
 
+void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    // here, we map the key to our enums
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    case VK_ESCAPE: key = K_ESCAPE; break;
+    }
+    // a key pressed event would be one with bKeyDown == true
+    // a key released event would be one with bKeyDown == false
+    // if no key is pressed, no event would be fired.
+    // so we are tracking if a key is either pressed, or released
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
+}
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the game state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -222,6 +243,7 @@ void update(double dt)
             break;
         case S_GAME: updateGame(); // gameplay logic when we are in the game
             break;
+        case S_PAUSESCREEN: updatePause();
     }
 }
 
@@ -250,6 +272,11 @@ void updateGame()       // gameplay logic
     player->PlayerUpdate();
 }
 
+void updatePause()
+{
+    processUserInput();
+}
+
 void moveCharacter()
 {    
     // Updating the location of the character based on the key release
@@ -268,6 +295,7 @@ void moveCharacter()
     {
         //Beep(1440, 30);
         player->setPosition(player->getX(), player->getY() + 1);
+        player->setHealth(player->getHealth() - 10);
     }
     if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
@@ -284,9 +312,18 @@ void moveCharacter()
 void processUserInput()
 {
     // quits the game if player hits the escape key
-    if (g_skKeyEvent[K_ESCAPE].keyReleased)
+    if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
     {
-    g_bQuitGame = true;
+        if (g_eGameState == S_GAME)
+        {
+            g_eGameState = S_PAUSESCREEN;
+            return;
+        }
+        if (g_eGameState == S_PAUSESCREEN)
+        {
+            g_eGameState = S_GAME;
+            return;
+        }
     }
         
           
@@ -323,6 +360,8 @@ void render()
     case S_SPLASHSCREEN: renderSplashScreen();
         break;
     case S_GAME: renderGame();
+        break;
+    case S_PAUSESCREEN: renderPauseScreen();
         break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
@@ -408,6 +447,7 @@ void renderGame()
 {
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
+    renderGUI();
 }
 
 void renderMap()
@@ -426,6 +466,36 @@ void renderMap()
         colour(colors[i]);
         g_Console.writeToBuffer(c, " °±²Û", colors[i]);
     }
+}
+
+void renderPauseScreen()
+{
+    renderPauseSlate();
+    renderPauseOptions();
+}
+
+void renderPauseSlate()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y /= 20;
+    c.X = c.X / 10;
+    std::string PAUSE = "pause screen lol";
+    g_Console.writeToBuffer(c, PAUSE, 0x0c, PAUSE.length());
+}
+
+void renderPauseOptions()
+{
+}
+
+void renderGUI() // render game user inferface
+{
+    std::string objective = "Objective: Escape the Dungeon";
+    std::string lifeBar = "Lives: " + std::to_string(player->getLives());
+    std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
+    g_Console.writeToBuffer(1, 1, objective, 0x0C, objective.length());
+    g_Console.writeToBuffer(1, 2, lifeBar, 0x0C, lifeBar.length());
+    g_Console.writeToBuffer(1, 3, healthBar, 0x0C, healthBar.length());
+
 }
 
 void renderCharacter()
