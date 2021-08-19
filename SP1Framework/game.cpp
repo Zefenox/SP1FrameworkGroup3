@@ -2,27 +2,30 @@
 //
 //
 #include "game.h"
+#include "Player.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-
+//define WASD keys.
 #define VK_KEY_W	0x57
 #define VK_KEY_A	0x41
 #define VK_KEY_S	0x53
 #define VK_KEY_D	0x44
+
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
 // Game specific variables here
-SGameChar   g_sChar;
+//SGameChar   g_sChar;
+Player* player = new Player;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
-Console g_Console(80, 25, "ESCAPE THE DUNGEON");
+Console g_Console(300, 100, "ESCAPE THE DUNGEON");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -39,9 +42,9 @@ void init( void )
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
+    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2);
+    player->setPosition(player->getSpawnPoint());
+    player->setActive(true);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -225,8 +228,16 @@ void update(double dt)
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
+    if (g_dElapsedTime > 5.0) // wait for 3 seconds to switch to game mode, else do nothing
         g_eGameState = S_GAME;
+
+    
+    /*processUserInput();*/
+    /*getInput();*/
+    /*if (g_skKeyEvent[K_SPACE].keyReleased)
+    {
+        g_eGameState = S_GAME;
+    }*/
 }
 
 void updateGame()       // gameplay logic
@@ -234,35 +245,38 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+                        
+    // interactions
+    player->PlayerUpdate();
 }
 
 void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_W].keyDown && g_sChar.m_cLocation.Y > 0)
+    if (g_skKeyEvent[K_W].keyDown && player->getY() > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y--;       
+        player->setPosition(player->getX(), player->getY() - 1);
     }
-    if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
+    if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X--;        
+        player->setPosition(player->getX() - 1, player->getY());
     }
-    if (g_skKeyEvent[K_S].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+    if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y++;        
+        player->setPosition(player->getX(), player->getY() + 1);
     }
-    if (g_skKeyEvent[K_D].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+    if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X++;        
+        player->setPosition(player->getX() + 1, player->getY());
     }
     if (g_skKeyEvent[K_SPACE].keyReleased)
     {
-        g_sChar.m_bActive = !g_sChar.m_bActive;        
+        player->setActive(false);
     }
 
    
@@ -271,7 +285,26 @@ void processUserInput()
 {
     // quits the game if player hits the escape key
     if (g_skKeyEvent[K_ESCAPE].keyReleased)
-        g_bQuitGame = true;    
+    {
+    g_bQuitGame = true;
+    }
+        
+          
+    //if (g_eGameState == S_SPLASHSCREEN)
+    //{
+    //    if (g_skKeyEvent[K_SPACE].keyReleased)
+    //    {// wait for 3 seconds to switch to game mode, else do nothing
+    //        g_eGameState = S_GAME;
+
+    //    }
+    //}
+    //else if (g_skKeyEvent[K_ESCAPE].keyReleased)
+    //{
+    //    g_bQuitGame = true;
+    //}
+
+    
+        
 }
 
 //--------------------------------------------------------------
@@ -293,7 +326,7 @@ void render()
         break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
-    renderInputEvents();    // renders status of input events
+    /*renderInputEvents();*/    // renders status of input events
     renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
 }
 
@@ -312,15 +345,63 @@ void renderToScreen()
 void renderSplashScreen()  // renders the splash screen
 {
     COORD c = g_Console.getConsoleSize();
-    c.Y /= 3;
-    c.X = c.X / 2 - 9;
-    g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
+    c.Y /= 20;
+    c.X = c.X / 10;
+
+    // ESCAPE
+    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", 0x0F);
     c.Y += 1;
+    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  / ____       ", 0x0F);
+    c.X += 15;
+    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    c.X += 1;
+    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    c.X += 1;
+    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", 0x0F);
+    c.X -= 17;
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", 0x0F);
+    
+    
+    // THE
+    c.Y += 2;
+    c.X += 15;
+    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " / /    //    / / //          ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", 0x0F);
+    
+    
+    // DUNGEON
+    c.Y += 2;
+    c.X -= 20;
+    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", 0x0F);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", 0x0F);
+    c.Y += 1;
+
+
+    /*c.Y += 3;
     c.X = g_Console.getConsoleSize().X / 2 - 20;
     g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-    c.Y += 1;
+    c.Y += 5;
     c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
+    g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);*/
 }
 
 void renderGame()
@@ -351,24 +432,31 @@ void renderCharacter()
 {
     // Draw the location of the character
     WORD charColor = 0x0C;
-    if (g_sChar.m_bActive)
+    if (player->getActive())
     {
         charColor = 0x0A;
     }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
+    g_Console.writeToBuffer(player->getPosition(), (char)1, charColor);
 }
 
-void setPlayer(COORD position)
-{
-    // moves the player to position
-    g_sChar.m_cLocation.X = position.X;
-    g_sChar.m_cLocation.Y = position.Y;
-}
+//COORD getPlayerPosition()
+//{
+//    // returns player position
+//    return g_sChar.m_cLocation;
+//}
 
-COORD getPlayerPosition()
+void playerInteractions()
 {
-    // returns player position
-    return g_sChar.m_cLocation;
+    //if ( true)
+    //{
+    //    Checkpoint.setSpawn();
+    //}
+
+   /* if ()
+    {
+
+    }*/
+
 }
 
 void renderFramerate()
