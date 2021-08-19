@@ -34,6 +34,9 @@ EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 // Console object
 Console g_Console(300, 64, "ESCAPE THE DUNGEON");
 
+// map
+char map[65][300];
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -250,25 +253,47 @@ void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
+    int x;
+    int y;
+
+    x = g_sChar.m_cLocation.X;
+    y = g_sChar.m_cLocation.Y;
+
     if (g_skKeyEvent[K_W].keyDown && g_sChar.m_cLocation.Y > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y--;       
+        if (map[y-1][x] != '#')
+        {
+            g_sChar.m_cLocation.Y--;    
+        }
+           
     }
     if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X--;        
+        if (map[y][x - 1] != '#')
+        {
+            g_sChar.m_cLocation.X--; 
+        }
+               
     }
     if (g_skKeyEvent[K_S].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y++;        
+        if (map[y + 1][x] != '#')
+        {
+            g_sChar.m_cLocation.Y++;
+        }
+                
     }
     if (g_skKeyEvent[K_D].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X++;        
+        if (map[y][x + 1] != '#')
+        {
+            g_sChar.m_cLocation.X++;
+        }
+                
     }
     if (g_skKeyEvent[K_SPACE].keyReleased)
     {
@@ -377,16 +402,16 @@ void renderSplashScreen()  // renders the splash screen
 
 void renderGame()
 {
+    loadmap();
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
 }
 
-void renderMap()
+void loadmap()
 {
     std::ifstream infile("Map1stTest.txt");
     std::string var;
     // Init and store Map
-    char map[65][300];
     int y = 0;
     while (getline(infile, var)) {
         // Output the text from the file
@@ -397,8 +422,10 @@ void renderMap()
         }
         y++;
     }
+}
 
-
+void renderMap()
+{
     //render Map
     for (int y = 0; y < 65; y++)
     {
@@ -424,6 +451,11 @@ void renderMap()
     //renderL2();
     //renderL3();
     //renderlast();
+}
+
+void playerInteractions()
+{
+
 }
 
 void renderstart()
