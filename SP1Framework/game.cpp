@@ -2,12 +2,19 @@
 //
 //
 #include "game.h"
+#include "Player.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h> 
+
+// define WASD keys
+
 #define VK_KEY_W    0x57
 #define VK_KEY_A    0x41
 #define VK_KEY_S    0x53
@@ -28,7 +35,7 @@ COORD c;
 
 
 // Game specific variables here
-SGameChar   g_sChar;
+Player* player = new Player;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -43,17 +50,20 @@ char map[65][300];
 // Input    : void
 // Output   : void
 //--------------------------------------------------------------
-void init( void )
+void init(void)
 {
+    // assigning seed
+    srand((unsigned int)time(NULL));
+
     // Set precision for floating point output
-    g_dElapsedTime = 0.0;    
+    g_dElapsedTime = 0.0;
 
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
+    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2);
+    player->setPosition(player->getSpawnPoint());
+    player->setActive(true);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -69,7 +79,7 @@ void init( void )
 // Input    : Void
 // Output   : void
 //--------------------------------------------------------------
-void shutdown( void )
+void shutdown(void)
 {
     // Reset to white text on black background
     colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
@@ -90,12 +100,12 @@ void shutdown( void )
 // Input    : Void
 // Output   : void
 //--------------------------------------------------------------
-void getInput( void )
+void getInput(void)
 {
     // resets all the keyboard events
     memset(g_skKeyEvent, 0, K_COUNT * sizeof(*g_skKeyEvent));
     // then call the console to detect input from user
-    g_Console.readConsoleInput();    
+    g_Console.readConsoleInput();
 }
 
 //--------------------------------------------------------------
@@ -112,12 +122,14 @@ void getInput( void )
 // Output   : void
 //--------------------------------------------------------------
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
-{    
+{
     switch (g_eGameState)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
+        break;
+    case S_PAUSESCREEN: pauseKBHandler(keyboardEvent);
         break;
     }
 }
@@ -139,12 +151,14 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
 // Output   : void
 //--------------------------------------------------------------
 void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
-{    
+{
     switch (g_eGameState)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
     case S_GAME: gameplayMouseHandler(mouseEvent); // handle gameplay mouse event
+        break;
+    case S_PAUSESCREEN: pauseMouseHandler(mouseEvent);
         break;
     }
 }
@@ -164,16 +178,17 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     EKEYS key = K_COUNT;
     switch (keyboardEvent.wVirtualKeyCode)
     {
-    /*case VK_UP: key = K_UP; break;
-    case VK_DOWN: key = K_DOWN; break;
-    case VK_LEFT: key = K_LEFT; break; 
-    case VK_RIGHT: key = K_RIGHT; break; */
     case VK_SPACE: key = K_SPACE; break;
     case VK_KEY_W: key = K_W; break;
     case VK_KEY_S: key = K_S; break;
     case VK_KEY_A: key = K_A; break;
     case VK_KEY_D: key = K_D; break;
-    case VK_ESCAPE: key = K_ESCAPE; break; 
+    case VK_ESCAPE: key = K_ESCAPE; break;
+    case 0x31: key = K_1; break;
+    case 0x32: key = K_2; break;
+    case 0x33: key = K_3; break;
+    case 0x34: key = K_4; break;
+    case 0x35: key = K_5; break;
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -183,7 +198,26 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     {
         g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
         g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
-    }    
+    }
+}
+
+void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    // here, we map the key to our enums
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    case VK_ESCAPE: key = K_ESCAPE; break;
+    }
+    // a key pressed event would be one with bKeyDown == true
+    // a key released event would be one with bKeyDown == false
+    // if no key is pressed, no event would be fired.
+    // so we are tracking if a key is either pressed, or released
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
 }
 
 //--------------------------------------------------------------
@@ -196,6 +230,16 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
 // Output   : void
 //--------------------------------------------------------------
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
+void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
     {
@@ -227,10 +271,11 @@ void update(double dt)
 
     switch (g_eGameState)
     {
-        case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
-            break;
-        case S_GAME: updateGame(); // gameplay logic when we are in the game
-            break;
+    case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
+        break;
+    case S_GAME: updateGame(); // gameplay logic when we are in the game
+        break;
+    case S_PAUSESCREEN: updatePause();
     }
 }
 
@@ -239,6 +284,14 @@ void splashScreenWait()    // waits for time to pass in splash screen
 {
     if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
         g_eGameState = S_GAME;
+
+
+    /*processUserInput();*/
+    /*getInput();*/
+    /*if (g_skKeyEvent[K_SPACE].keyReleased)
+    {
+        g_eGameState = S_GAME;
+    }*/
 }
 
 void updateGame()       // gameplay logic
@@ -246,62 +299,124 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+
+    // interactions
+    player->PlayerUpdate();
+}
+
+void updatePause()
+{
+    processUserInput();
 }
 
 void moveCharacter()
-{    
+{
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
     int x;
     int y;
 
-    x = g_sChar.m_cLocation.X;
-    y = g_sChar.m_cLocation.Y;
+    x = player->getX();
+    y = player->getY();
 
-    if (g_skKeyEvent[K_W].keyDown && g_sChar.m_cLocation.Y > 0)
+    if (g_skKeyEvent[K_W].keyDown && player->getY() > 0)
     {
-        //Beep(1440, 30);
         if (map[y - 1][x] != '#')
         {
-            g_sChar.m_cLocation.Y--;
+            //Beep(1440, 30);
+            player->setPosition(player->getX(), player->getY() - 1);
         }
     }
-    if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
+    if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
     {
-        //Beep(1440, 30);
         if (map[y][x - 1] != '#')
         {
-            g_sChar.m_cLocation.X--;
+            //Beep(1440, 30);
+            player->setPosition(player->getX() - 1, player->getY());
         }
     }
-    if (g_skKeyEvent[K_S].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+    if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
     {
-        //Beep(1440, 30);
         if (map[y + 1][x] != '#')
         {
-            g_sChar.m_cLocation.Y++;
+            //Beep(1440, 30);
+            player->setPosition(player->getX(), player->getY() + 1);
         }
     }
-    if (g_skKeyEvent[K_D].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+    if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
-        //Beep(1440, 30);
         if (map[y][x + 1] != '#')
         {
-            g_sChar.m_cLocation.X++;
+            //Beep(1440, 30);
+            player->setPosition(player->getX() + 1, player->getY());
         }
     }
-    if (g_skKeyEvent[K_SPACE].keyReleased)
-    {
-        g_sChar.m_bActive = !g_sChar.m_bActive;        
-    }
 
-   
 }
+
 void processUserInput()
 {
     // quits the game if player hits the escape key
-    if (g_skKeyEvent[K_ESCAPE].keyReleased)
-        g_bQuitGame = true;    
+    if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
+    {
+        if (g_eGameState == S_GAME)
+        {
+            g_eGameState = S_PAUSESCREEN;
+            return;
+        }
+        if (g_eGameState == S_PAUSESCREEN)
+        {
+            g_eGameState = S_GAME;
+            return;
+        }
+    }
+
+    if (g_eGameState == S_GAME) // inventory usage
+    {
+        if (g_skKeyEvent[K_1].keyDown)
+        {
+            if (player->getInventory(0) != nullptr && player->getInventory(0)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(0));
+                player->setInventory(0, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_2].keyDown)
+        {
+            if (player->getInventory(1) != nullptr && player->getInventory(1)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(1));
+                player->setInventory(1, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_3].keyDown)
+        {
+            if (player->getInventory(2) != nullptr && player->getInventory(2)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(2));
+                player->setInventory(2, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_4].keyDown)
+        {
+            if (player->getInventory(3) != nullptr && player->getInventory(3)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(3));
+                player->setInventory(3, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_5].keyDown)
+        {
+            if (player->getInventory(4) != nullptr && player->getInventory(4)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(4));
+                player->setInventory(4, nullptr);
+            }
+        }
+
+        if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
+            player->setHealth(player->getHealth() - 10);
+    }
 }
 
 //--------------------------------------------------------------
@@ -320,6 +435,8 @@ void render()
     case S_SPLASHSCREEN: renderSplashScreen();
         break;
     case S_GAME: renderGame();
+        break;
+    case S_PAUSESCREEN: renderPauseScreen();
         break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
@@ -417,6 +534,7 @@ void renderGame()
     loadmap();
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
+    renderGUI();        // renders game user interface
 }
 
 void loadmap()
@@ -529,29 +647,64 @@ void renderMap()
             }
             else if (map[y][x] == '&') //Checkpoint, sets player spawn pos
             {
-            g_Console.writeToBuffer(x, y, (char)237, 0x8B);
+                g_Console.writeToBuffer(x, y, (char)237, 0x8B);
             }
             else //empty space
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x80);
             }
         }
-    }    
+    }
 }
 
+void renderPauseScreen()
+{
+    renderPauseSlate();
+    renderPauseOptions();
+}
 
+void renderPauseSlate()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y /= 20;
+    c.X = c.X / 10;
+    std::string PAUSE = "pause screen lol";
+    g_Console.writeToBuffer(c, PAUSE, 0x0c, PAUSE.length());
+}
 
+void renderPauseOptions()
+{
+}
 
+void renderGUI() // render game user inferface
+{
+    std::string objective = "Objective: Escape the Dungeon";
+    std::string lifeBar = "Lives: " + std::to_string(player->getLives());
+    std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
+    std::string inventoryList = "Inventory: ";
+    std::string tempStr;
+
+    g_Console.writeToBuffer(1, 1, objective, 0x0C, objective.length());
+    g_Console.writeToBuffer(1, 2, lifeBar, 0x0C, lifeBar.length());
+    g_Console.writeToBuffer(1, 3, healthBar, 0x0C, healthBar.length());
+    g_Console.writeToBuffer(1, 6, inventoryList, 0x0C, inventoryList.length());
+
+    for (int i = 0; i < 5; i++) // print inventory contents
+    {
+        if (player->getInventory(i) != nullptr)
+            tempStr = std::to_string(i + 1) + ". " + player->getInventory(i)->getName();
+        else
+            tempStr = std::to_string(i + 1) + ".";
+
+        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0C, tempStr.length());
+    }
+
+}
 
 void renderCharacter()
 {
     // Draw the location of the character
-    WORD charColor = 0x0C;
-    if (g_sChar.m_bActive)
-    {
-        charColor = 0x0A;
-    }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
+    g_Console.writeToBuffer(player->getPosition(), (char)1, player->getCharColour());
 }
 
 void renderFramerate()
@@ -577,7 +730,7 @@ void renderFramerate()
 void renderInputEvents()
 {
     // keyboard events
-    COORD startPos = {210, 2};
+    COORD startPos = { 210, 2 };
     std::ostringstream ss;
     std::string key;
     for (int i = 0; i < K_COUNT; ++i)
@@ -635,7 +788,7 @@ void renderInputEvents()
     case DOUBLE_CLICK:
         ss.str("Double Clicked");
         g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
-        break;        
+        break;
     case MOUSE_WHEELED:
         if (g_mouseEvent.buttonState & 0xFF000000)
             ss.str("Mouse wheeled down");
@@ -643,11 +796,8 @@ void renderInputEvents()
             ss.str("Mouse wheeled up");
         g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
         break;
-    default:        
+    default:
         break;
     }
-    
+
 }
-
-
-
