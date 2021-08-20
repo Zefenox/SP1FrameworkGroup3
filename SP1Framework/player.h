@@ -15,6 +15,7 @@ private:
 	SHORT lives;
 	COORD position;
 	COORD spawnPoint;
+	CHAR direction;
 	WORD charColour;
 	bool active;
 	Consumable* inventory[5];
@@ -38,6 +39,8 @@ public:
 	COORD getSpawnPoint();
 	void setSpawnPoint(COORD spawnPoint);
 	void setSpawnPoint(SHORT X, SHORT Y);
+	CHAR getDirection();
+	void setDirection(CHAR direction);
 	WORD getCharColour();
 	void setCharColour(WORD charColour);
 	bool getActive();

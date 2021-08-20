@@ -3,6 +3,7 @@
 //
 #include "game.h"
 #include "Player.h"
+#include "Chest.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
@@ -36,6 +37,7 @@ COORD c;
 
 // Game specific variables here
 Player* player = new Player;
+Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -64,6 +66,11 @@ void init(void)
     player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2);
     player->setPosition(player->getSpawnPoint());
     player->setActive(true);
+
+    // initialises chests
+    chest[0] = new Chest;
+    chest[0]->setPosition(156, 36);
+    
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -300,8 +307,9 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 
+    playerInteractions();
     // interactions
-    player->PlayerUpdate();
+    player->PlayerUpdate(); // checks for updates to player status
 }
 
 void updatePause()
@@ -699,6 +707,55 @@ void renderGUI() // render game user inferface
         g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0C, tempStr.length());
     }
 
+}
+
+void playerInteractions()
+{
+    for (int i = 0; i < 10; i++) // player interacts with a chest
+    {
+        if (chest[i] != nullptr)
+        {
+            if (player->getX() == chest[i]->getX() && player->getY() == chest[i]->getY()) // check for same position
+            {
+                for (int j = 0; j < 5; j++) // loop through inventory to check which is free
+                {
+                    if (player->getInventory(j) == nullptr)
+                    {
+                        int randNum = (rand() % 4) + 1; // randomise consumable gift
+                        switch (randNum)
+                        {
+                        case 1:
+                        {
+                            player->setInventory(j, new HealthPotion);
+                            chest[i] = nullptr;
+                            break;
+                        }
+                        case 2:
+                        {
+                            player->setInventory(j, new ExtraLife);
+                            chest[i] = nullptr;
+                            break;
+                        }
+                        case 3:
+                        {
+                            player->setInventory(j, new OddPotion);
+                            chest[i] = nullptr;
+                            break;
+                        }
+                        case 4:
+                        {
+                            player->setInventory(j, new Cheese);
+                            chest[i] = nullptr;
+                            break;
+                        }
+                        }
+                        break; // no need for further check
+                    }
+                }
+            }
+        }
+    }
+    
 }
 
 void renderCharacter()

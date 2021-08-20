@@ -7,7 +7,7 @@ Player::Player()
     lives = 3;
     position = { 0, 0 };
     spawnPoint = { 0, 0 };
-    charColour = 0x0c;
+    charColour = 0x84;
     active = true;
     inventory[0] = new HealthPotion;
     inventory[1] = new ExtraLife;
@@ -110,6 +110,16 @@ void Player::setSpawnPoint(SHORT X, SHORT Y)
 {
     spawnPoint.X = X;
     spawnPoint.Y = Y;
+}
+
+CHAR Player::getDirection()
+{
+    return direction;
+}
+
+void Player::setDirection(CHAR direction)
+{
+    this->direction = direction;
 }
 
 WORD Player::getCharColour()

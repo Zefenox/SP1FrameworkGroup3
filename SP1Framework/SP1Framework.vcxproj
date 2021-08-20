@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cheese.cpp" />
+    <ClCompile Include="Chest.cpp" />
     <ClCompile Include="Consumable.cpp" />
     <ClCompile Include="ExtraLife.cpp" />
     <ClCompile Include="Framework\console.cpp" />
@@ -92,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cheese.h" />
+    <ClInclude Include="Chest.h" />
     <ClInclude Include="Consumable.h" />
     <ClInclude Include="ExtraLife.h" />
     <ClInclude Include="Framework\console.h" />
