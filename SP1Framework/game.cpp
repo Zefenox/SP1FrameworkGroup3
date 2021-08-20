@@ -310,23 +310,15 @@ void moveCharacter()
     {
         //Beep(1440, 30);
         player->setPosition(player->getX(), player->getY() + 1);
-        player->setHealth(player->getHealth() - 10);
     }
     if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
         player->setPosition(player->getX() + 1, player->getY());
     }
-    if (g_skKeyEvent[K_SPACE].keyReleased)
-    {
-        player->setActive(false);
-    }
-
-   
 }
 void processUserInput()
 {
-    // quits the game if player hits the escape key
     if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
     {
         if (g_eGameState == S_GAME)
@@ -345,16 +337,47 @@ void processUserInput()
     {
         if (g_skKeyEvent[K_1].keyDown)
         {
-            if (player->getInventory1() != nullptr && player->getInventory1()->getCanBeConsumed())
+            if (player->getInventory(0) != nullptr && player->getInventory(0)->getCanBeConsumed() && player->getActive())
             {
-                player->consume(player->getInventory1());
-                player->setInventory1(nullptr);
+                player->consume(player->getInventory(0));
+                player->setInventory(0, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_2].keyDown)
+        {
+            if (player->getInventory(1) != nullptr && player->getInventory(1)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(1));
+                player->setInventory(1, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_3].keyDown)
+        {
+            if (player->getInventory(2) != nullptr && player->getInventory(2)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(2));
+                player->setInventory(2, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_4].keyDown)
+        {
+            if (player->getInventory(3) != nullptr && player->getInventory(3)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(3));
+                player->setInventory(3, nullptr);
+            }
+        }
+        if (g_skKeyEvent[K_5].keyDown)
+        {
+            if (player->getInventory(4) != nullptr && player->getInventory(4)->getCanBeConsumed() && player->getActive())
+            {
+                player->consume(player->getInventory(4));
+                player->setInventory(4, nullptr);
             }
         }
 
-        if (g_skKeyEvent[K_2].keyDown) // for debugging
+        if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
             player->setHealth(player->getHealth() - 10);
-
     }
         
           
@@ -524,37 +547,23 @@ void renderGUI() // render game user inferface
     std::string lifeBar = "Lives: " + std::to_string(player->getLives());
     std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
     std::string inventoryList = "Inventory: ";
-    std::string inventory1;
-    std::string inventory2;
-    std::string inventory3;
-    std::string inventory4;
-    std::string inventory5;
-    if (player->getInventory1() != nullptr)
-        inventory1 = player->getInventory1()->getName();
-    if (player->getInventory2() != nullptr)
-        inventory2 = player->getInventory2()->getName();
-    if (player->getInventory3() != nullptr)
-        inventory3 = player->getInventory3()->getName();
-    if (player->getInventory4() != nullptr)
-        inventory4 = player->getInventory4()->getName();
-    if (player->getInventory5() != nullptr)
-        inventory5 = player->getInventory5()->getName();
+    std::string tempStr;
 
     g_Console.writeToBuffer(1, 1, objective, 0x0C, objective.length());
     g_Console.writeToBuffer(1, 2, lifeBar, 0x0C, lifeBar.length());
     g_Console.writeToBuffer(1, 3, healthBar, 0x0C, healthBar.length());
     g_Console.writeToBuffer(1, 6, inventoryList, 0x0C, inventoryList.length());
-    if (player->getInventory1() != nullptr)
-        g_Console.writeToBuffer(1, 7, inventory1, 0x0C, inventory1.length());
-    if (player->getInventory2() != nullptr)
-        g_Console.writeToBuffer(1, 8, inventory2, 0x0C, inventory2.length());
-    if (player->getInventory3() != nullptr)
-        g_Console.writeToBuffer(1, 9, inventory3, 0x0C, inventory3.length());
-    if (player->getInventory4() != nullptr)
-        g_Console.writeToBuffer(1, 10, inventory4, 0x0C, inventory4.length());
-    if (player->getInventory5() != nullptr)
-        g_Console.writeToBuffer(1, 11, inventory5, 0x0C, inventory5.length());
-    
+
+    for (int i = 0; i < 5; i++) // print inventory contents
+    {
+        if (player->getInventory(i) != nullptr)
+            tempStr = std::to_string(i + 1) + ". " + player->getInventory(i)->getName();
+        else
+            tempStr = std::to_string(i + 1) + ".";
+
+        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0C, tempStr.length());
+    }
+
 }
 
 void renderCharacter()

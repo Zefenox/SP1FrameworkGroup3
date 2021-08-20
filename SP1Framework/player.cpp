@@ -86,54 +86,14 @@ void Player::setY(SHORT Y)
     position.Y = Y;
 }
 
-Consumable* Player::getInventory1()
+Consumable* Player::getInventory(int i)
 {
-    return inventory[0];
+    return inventory[i];
 }
 
-void Player::setInventory1(Consumable* consumable)
+void Player::setInventory(int i, Consumable* consumable)
 {
-    inventory[0] = consumable;
-}
-
-Consumable* Player::getInventory2()
-{
-    return inventory[1];
-}
-
-void Player::setInventory2(Consumable* consumable)
-{
-    inventory[1] = consumable;
-}
-
-Consumable* Player::getInventory3()
-{
-    return inventory[2];
-}
-
-void Player::setInventory3(Consumable* consumable)
-{
-    inventory[2] = consumable;
-}
-
-Consumable* Player::getInventory4()
-{
-    return inventory[3];
-}
-
-void Player::setInventory4(Consumable* consumable)
-{
-    inventory[3] = consumable;
-}
-
-Consumable* Player::getInventory5()
-{
-    return inventory[4];
-}
-
-void Player::setInventory5(Consumable* consumable)
-{
-    inventory[4] = consumable;
+    inventory[i] = consumable;
 }
 
 COORD Player::getSpawnPoint()
@@ -170,13 +130,19 @@ void Player::consume(Consumable* consumable)
 
 void Player::PlayerUpdate()
 {
-    if (health <= 0 && lives <= 0)
+    if (health > maxHealth) // capping health
+        health = maxHealth;
+
+    if (health < 0) // removing negative health
+        health = 0;
+
+    if (lives <= 0)
     {
         active = false;
         return;
     }
 
-    if (health <= 0 && active)
+    if (health <= 0 && lives > 0)
     {
         lives--;
         health = maxHealth;
