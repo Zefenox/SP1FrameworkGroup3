@@ -7,6 +7,10 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h> 
+
 
 //define WASD keys.
 #define VK_KEY_W	0x57
@@ -36,6 +40,9 @@ Console g_Console(300, 100, "ESCAPE THE DUNGEON");
 //--------------------------------------------------------------
 void init( void )
 {
+    // assigning seed
+    srand((unsigned int)time(NULL));
+
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
 
@@ -299,7 +306,6 @@ void moveCharacter()
     {
         //Beep(1440, 30);
         player->setPosition(player->getX(), player->getY() - 1);
-        player->setHealth(player->getHealth() - 10);
     }
     if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
     {
@@ -569,12 +575,7 @@ void renderGUI() // render game user inferface
 void renderCharacter()
 {
     // Draw the location of the character
-    WORD charColor = 0x0C;
-    if (player->getActive())
-    {
-        charColor = 0x0A;
-    }
-    g_Console.writeToBuffer(player->getPosition(), (char)1, charColor);
+    g_Console.writeToBuffer(player->getPosition(), (char)1, player->getCharColour());
 }
 
 //COORD getPlayerPosition()

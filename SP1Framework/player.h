@@ -3,6 +3,9 @@
 #include "Item.h"
 #include "Consumable.h"
 #include "HealthPotion.h"
+#include "ExtraLife.h"
+#include "OddPotion.h"
+#include "Cheese.h"
 
 class Player
 {
@@ -12,6 +15,7 @@ private:
 	SHORT lives;
 	COORD position;
 	COORD spawnPoint;
+	WORD charColour;
 	bool active;
 	Consumable* inventory[5];
 
@@ -34,6 +38,8 @@ public:
 	COORD getSpawnPoint();
 	void setSpawnPoint(COORD spawnPoint);
 	void setSpawnPoint(SHORT X, SHORT Y);
+	WORD getCharColour();
+	void setCharColour(WORD charColour);
 	bool getActive();
 	void setActive(bool active);
 	void consume(Consumable* consumable);
