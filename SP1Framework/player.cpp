@@ -50,17 +50,6 @@ void Player::setLives(SHORT lives)
     this->lives = lives;
 }
 
-void Player::setDirection(char dir)
-{
-    this->direction = dir;
-}
-
-char Player::getDirection()
-{
-
-    return direction;
-}
-
 COORD Player::getPosition()
 {
     return position;
@@ -195,10 +184,13 @@ void Player::PlayerUpdate()
         return;
     }
 
-    if (health <= 0 && lives > 0)
+    if (health <= 0)
     {
         lives--;
-        health = maxHealth;
-        position = spawnPoint;
+        if (lives > 0)
+        {
+            health = maxHealth;
+            position = spawnPoint;
+        }
     }
 }

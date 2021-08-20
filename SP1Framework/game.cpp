@@ -4,6 +4,7 @@
 #include "game.h"
 #include "Player.h"
 #include "Chest.h"
+#include "Bullet.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
