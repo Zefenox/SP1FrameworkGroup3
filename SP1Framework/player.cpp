@@ -1,6 +1,5 @@
 #include "Player.h"
 
-
 Player::Player()
 {
     health = 100;
@@ -8,7 +7,13 @@ Player::Player()
     lives = 3;
     position = { 0, 0 };
     spawnPoint = { 0, 0 };
+    charColour = 0x0c;
     active = true;
+    inventory[0] = new HealthPotion;
+    inventory[1] = new ExtraLife;
+    inventory[2] = new OddPotion;
+    inventory[3] = new Cheese;
+    inventory[4] = nullptr;
 }
 
 Player::~Player()
@@ -92,6 +97,16 @@ void Player::setY(SHORT Y)
     position.Y = Y;
 }
 
+Consumable* Player::getInventory(int i)
+{
+    return inventory[i];
+}
+
+void Player::setInventory(int i, Consumable* consumable)
+{
+    inventory[i] = consumable;
+}
+
 COORD Player::getSpawnPoint()
 {
     return spawnPoint;
@@ -108,6 +123,16 @@ void Player::setSpawnPoint(SHORT X, SHORT Y)
     spawnPoint.Y = Y;
 }
 
+WORD Player::getCharColour()
+{
+    return charColour;
+}
+
+void Player::setCharColour(WORD charColour)
+{
+    this->charColour = charColour;
+}
+
 bool Player::getActive()
 {
     return active;
@@ -118,15 +143,49 @@ void Player::setActive(bool active)
     this->active = active;
 }
 
+void Player::consume(Consumable* consumable)
+{
+    if (consumable->getId() == 1) // health potion
+        health += 30;
+    if (consumable->getId() == 2) // extra life
+        lives += 1;
+    if (consumable->getId() == 3) // odd potion (random effect)
+    {
+        int randNum = rand() % 4;
+        if (randNum == 0)
+            health -= 20;
+        if (randNum == 1)
+            health += 20;
+        if (randNum == 2)
+            lives -= 1;
+        if (randNum == 3)
+        {
+            maxHealth += 30;
+            health += 30;
+        }
+    }
+
+    if (consumable->getId() == 4) // cheese
+    {
+        health = maxHealth;
+    }
+}
+
 void Player::PlayerUpdate()
 {
-    if (health <= 0 && lives <= 0)
+    if (health > maxHealth) // capping health
+        health = maxHealth;
+
+    if (health < 0) // removing negative health
+        health = 0;
+
+    if (lives <= 0)
     {
         active = false;
         return;
     }
 
-    if (health <= 0 && active)
+    if (health <= 0 && lives > 0)
     {
         lives--;
         health = maxHealth;

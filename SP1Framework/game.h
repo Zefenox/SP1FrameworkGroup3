@@ -29,6 +29,11 @@ enum EKEYS
     K_S, //K_DOWN
     K_A, //K_LEFT
     K_D, //K_RIGHT
+    K_1,
+    K_2, 
+    K_3,
+    K_4,
+    K_5,
     K_ESCAPE,
     K_SPACE,
     K_COUNT,
@@ -40,6 +45,7 @@ enum EGAMESTATES
 {
     S_SPLASHSCREEN,
     S_GAME,
+    S_PAUSESCREEN,
     S_COUNT
 };
 
@@ -58,6 +64,7 @@ void shutdown    ( void );      // do clean up, free memory
 
 void splashScreenWait();    // waits for time to pass in splash screen
 void updateGame();          // gameplay logic
+void updatePause();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
@@ -68,8 +75,10 @@ void loadmap();
 void bulletLogic();
 
 void renderCharacter();     // renders the character into the buffer
-void setPlayer(COORD position); //moves character to that position
-/*COORD getPlayerPosition();*/      //gets player COORD
+void renderPauseScreen();
+void renderPauseSlate();
+void renderPauseOptions();
+void renderGUI();
 void playerInteractions();
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
@@ -82,5 +91,6 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);      // define this fun
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyboard events for gameplay 
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mouse events for gameplay 
 
-
+void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H
