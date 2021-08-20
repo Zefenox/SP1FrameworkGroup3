@@ -1,25 +1,25 @@
-#include "bullet.h"
+#include "Bullet.h"
 #include "game.h"
 
 
-bullet::bullet()
+Bullet::Bullet()
 {
 	
 	
 
 }
 
-bullet::~bullet()
+Bullet::~Bullet()
 {
 	
 }
 
-void bullet::shoot(char dir)
+void Bullet::shoot(char dir)
 {
 	/*if (g_skKeyEvent[K_SPACE].keyReleased)
 	{
-		bullet* Bullet = new bullet;
-		Bullet->bdirection = dir;
+		Bullet* Bullet = new Bullet;
+		Bullet->Bdirection = dir;
 
 	}*/
 	

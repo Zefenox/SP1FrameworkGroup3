@@ -1,9 +1,9 @@
 #pragma once
-class bullet
+class Bullet
 {
 public:
-	bullet();
-	~bullet();
+	Bullet();
+	~Bullet();
 
 	static void shoot(char dir);
 	
@@ -12,4 +12,5 @@ private:
 	char bdirection;
 
 };
+
 
