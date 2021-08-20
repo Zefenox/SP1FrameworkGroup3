@@ -64,12 +64,6 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
-void renderstart();
-void renderL1();
-void renderL2();
-void renderlines(int xstart, int ystart, int xend, int yend, int symbol);
-void renderblock(int xpos, int ypos, int hexa);
-void renderarea(int xstart, int ystart, int xend, int yend, int symbol);
 
 void renderCharacter();     // renders the character into the buffer
 void setPlayer(COORD position); //moves character to that position
