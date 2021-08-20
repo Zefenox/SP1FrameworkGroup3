@@ -65,6 +65,7 @@ void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
 void loadmap();
+void bulletLogic();
 
 void renderCharacter();     // renders the character into the buffer
 void setPlayer(COORD position); //moves character to that position

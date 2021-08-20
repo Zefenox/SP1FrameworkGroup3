@@ -45,6 +45,17 @@ void Player::setLives(SHORT lives)
     this->lives = lives;
 }
 
+void Player::setDirection(char dir)
+{
+    this->direction = dir;
+}
+
+char Player::getDirection()
+{
+
+    return direction;
+}
+
 COORD Player::getPosition()
 {
     return position;

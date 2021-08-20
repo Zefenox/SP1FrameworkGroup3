@@ -2,6 +2,8 @@
 //
 //
 #include "game.h"
+#include "player.h"
+#include "bullet.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
@@ -245,7 +247,15 @@ void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
+    /*Player->shoot(dir);*/
+    bulletLogic();
+    renderMap();
                         // sound can be played here too.
+}
+
+void bulletLogic()
+{
+
 }
 
 void moveCharacter()
@@ -264,6 +274,7 @@ void moveCharacter()
         if (map[y - 1][x] != '#')
         {
             g_sChar.m_cLocation.Y--;
+            /*Player->setDirection('D');*/
         }
     }
     if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
@@ -443,112 +454,95 @@ void renderMap()
     {
         for (int x = 0; x < 300; x++)
         {
-            if (map[y][x] == '|')
+            if (map[y][x] == '|') //torch stick, can pass thru
             {
                 g_Console.writeToBuffer(x, y, (char)186, 0x80);
-
             }
-            else if (map[y][x] == '#')
+            else if (map[y][x] == '#') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)219, 0x80);
             }
-            else if (map[y][x] == '+')
+            else if (map[y][x] == '+') //torch fire, pass thru
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)178, 0x84);
             }
-            else if (map[y][x] == '[')
+            else if (map[y][x] == '[') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)222, 0x80);
             }
-            else if (map[y][x] == ']')
+            else if (map[y][x] == ']') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)221, 0x80);
             }
-            else if (map[y][x] == '(')
+            else if (map[y][x] == '(') //trap firing block, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)204, 0x84);
             }
-            else if (map[y][x] == ')')
+            else if (map[y][x] == ')') //trap firing block, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)185, 0x84);
             }
-            else if (map[y][x] == '=')
+            else if (map[y][x] == '=') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)254, 0x80);
             }
-            else if (map[y][x] == '%')
+            else if (map[y][x] == '%') //chest, can pass and gives item
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)233, 0x8E);
             }
-            else if (map[y][x] == '!')
+            else if (map[y][x] == '!') //lava trap, can pass with DoT (2/s)
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)177, 0x8C);
             }
-            else if (map[y][x] == '$')
+            else if (map[y][x] == '$') //Dungeon gate, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)215, 0x86);
             }
-            else if (map[y][x] == '-')
+            else if (map[y][x] == '-') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)205, 0x84);
             }
-            else if (map[y][x] == '`')
+            else if (map[y][x] == '`') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)254, 0x84);
             }
-            else if (map[y][x] == '*')
+            else if (map[y][x] == '*') //wall, cannot pass
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)206, 0x84);
             }
-            else if (map[y][x] == '<')
+            else if (map[y][x] == '<') //tp gate step, pass thru
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)243, 0x8B);
             }
-            else if (map[y][x] == '>')
+            else if (map[y][x] == '>') //tp gate step, pass thru
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)242, 0x8B);
             }
-            else if (map[y][x] == '~')
+            else if (map[y][x] == '~') //tp gate, teleports to next room
             {
-                // walls
                 g_Console.writeToBuffer(x, y, (char)234, 0x8B);
             }
-            else if (map[y][x] == '0')
+            else if (map[y][x] == '0') //firetrap's fire, pass with DoT (10/s)
             {
-                // walls
                 g_Console.writeToBuffer(x, y, '-', 0x84);
             }
-            else if (map[y][x] == '1')
+            else if (map[y][x] == '1') //firetrap's fire, pass with DoT (10/s)
             {
-                // walls
                 g_Console.writeToBuffer(x, y, '=', 0x84);
             }
-            else if (map[y][x] == '2')
+            else if (map[y][x] == '2') //firetrap's fire, pass with DoT (10/s)
             {
-                // walls
                 g_Console.writeToBuffer(x, y, '#', 0x84);
             }
-            else if (map[y][x] == '3')
+            else if (map[y][x] == '3') //firetrap's fire, pass with DoT (10/s)
             {
-                // walls
                 g_Console.writeToBuffer(x, y, '@', 0x84);
             }
-            else
+            else if (map[y][x] == '&') //Checkpoint, sets player spawn pos
+            {
+            g_Console.writeToBuffer(x, y, (char)237, 0x8B);
+            }
+            else //empty space
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x80);
             }
