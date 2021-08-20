@@ -421,7 +421,7 @@ void renderGame()
 
 void loadmap()
 {
-    std::ifstream infile("Maplvl1.txt");
+    std::ifstream infile("MapLv2.txt");
     std::string var;
     // Init and store Map
     int y = 0;
@@ -531,6 +531,10 @@ void renderMap()
             {
             g_Console.writeToBuffer(x, y, (char)237, 0x8B);
             }
+            else if (map[y][x] == '"') //Checkpoint, sets player spawn pos
+            {
+                g_Console.writeToBuffer(x, y, (char)240, 0x86);
+            }
             else //empty space
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x80);
@@ -549,7 +553,7 @@ void renderCharacter()
     WORD charColor = 0x0C;
     if (g_sChar.m_bActive)
     {
-        charColor = 0x0A;
+        charColor = 0x8A;
     }
     g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
 }
