@@ -7,13 +7,14 @@ Player::Player()
     lives = 3;
     position = { 0, 0 };
     spawnPoint = { 0, 0 };
+    direction = 'W';
     charColour = 0x84;
     active = true;
     inventory[0] = new HealthPotion;
     inventory[1] = new ExtraLife;
     inventory[2] = new OddPotion;
     inventory[3] = new Cheese;
-    inventory[4] = nullptr;
+    inventory[4] = new Cheese;
 }
 
 Player::~Player()
@@ -150,18 +151,32 @@ void Player::consume(Consumable* consumable)
         lives += 1;
     if (consumable->getId() == 3) // odd potion (random effect)
     {
-        int randNum = rand() % 4;
-        if (randNum == 0)
-            health -= 20;
-        if (randNum == 1)
-            health += 20;
-        if (randNum == 2)
-            lives -= 1;
-        if (randNum == 3)
+        int randNum = (rand() % 4) + 1;
+        switch (randNum)
         {
-            maxHealth += 30;
-            health += 30;
+            case 1:
+            {
+                health += 20;
+                break;
+            }
+            case 2:
+            {
+                health -= 20;
+                break;
+            }
+            case 3:
+            {
+                lives -= 1;
+                break;
+            }
+            case 4:
+            {
+                maxHealth += 30;
+                health += 30;
+                break;
+            }
         }
+ 
     }
 
     if (consumable->getId() == 4) // cheese
