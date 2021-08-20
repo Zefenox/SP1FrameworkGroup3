@@ -341,6 +341,23 @@ void renderToScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
+
+    const WORD colors[] = {
+        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    };
+
+    //render's BG
+    COORD size = g_Console.getConsoleSize();
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0x80);
+        }
+
+    }
+
     COORD c = g_Console.getConsoleSize();
     c.Y /= 20;
     c.X = c.X / 10;
