@@ -2,6 +2,8 @@
 //
 //
 #include "game.h"
+#include "player.h"
+#include "bullet.h"
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
@@ -245,7 +247,15 @@ void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
+    /*Player->shoot(dir);*/
+    bulletLogic();
+    renderMap();
                         // sound can be played here too.
+}
+
+void bulletLogic()
+{
+
 }
 
 void moveCharacter()
@@ -264,6 +274,7 @@ void moveCharacter()
         if (map[y - 1][x] != '#')
         {
             g_sChar.m_cLocation.Y--;
+            /*Player->setDirection('D');*/
         }
     }
     if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)

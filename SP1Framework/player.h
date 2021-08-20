@@ -10,6 +10,7 @@ private:
 	COORD position;
 	COORD spawnPoint;
 	bool active;
+	char direction;
 
 public:
 	SHORT getHealth();
@@ -18,6 +19,8 @@ public:
 	void setMaxHealth(SHORT maxHealth);
 	SHORT getLives();
 	void setLives(SHORT lives);
+	void setDirection(char dir);
+	char getDirection();
 	COORD getPosition();
 	void setPosition(COORD position);
 	void setPosition(SHORT X, SHORT Y);
