@@ -33,6 +33,8 @@ EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
 Console g_Console(300, 64, "ESCAPE THE DUNGEON");
+// map
+char map[65][300];
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -250,25 +252,43 @@ void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
+    int x;
+    int y;
+
+    x = g_sChar.m_cLocation.X;
+    y = g_sChar.m_cLocation.Y;
+
     if (g_skKeyEvent[K_W].keyDown && g_sChar.m_cLocation.Y > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y--;       
+        if (map[y - 1][x] != '#')
+        {
+            g_sChar.m_cLocation.Y--;
+        }
     }
     if (g_skKeyEvent[K_A].keyDown && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X--;        
+        if (map[y][x - 1] != '#')
+        {
+            g_sChar.m_cLocation.X--;
+        }
     }
     if (g_skKeyEvent[K_S].keyDown && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y++;        
+        if (map[y + 1][x] != '#')
+        {
+            g_sChar.m_cLocation.Y++;
+        }
     }
     if (g_skKeyEvent[K_D].keyDown && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X++;        
+        if (map[y][x + 1] != '#')
+        {
+            g_sChar.m_cLocation.X++;
+        }
     }
     if (g_skKeyEvent[K_SPACE].keyReleased)
     {
@@ -394,16 +414,16 @@ void renderSplashScreen()  // renders the splash screen
 
 void renderGame()
 {
+    loadmap();
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
 }
 
-void renderMap()
+void loadmap()
 {
-    std::ifstream infile("Map1stTest.txt");
+    std::ifstream infile("Maplvl1.txt");
     std::string var;
     // Init and store Map
-    char map[65][300];
     int y = 0;
     while (getline(infile, var)) {
         // Output the text from the file
@@ -414,22 +434,119 @@ void renderMap()
         }
         y++;
     }
-
+}
+void renderMap()
+{
 
     //render Map
     for (int y = 0; y < 65; y++)
     {
         for (int x = 0; x < 300; x++)
         {
-            if (map[y][x] == '*')
+            if (map[y][x] == '|')
             {
-                g_Console.writeToBuffer(x, y, '#', 0x0F);
+                g_Console.writeToBuffer(x, y, (char)186, 0x80);
 
             }
             else if (map[y][x] == '#')
             {
                 // walls
-                g_Console.writeToBuffer(x, y, ' ', 0x00);
+                g_Console.writeToBuffer(x, y, (char)219, 0x80);
+            }
+            else if (map[y][x] == '+')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)178, 0x84);
+            }
+            else if (map[y][x] == '[')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)222, 0x80);
+            }
+            else if (map[y][x] == ']')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)221, 0x80);
+            }
+            else if (map[y][x] == '(')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)204, 0x84);
+            }
+            else if (map[y][x] == ')')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)185, 0x84);
+            }
+            else if (map[y][x] == '=')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)254, 0x80);
+            }
+            else if (map[y][x] == '%')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)233, 0x8E);
+            }
+            else if (map[y][x] == '!')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)177, 0x8C);
+            }
+            else if (map[y][x] == '$')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)215, 0x86);
+            }
+            else if (map[y][x] == '-')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)205, 0x84);
+            }
+            else if (map[y][x] == '`')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)254, 0x84);
+            }
+            else if (map[y][x] == '*')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)206, 0x84);
+            }
+            else if (map[y][x] == '<')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)243, 0x8B);
+            }
+            else if (map[y][x] == '>')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)242, 0x8B);
+            }
+            else if (map[y][x] == '~')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, (char)234, 0x8B);
+            }
+            else if (map[y][x] == '0')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, '-', 0x84);
+            }
+            else if (map[y][x] == '1')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, '=', 0x84);
+            }
+            else if (map[y][x] == '2')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, '#', 0x84);
+            }
+            else if (map[y][x] == '3')
+            {
+                // walls
+                g_Console.writeToBuffer(x, y, '@', 0x84);
             }
             else
             {
