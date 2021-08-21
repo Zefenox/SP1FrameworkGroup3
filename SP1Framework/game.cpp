@@ -221,10 +221,8 @@ void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     EKEYS key = K_COUNT;
     switch (keyboardEvent.wVirtualKeyCode)
     {
-    case VK_DOWN: key = K_DOWN; break;
-    case VK_UP: key = K_UP; break;
     case VK_SPACE: key = K_SPACE; break;
-
+    case VK_ESCAPE: key = K_ESCAPE; break;
     }
 
     if (key != K_COUNT)
@@ -331,8 +329,7 @@ void update(double dt)
 void splashScreenWait()    // waits for time to pass in splash screen
 {
     if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to start screen, else do nothing
-        g_eGameState = S_GAME;
-        // g_eGameState = S_STARTSCREEN;
+        g_eGameState = S_STARTSCREEN;
 
 
     /*processUserInput();*/
@@ -345,7 +342,7 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void updateStart()
 {
-    processUserInput();
+    startInput();
 }
 
 void updateGame()       // gameplay logic
@@ -475,6 +472,14 @@ void inventoryInput()
         player->setHealth(player->getHealth() - 10);
 
 
+}
+
+void startInput()
+{
+    if (g_skKeyEvent[K_SPACE].keyDown)
+        g_eGameState = S_GAME;
+    if (g_skKeyEvent[K_ESCAPE].keyDown)
+        g_bQuitGame = true;
 }
 
 void processUserInput()
@@ -753,7 +758,18 @@ void renderMap()
 
 void renderStartOptions()
 {
+    COORD c = g_Console.getConsoleSize();
+    c.Y = (c.Y / 20);
+    c.X = c.X / 10;
 
+    COORD cSTART = { c.X, c.Y + 25 };
+    COORD cQUIT = { c.X, c.Y + 28 };
+
+    std::string START = "PRESS SPACE TO START";
+    std::string QUIT = "PRESS ESC TO QUIT";
+
+    g_Console.writeToBuffer(cSTART, START, 0x0c, START.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
 }
 
 void renderPauseBase()
