@@ -1,16 +1,10 @@
 #ifndef _GAME_H
 #define _GAME_H
-#define VK_KEY_W	0x57
-#define VK_KEY_A	0x41
-#define VK_KEY_S	0x53
-#define VK_KEY_D	0x44
-
 #include "Framework\timer.h"
 #include <string>
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
-
 // struct to store keyboard events
 // a small subset of KEY_EVENT_RECORD
 struct SKeyEvent
@@ -35,8 +29,15 @@ enum EKEYS
     K_S, //K_DOWN
     K_A, //K_LEFT
     K_D, //K_RIGHT
+    K_1,
+    K_2, 
+    K_3,
+    K_4,
+    K_5,
     K_ESCAPE,
     K_SPACE,
+    K_UP,
+    K_DOWN,
     K_COUNT,
     
 };
@@ -45,7 +46,9 @@ enum EKEYS
 enum EGAMESTATES
 {
     S_SPLASHSCREEN,
+    S_STARTSCREEN,
     S_GAME,
+    S_PAUSESCREEN,
     S_COUNT
 };
 
@@ -63,14 +66,29 @@ void render      ( void );      // renders the current state of the game to the 
 void shutdown    ( void );      // do clean up, free memory
 
 void splashScreenWait();    // waits for time to pass in splash screen
+void updateStart();         // updates start menu
 void updateGame();          // gameplay logic
+void updatePause();
+void inventoryInput();
+void startInput();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
+void playerInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
+void renderTitle();
 void renderSplashScreen();  // renders the splash screen
+void renderStart();
 void renderGame();          // renders the game stuff
+void renderPauseScreen();   // renders the pause screen
 void renderMap();           // renders the map to the buffer first
+void loadmap();
+void bulletLogic();
+
 void renderCharacter();     // renders the character into the buffer
+void renderStartOptions();
+void renderPauseBase();
+void renderPauseOptions();
+void renderGUI();
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderInputEvents();   // renders the status of input events
@@ -99,8 +117,12 @@ void bossBodyCoord(SGameChar BArr[15]); //generates boss body coords that are si
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events
 void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);      // define this function for the console to call when there are mouse events
 
+void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for start screen
+void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyboard events for gameplay 
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mouse events for gameplay 
 
-
+void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H

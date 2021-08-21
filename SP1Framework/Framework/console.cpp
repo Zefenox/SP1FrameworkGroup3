@@ -147,6 +147,8 @@ void Console::initConsole(COORD consoleSize, LPCSTR lpConsoleTitle)
     m_topleft_c = { 0, 0 };
     m_writeRegion = { 0, 0, m_cConsoleSize.X - 1, m_cConsoleSize.Y - 1 };
 
+    /*SetConsoleDisplayMode(1);*/
+
     // initialize the input console
     initInput();
 }
@@ -239,6 +241,11 @@ void Console::setConsoleWindowSize()
 		PERR( bSuccess, "SetConsoleWindowInfo" );
 	}
 }
+
+BOOL __stdcall Console::SetConsoleDisplayMode(/*HANDLE hConsoleOutput,*/ DWORD dwFlags /*,PCOORD lpNewScreebBufferDimentions*/)
+{
+    return 0;
+}
 void Console::clearBuffer(WORD attribute)
 {
     CHAR_INFO clear = { ' ', attribute };
@@ -288,6 +295,11 @@ void Console::writeToBuffer(SHORT x, SHORT y, char ch, WORD attribute)
 void Console::writeToBuffer(COORD c, char ch, WORD attribute)
 {
     writeToBuffer(c.X, c.Y, ch, attribute);
+}
+
+void Console::writeToBuffer(int x, int y, std::string & s, WORD attribute, SHORT length)
+{
+    writeToBuffer(x, y, s.c_str(), attribute, length);
 }
 
 void Console::writeToConsole(const CHAR_INFO* lpBuffer)
