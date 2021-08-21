@@ -10,7 +10,7 @@ Player::Player()
     direction = 'W';
     charColour = 0x84;
     active = true;
-    inventory[0] = new HealthPotion;
+    inventory[0] = new HealthPotion; // starting inventory ( items inside for debugging purposes rn )
     inventory[1] = new ExtraLife;
     inventory[2] = new OddPotion;
     inventory[3] = new Cheese;

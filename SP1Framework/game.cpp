@@ -37,8 +37,8 @@ COORD c;
 
 
 // Game specific variables here
-Player* player = new Player;
-Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+Player* player = new Player; // player initialisation
+Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }; // chests initialisation
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -64,13 +64,13 @@ void init(void)
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2);
-    player->setPosition(player->getSpawnPoint());
-    player->setActive(true);
+    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
+    player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
+    player->setActive(true); // set him to be active
 
     // initialises chests
-    chest[0] = new Chest;
-    chest[0]->setPosition(156, 36);
+    chest[0] = new Chest; // initialise chest
+    chest[0]->setPosition(156, 36); // set its position
     
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
@@ -135,9 +135,11 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
+    case S_STARTSCREEN: startKBHandler(keyboardEvent);
+        break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
-    case S_PAUSESCREEN: pauseKBHandler(keyboardEvent);
+    case S_PAUSESCREEN: pauseKBHandler(keyboardEvent); // handle pause screen keyboard event
         break;
     }
 }
@@ -164,12 +166,15 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
+    case S_STARTSCREEN: startMouseHandler(mouseEvent);
+        break;
     case S_GAME: gameplayMouseHandler(mouseEvent); // handle gameplay mouse event
         break;
-    case S_PAUSESCREEN: pauseMouseHandler(mouseEvent);
+    case S_PAUSESCREEN: pauseMouseHandler(mouseEvent); // handle pause screen mouse event
         break;
     }
 }
+
 
 //--------------------------------------------------------------
 // Purpose  : This is the keyboard handler in the game state. Whenever there is a keyboard event in the game state, this function will be called.
@@ -186,7 +191,7 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     EKEYS key = K_COUNT;
     switch (keyboardEvent.wVirtualKeyCode)
     {
-    case VK_SPACE: key = K_SPACE; break;
+    case VK_SPACE: key = K_SPACE; break; // used gameplay controls
     case VK_KEY_W: key = K_W; break;
     case VK_KEY_S: key = K_S; break;
     case VK_KEY_A: key = K_A; break;
@@ -197,11 +202,31 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case 0x33: key = K_3; break;
     case 0x34: key = K_4; break;
     case 0x35: key = K_5; break;
+
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
     // if no key is pressed, no event would be fired.
     // so we are tracking if a key is either pressed, or released
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
+}
+
+void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    // here, we map the key to our enums
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    case VK_DOWN: key = K_DOWN; break;
+    case VK_UP: key = K_UP; break;
+    case VK_SPACE: key = K_SPACE; break;
+
+    }
+
     if (key != K_COUNT)
     {
         g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
@@ -215,7 +240,7 @@ void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     EKEYS key = K_COUNT;
     switch (keyboardEvent.wVirtualKeyCode)
     {
-    case VK_ESCAPE: key = K_ESCAPE; break;
+    case VK_ESCAPE: key = K_ESCAPE; break; // used pause screen controls
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -246,6 +271,18 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+
+
+void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
 
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
@@ -281,9 +318,12 @@ void update(double dt)
     {
     case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
         break;
+    case S_STARTSCREEN: updateStart();
+        break;
     case S_GAME: updateGame(); // gameplay logic when we are in the game
         break;
     case S_PAUSESCREEN: updatePause();
+        break;
     }
 }
 
@@ -302,16 +342,28 @@ void splashScreenWait()    // waits for time to pass in splash screen
     }*/
 }
 
+void updateStart()
+{
+    processUserInput();
+}
+
 void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
+    inventoryInput();
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 
     playerInteractions();
     // interactions
     player->PlayerUpdate(); // checks for updates to player status
+
+    /*
+    * if (!player->getActive()) // if player is dead
+        // loss screen
+    */
 }
+
 
 void updatePause()
 {
@@ -363,25 +415,9 @@ void moveCharacter()
 
 }
 
-void processUserInput()
+void inventoryInput()
 {
-    // quits the game if player hits the escape key
-    if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
-    {
-        if (g_eGameState == S_GAME)
-        {
-            g_eGameState = S_PAUSESCREEN;
-            return;
-        }
-        if (g_eGameState == S_PAUSESCREEN)
-        {
-            g_eGameState = S_GAME;
-            return;
-        }
-    }
 
-    if (g_eGameState == S_GAME) // inventory usage
-    {
         if (g_skKeyEvent[K_1].keyDown)
         {
             if (player->getInventory(0) != nullptr && player->getInventory(0)->getCanBeConsumed() && player->getActive())
@@ -425,6 +461,25 @@ void processUserInput()
 
         if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
             player->setHealth(player->getHealth() - 10);
+
+
+}
+
+void processUserInput()
+{
+    // quits the game if player hits the escape key
+    if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
+    {
+        if (g_eGameState == S_GAME)
+        {
+            g_eGameState = S_PAUSESCREEN;
+            return;
+        }
+        if (g_eGameState == S_PAUSESCREEN)
+        {
+            g_eGameState = S_GAME;
+            return;
+        }
     }
 }
 
@@ -459,31 +514,8 @@ void clearScreen()
     g_Console.clearBuffer(0x1F);
 }
 
-void renderToScreen()
+void renderTitle() // function to render title
 {
-    // Writes the buffer to the console, hence you will see what you have written
-    g_Console.flushBufferToConsole();
-}
-
-void renderSplashScreen()  // renders the splash screen
-{
-
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
-
-    //render's BG
-    COORD size = g_Console.getConsoleSize();
-    for (int i = 0; i < size.Y; i++)
-    {
-        for (int x = 0; x < size.X; x++)
-        {
-            g_Console.writeToBuffer(x, i, " ", 0x80);
-        }
-
-    }
-
     COORD c = g_Console.getConsoleSize();
     c.Y /= 20;
     c.X = c.X / 10;
@@ -534,8 +566,39 @@ void renderSplashScreen()  // renders the splash screen
     c.Y += 1;
     g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", 0x0F);
     c.Y += 1;
+}
 
+void renderToScreen()
+{
+    // Writes the buffer to the console, hence you will see what you have written
+    g_Console.flushBufferToConsole();
+}
 
+void renderSplashScreen()  // renders the splash screen
+{
+
+    const WORD colors[] = {
+        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    };
+
+    //render's BG
+    COORD size = g_Console.getConsoleSize();
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0x80);
+        }
+
+    }
+
+    renderTitle();
+
+}
+
+void renderStart()
+{
 }
 
 void renderGame()
@@ -668,11 +731,11 @@ void renderMap()
 
 void renderPauseScreen()
 {
-    renderPauseSlate();
+    renderPauseBase();
     renderPauseOptions();
 }
 
-void renderPauseSlate()
+void renderPauseBase()
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 20;

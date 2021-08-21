@@ -27,7 +27,7 @@ public:
 	void setMaxHealth(SHORT maxHealth);
 	SHORT getLives();
 	void setLives(SHORT lives);
-	COORD getPosition();
+	COORD getPosition(); // different ways to set and get the player's pos
 	void setPosition(COORD position);
 	void setPosition(SHORT X, SHORT Y);
 	SHORT getX();
