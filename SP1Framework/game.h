@@ -6,6 +6,7 @@
 #define VK_KEY_D	0x44
 
 #include "Framework\timer.h"
+#include <string>
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
@@ -73,6 +74,26 @@ void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderInputEvents();   // renders the status of input events
+
+//Enemy functions:
+void bossMovement(SGameChar BArr[15]); // Boss movement
+void bossAttackSeq();           // Boss attack
+void bossSearchPlayer();
+void bossDeath();
+void phantomMovement();        // Phantom movement
+char phantomSearchPlayer();    // Phantom looks out for player to shoot
+void phantomFireProj();         //Phantom fires a proj randomly
+void stalkerMovement(SGameChar EArr[2]); // Stalker movement, collision detection
+bool stalkerSearchPlayer(SGameChar EArr[2]);   // enemy lookout for player to stalk
+void stalkerChasePlayer(SGameChar EArr[2]);    // enemy chase player function once searched
+// Enemy spawn functions
+void renderEnemies(SGameChar EArr[2]); // renders enemies into the buffer (Sherryan)
+void renderBoss(SGameChar BArr[15]);
+void renderBossParticles(SGameChar BArr[15]);
+void renderProj();
+bool coordCheck(std::string arr[100], std::string cmb); // Ensures enemies all different x and y values
+void randEnemyCoord(SGameChar EArr[2]); // random generates enemies with different x and y values
+void bossBodyCoord(SGameChar BArr[15]); //generates boss body coords that are side - by - side.
 
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events

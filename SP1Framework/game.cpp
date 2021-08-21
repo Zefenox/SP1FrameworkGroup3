@@ -14,29 +14,55 @@ SMouseEvent g_mouseEvent;
 
 // Game specific variables here
 SGameChar   g_sChar;
+// testing out enemy and enemy bullet vars:
+// stalkers
+SGameChar   s1, s2;
+SGameChar Enemies[2] = { s1,s2 };
+// phantom
+SGameChar   p1;
+// projectile of phantom
+SGameChar pro1;
+// boss
+//SGameChar bx,by,bTailX[50], bTailY[50];
+SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
+SGameChar bossParticles[15] = {b1,b2,b3,b4,b5,b6,b7,b8,b9,
+                           b10,b11,b12,b13,b14,b15};
+int stalkHp, bossHp;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
-Console g_Console(80, 25, "SP1 Framework");
+Console g_Console(80, 25, "ESCAPE THE DUNGEON");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
 //            This is called once before entering into your main loop
 // Input    : void
-// Output   : void
+// Output   : cvoid
 //--------------------------------------------------------------
 void init( void )
 {
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
-
+    //produces a new seed each run
+    srand((unsigned int)time(NULL)); 
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
     g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
     g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
+    // Enemy initial state
+    //s1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
+    //s1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
+    //Testing Phantom:
+    p1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
+    p1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
+    p1.m_bActive = true;
+    pro1.m_bActive = true;
+    randEnemyCoord(Enemies);
+    bossBodyCoord(bossParticles);
+ 
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -229,6 +255,9 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+    stalkerMovement(Enemies);
+    phantomMovement();
+    //bossMovement(bossParticles);
 }
 
 void moveCharacter()
@@ -260,8 +289,383 @@ void moveCharacter()
         g_sChar.m_bActive = !g_sChar.m_bActive;        
     }
 
-   
 }
+
+bool coordCheck(std::string arr[100], std::string cmb)
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if (cmb == arr[i])
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    //return false;
+}
+
+
+void randEnemyCoord(SGameChar EArr[2])
+{
+    int rndX, rndY;
+    std::string used[2]; // size dependent on num of enemies
+    std::string cmb;
+
+    for (int i = 0; i < 2; i++)
+    {
+        while (true)
+        {
+            rndX = (rand() % g_Console.getConsoleSize().X / 2) + 5;
+            rndY = (rand() % g_Console.getConsoleSize().Y / 2) + 2;
+            cmb = std::to_string(rndX) + std::to_string(rndY);
+
+            EArr[i].m_cLocation.X = rndX;
+            EArr[i].m_cLocation.Y = rndY;
+            used[i] = cmb[i];
+            if (coordCheck(used, cmb) == true)
+            {
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
+void bossBodyCoord(SGameChar BArr[15])
+{
+    int count = 0;
+    int rndX  = (rand() % g_Console.getConsoleSize().X / 2) + 5;
+    int rndY  = (rand() % g_Console.getConsoleSize().Y / 2) + 5;
+
+    for (int i = 0; i < 15; i++)
+    {
+        BArr[0].m_cLocation.X = rndX;
+        BArr[0].m_cLocation.Y = rndY;
+        count++;
+        if (i > 0)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-1;
+            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y;
+        }
+        if (i > 4)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
+            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
+        }
+        if (i > 5)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-6;
+            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y;
+        }
+        if (i > 9)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
+            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y + 1;
+        }
+        if (i > 10) 
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-11;
+            BArr[i].m_cLocation.Y = BArr[10].m_cLocation.Y;
+        }
+    }
+}
+
+
+void bossMovement(SGameChar BArr[15])
+{
+    int dir = (rand() % 4) + 1;
+    for (int i = 0; i < 15; i++)
+    {
+        switch (dir)
+        {
+            //Up
+        case 1:
+            if (BArr[i].m_cLocation.Y > 0 && BArr[i].m_cLocation.Y < 5)
+            {
+                BArr[i].m_cLocation.Y--;
+            }
+            break;
+            //Left
+        case 2:
+            if (BArr[i].m_cLocation.X > 0 && BArr[i].m_cLocation.X < 5)
+            {
+                BArr[i].m_cLocation.X--;
+            }
+            break;
+            //Down
+        case 3:
+            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 20)
+            {
+                BArr[i].m_cLocation.Y++;
+            }
+            break;
+            //Right
+        case 4:
+            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 20)
+            {
+                BArr[i].m_cLocation.X++;
+
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
+void bossSearchPlayer()
+{
+
+}
+
+void bossAttackSeq()
+{
+
+}
+
+void bossDeath()
+{
+
+}
+
+void phantomMovement()
+{
+    int diagdir = (rand() % 4) + 1;
+    switch (diagdir)
+    {
+    case 1:
+        if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+            && (p1.m_cLocation.Y > 0))
+        {
+            p1.m_cLocation.X++;
+            p1.m_cLocation.Y--;
+        }
+        break;
+    case 2:
+        if ((p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+            && (p1.m_cLocation.X > 0))
+        {
+            p1.m_cLocation.X--;
+            p1.m_cLocation.Y++;
+        }
+        break;
+    case 3:
+        if ((p1.m_cLocation.Y > 0) && (p1.m_cLocation.X > 0))
+        {
+            p1.m_cLocation.Y--;
+            p1.m_cLocation.X--;
+        }
+        break;
+    case 4:
+        if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+            && (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        {
+            p1.m_cLocation.Y++;
+            p1.m_cLocation.X++;
+        }
+        break;
+    }
+    
+    phantomSearchPlayer();
+    phantomFireProj();
+    //fix rand spawn pt
+    if (g_sChar.m_cLocation.X < pro1.m_cLocation.X)
+    {
+        pro1.m_cLocation.X--;
+    }
+    else if(g_sChar.m_cLocation.Y < pro1.m_cLocation.Y)
+    {
+        pro1.m_cLocation.Y--;
+    }
+    else if (g_sChar.m_cLocation.X > pro1.m_cLocation.X)
+    {
+        pro1.m_cLocation.X++;
+    }
+    else if (g_sChar.m_cLocation.Y > pro1.m_cLocation.Y)
+    {
+        pro1.m_cLocation.Y++;
+    }
+    else if((g_sChar.m_cLocation.X == pro1.m_cLocation.X)
+        && (g_sChar.m_cLocation.Y == pro1.m_cLocation.Y))
+    {
+        pro1.m_bActive = false; //bullet vanishes
+        p1.m_bActive = false;   //phantom dies
+    }
+}
+
+char phantomSearchPlayer()
+{
+    int dist = 15;
+    
+    if ((p1.m_cLocation.X - dist <= g_sChar.m_cLocation.X)
+        && (g_sChar.m_cLocation.Y == p1.m_cLocation.Y))
+    {   // so that left side will not follow
+        if((p1.m_cLocation.X <= g_sChar.m_cLocation.X)
+            && (p1.m_cLocation.Y == g_sChar.m_cLocation.Y))
+            {
+            return 'n';
+            }
+        return 'f'; // if player is infront of phantom
+    }
+    else if ((p1.m_cLocation.Y - dist <= g_sChar.m_cLocation.Y)
+        && (g_sChar.m_cLocation.X == p1.m_cLocation.X))
+    {
+        // so bottom side will not follow
+        if ((p1.m_cLocation.Y <= g_sChar.m_cLocation.Y)
+            && (p1.m_cLocation.X == g_sChar.m_cLocation.X))
+        {
+            return 'n';
+        }
+        return 'r'; // if player is right side of phantom
+    }
+    else
+    {
+        return 'n';
+    }
+}
+
+void phantomFireProj()
+{
+    if (phantomSearchPlayer() != 'n')
+    {
+        renderProj();
+    }
+}
+
+void stalkerMovement(SGameChar EArr[2])
+{
+    int dir = (rand() % 4) + 1;
+    //Note: find a way to make them move individually, arr[i] applies to both same.
+   
+    for (int i = 0; i < 2; i++)
+    {
+        switch (dir)
+        {
+            //Up
+        case 1:
+            if (EArr[i].m_cLocation.Y > 0)
+            {
+                EArr[i].m_cLocation.Y--;
+            }
+            break;
+            //Left
+        case 2:
+            if (EArr[i].m_cLocation.X > 0)
+            {
+                EArr[i].m_cLocation.X--;
+            }
+            break;
+            //Down
+        case 3:
+            if (EArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+            {
+                EArr[i].m_cLocation.Y++;
+            }
+            break;
+            //Right
+        case 4:
+            if (EArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
+            {
+                EArr[i].m_cLocation.X++;
+
+            }
+            break;
+
+        default:
+            break;
+        }
+        if ((EArr[0].m_cLocation.X == EArr[1].m_cLocation.X) &&
+            (EArr[0].m_cLocation.Y == EArr[1].m_cLocation.Y)) 
+        {
+            EArr[0].m_cLocation.Y -= 2;
+            EArr[1].m_cLocation.X -= 2;
+        }
+    }
+        
+    stalkerSearchPlayer(Enemies);
+    stalkerChasePlayer(Enemies);
+}
+
+bool stalkerSearchPlayer(SGameChar EArr[2])
+{
+    // Assume a 5x5 grid radius of range
+    int x_final, y_final;
+    int maxNumOfSteps = 0;
+    // check if the player and enemy are in the same lane
+    for (int i = 0; i < 2; i++)
+    {
+        if ((g_sChar.m_cLocation.Y == EArr[i].m_cLocation.Y + 5) ||
+            (g_sChar.m_cLocation.X == EArr[i].m_cLocation.X + 5))
+        {
+            if (g_sChar.m_cLocation.X - EArr[i].m_cLocation.X <= 2)
+            {
+                return true;
+            }
+        }
+        // check for other possibilities
+        else
+        {
+            x_final = g_sChar.m_cLocation.X - EArr[i].m_cLocation.X;
+            y_final = g_sChar.m_cLocation.Y - EArr[i].m_cLocation.Y;
+            // remove negative val
+            if (x_final < 0)
+            {
+                x_final *= -1;
+            }
+            if (y_final < 0)
+            {
+                y_final *= -1;
+            }
+            // add together
+            maxNumOfSteps += x_final += y_final;
+            if (maxNumOfSteps <= 4)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+    // if both conditions not met, 
+    // player not in range of enemy
+}
+
+void stalkerChasePlayer(SGameChar EArr[2]) 
+{
+    for (int i = 0; i < 2; i++)
+    {
+        if (stalkerSearchPlayer(Enemies) == true)
+        {
+            // After 10 steps stop chasing
+            if ((g_sChar.m_cLocation.X - 10 <= EArr[i].m_cLocation.X) ||
+                (g_sChar.m_cLocation.Y - 10 <= EArr[i].m_cLocation.Y))
+            {
+                if (g_sChar.m_cLocation.X > EArr[i].m_cLocation.X)
+                {
+                    EArr[i].m_cLocation.X++;
+                }
+                else if (g_sChar.m_cLocation.X < EArr[i].m_cLocation.X)
+                {
+                    EArr[i].m_cLocation.X--;
+                }
+                else if (g_sChar.m_cLocation.Y > EArr[i].m_cLocation.Y)
+                {
+                    EArr[i].m_cLocation.Y++;
+                }
+                else if (g_sChar.m_cLocation.Y < EArr[i].m_cLocation.Y)
+                {
+                    EArr[i].m_cLocation.Y--;
+                }
+            }
+        }
+    }
+}
+
 void processUserInput()
 {
     // quits the game if player hits the escape key
@@ -322,6 +726,9 @@ void renderGame()
 {
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
+    renderEnemies(Enemies);    // renders the enemies into the buffer 
+    //renderBossParticles(bossParticles);
+    renderBoss(bossParticles);
 }
 
 void renderMap()
@@ -342,15 +749,96 @@ void renderMap()
     }
 }
 
+// colour for character
 void renderCharacter()
 {
     // Draw the location of the character
-    WORD charColor = 0x0C;
+    WORD charColor = 0x0C; // background colour of character when non active. (Sherryan)
+    
     if (g_sChar.m_bActive)
     {
         charColor = 0x0A;
     }
     g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
+}
+
+void renderEnemies(SGameChar EArr[2])
+{
+    WORD charEnemyColor = 0x0A; // when non active. 
+    WORD pcolor = 0x5E;
+    WORD projColor = 0x4D;
+    // Enemy render:
+    // character change? at (char)04 // S for Stalker
+    if (EArr[0].m_bActive || EArr[1].m_bActive)
+    {
+        charEnemyColor = 0x0A;
+    }
+    for (int i = 0; i < 2; i++)
+    {
+        g_Console.writeToBuffer(EArr[i].m_cLocation, (char)83, charEnemyColor);
+    }
+    //Testing out phantom
+    if (p1.m_bActive == true)
+    {
+        g_Console.writeToBuffer(p1.m_cLocation, (char)231, pcolor);
+    }
+    
+    if (pro1.m_bActive == true)
+    {
+        g_Console.writeToBuffer(pro1.m_cLocation, (char)60, projColor);
+    }
+}
+
+void renderBossParticles(SGameChar BArr[15])
+{
+    WORD bossColor = 0x0A;
+    for (int i = 0; i < 15; i++)
+    {
+        g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossColor);
+    }
+
+}
+
+void renderBoss(SGameChar BArr[15])
+{
+    WORD bossColor = 0x5E;
+    WORD bossCorner = 0x4D;
+    int num = 134;
+    int num2 = 248;
+    for (int i = 0; i < 15; i++)
+    {
+        if (i == 0 || i == 4 || i == 10 || i == 14)
+        {
+            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
+        }
+        else if(i == 6 || i == 8)
+        {
+            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)num, bossColor);
+        }
+        else
+        {
+            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)num2, bossColor);
+        }
+        
+    }
+}
+
+void renderProj()
+{
+    // spawn proj in the matched direction
+    switch (phantomSearchPlayer())
+    {
+    case 'f':
+        pro1.m_cLocation.X = p1.m_cLocation.X-1;
+        pro1.m_cLocation.Y = p1.m_cLocation.Y;
+        break; // front
+    case 'r':
+        pro1.m_cLocation.X = p1.m_cLocation.X;
+        pro1.m_cLocation.Y = p1.m_cLocation.Y-1;
+        break; // right
+    default:
+        break;
+    }
 }
 
 void renderFramerate()
@@ -376,6 +864,7 @@ void renderFramerate()
 void renderInputEvents()
 {
     // keyboard events
+    // W, A ,S, D text show position
     COORD startPos = {50, 2};
     std::ostringstream ss;
     std::string key;
