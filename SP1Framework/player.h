@@ -15,7 +15,7 @@ private:
 	SHORT lives;
 	COORD position;
 	COORD spawnPoint;
-	CHAR direction;
+	CHAR direction; // WASD
 	WORD charColour;
 	bool active;
 	Consumable* inventory[5];

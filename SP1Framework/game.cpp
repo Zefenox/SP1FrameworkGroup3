@@ -723,32 +723,29 @@ void playerInteractions()
                     if (player->getInventory(j) == nullptr)
                     {
                         int randNum = (rand() % 4) + 1; // randomise consumable gift
+                        chest[i] = nullptr;
                         switch (randNum)
                         {
-                        case 1:
-                        {
-                            player->setInventory(j, new HealthPotion);
-                            chest[i] = nullptr;
-                            break;
-                        }
-                        case 2:
-                        {
-                            player->setInventory(j, new ExtraLife);
-                            chest[i] = nullptr;
-                            break;
-                        }
-                        case 3:
-                        {
-                            player->setInventory(j, new OddPotion);
-                            chest[i] = nullptr;
-                            break;
-                        }
-                        case 4:
-                        {
-                            player->setInventory(j, new Cheese);
-                            chest[i] = nullptr;
-                            break;
-                        }
+                            case 1:
+                            {
+                                player->setInventory(j, new HealthPotion);
+                                break;
+                            }
+                            case 2:
+                            {
+                                player->setInventory(j, new ExtraLife);
+                                break;
+                            }
+                            case 3:
+                            {
+                                player->setInventory(j, new OddPotion);
+                                break;
+                            }
+                            case 4:
+                            {
+                                player->setInventory(j, new Cheese);
+                                break;
+                            }
                         }
                         break; // no need for further check
                     }
