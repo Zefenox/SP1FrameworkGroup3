@@ -77,12 +77,13 @@ void renderTitle();
 void renderSplashScreen();  // renders the splash screen
 void renderStart();
 void renderGame();          // renders the game stuff
+void renderPauseScreen();   // renders the pause screen
 void renderMap();           // renders the map to the buffer first
 void loadmap();
 void bulletLogic();
 
 void renderCharacter();     // renders the character into the buffer
-void renderPauseScreen();
+void renderStartOptions();
 void renderPauseBase();
 void renderPauseOptions();
 void renderGUI();

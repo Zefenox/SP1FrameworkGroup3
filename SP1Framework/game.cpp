@@ -330,8 +330,9 @@ void update(double dt)
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
+    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to start screen, else do nothing
         g_eGameState = S_GAME;
+        // g_eGameState = S_STARTSCREEN;
 
 
     /*processUserInput();*/
@@ -429,50 +430,49 @@ void moveCharacter()
 
 void inventoryInput()
 {
+    if (g_skKeyEvent[K_1].keyDown)
+    {
+        if (player->getInventory(0) != nullptr && player->getInventory(0)->getCanBeConsumed() && player->getActive())
+        {
+            player->consume(player->getInventory(0));
+            player->setInventory(0, nullptr);
+        }
+    }
+    if (g_skKeyEvent[K_2].keyDown)
+    {
+        if (player->getInventory(1) != nullptr && player->getInventory(1)->getCanBeConsumed() && player->getActive())
+        {
+            player->consume(player->getInventory(1));
+            player->setInventory(1, nullptr);
+        }
+    }
+    if (g_skKeyEvent[K_3].keyDown)
+    {
+        if (player->getInventory(2) != nullptr && player->getInventory(2)->getCanBeConsumed() && player->getActive())
+        {
+            player->consume(player->getInventory(2));
+            player->setInventory(2, nullptr);
+        }
+    }
+    if (g_skKeyEvent[K_4].keyDown)
+    {
+        if (player->getInventory(3) != nullptr && player->getInventory(3)->getCanBeConsumed() && player->getActive())
+        {
+            player->consume(player->getInventory(3));
+            player->setInventory(3, nullptr);
+        }
+    }
+    if (g_skKeyEvent[K_5].keyDown)
+    {
+        if (player->getInventory(4) != nullptr && player->getInventory(4)->getCanBeConsumed() && player->getActive())
+        {
+            player->consume(player->getInventory(4));
+            player->setInventory(4, nullptr);
+        }
+    }
 
-        if (g_skKeyEvent[K_1].keyDown)
-        {
-            if (player->getInventory(0) != nullptr && player->getInventory(0)->getCanBeConsumed() && player->getActive())
-            {
-                player->consume(player->getInventory(0));
-                player->setInventory(0, nullptr);
-            }
-        }
-        if (g_skKeyEvent[K_2].keyDown)
-        {
-            if (player->getInventory(1) != nullptr && player->getInventory(1)->getCanBeConsumed() && player->getActive())
-            {
-                player->consume(player->getInventory(1));
-                player->setInventory(1, nullptr);
-            }
-        }
-        if (g_skKeyEvent[K_3].keyDown)
-        {
-            if (player->getInventory(2) != nullptr && player->getInventory(2)->getCanBeConsumed() && player->getActive())
-            {
-                player->consume(player->getInventory(2));
-                player->setInventory(2, nullptr);
-            }
-        }
-        if (g_skKeyEvent[K_4].keyDown)
-        {
-            if (player->getInventory(3) != nullptr && player->getInventory(3)->getCanBeConsumed() && player->getActive())
-            {
-                player->consume(player->getInventory(3));
-                player->setInventory(3, nullptr);
-            }
-        }
-        if (g_skKeyEvent[K_5].keyDown)
-        {
-            if (player->getInventory(4) != nullptr && player->getInventory(4)->getCanBeConsumed() && player->getActive())
-            {
-                player->consume(player->getInventory(4));
-                player->setInventory(4, nullptr);
-            }
-        }
-
-        if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
-            player->setHealth(player->getHealth() - 10);
+    if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
+        player->setHealth(player->getHealth() - 10);
 
 
 }
@@ -509,6 +509,8 @@ void render()
     switch (g_eGameState)
     {
     case S_SPLASHSCREEN: renderSplashScreen();
+        break;
+    case S_STARTSCREEN: renderStart();
         break;
     case S_GAME: renderGame();
         break;
@@ -611,6 +613,8 @@ void renderSplashScreen()  // renders the splash screen
 
 void renderStart()
 {
+    renderTitle();
+    renderStartOptions();
 }
 
 void renderGame()
@@ -621,9 +625,15 @@ void renderGame()
     renderGUI();        // renders game user interface
 }
 
+void renderPauseScreen()
+{
+    renderPauseBase();
+    renderPauseOptions();
+}
+
 void loadmap()
 {
-    std::ifstream infile("Maplv1 .txt");
+    std::ifstream infile("Maplvl1.txt");
     std::string var;
     // Init and store Map
     int y = 0;
@@ -740,10 +750,10 @@ void renderMap()
     }
 }
 
-void renderPauseScreen()
+
+void renderStartOptions()
 {
-    renderPauseBase();
-    renderPauseOptions();
+
 }
 
 void renderPauseBase()
