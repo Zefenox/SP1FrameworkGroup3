@@ -1,7 +1,4 @@
-﻿// This is the main file for the game logic and function
-//
-//
-#include "game.h"
+﻿#include "game.h"
 #include "Player.h"
 #include "Chest.h"
 #include "Bullet.h"
@@ -16,11 +13,10 @@
 #include <stdlib.h> 
 
 // define WASD keys
-
-#define VK_KEY_W    0x57
-#define VK_KEY_A    0x41
-#define VK_KEY_S    0x53
-#define VK_KEY_D    0x44
+#define VK_KEY_W    0x57;
+#define VK_KEY_A    0x41;
+#define VK_KEY_S    0x53;
+#define VK_KEY_D    0x44;
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
@@ -37,7 +33,6 @@ COORD c;
 
 
 // Game specific variables here
-<<<<<<< HEAD
 SGameChar   g_sChar;
 // testing out enemy and enemy bullet vars:
 // stalkers
@@ -53,10 +48,10 @@ SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
 SGameChar bossParticles[15] = {b1,b2,b3,b4,b5,b6,b7,b8,b9,
                            b10,b11,b12,b13,b14,b15};
 int stalkHp, bossHp;
-=======
+
 Player* player = new Player; // player initialisation
 Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }; // chests initialisation
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
+
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -77,15 +72,12 @@ void init(void)
     srand((unsigned int)time(NULL));
 
     // Set precision for floating point output
-<<<<<<< HEAD
     g_dElapsedTime = 0.0;    
-    //produces a new seed each run
-    srand((unsigned int)time(NULL)); 
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
+    //player->getX() = g_Console.getConsoleSize().X / 2;
+    //player->getY() = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // Enemy initial state
     //s1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
@@ -98,7 +90,6 @@ void init(void)
     randEnemyCoord(Enemies);
     bossBodyCoord(bossParticles);
  
-=======
     g_dElapsedTime = 0.0;
 
     // sets the initial state for the game
@@ -112,7 +103,6 @@ void init(void)
     chest[0] = new Chest; // initialise chest
     chest[0]->setPosition(156, 36); // set its position
     
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -233,10 +223,10 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     switch (keyboardEvent.wVirtualKeyCode)
     {
     case VK_SPACE: key = K_SPACE; break; // used gameplay controls
-    case VK_KEY_W: key = K_W; break;
-    case VK_KEY_S: key = K_S; break;
-    case VK_KEY_A: key = K_A; break;
-    case VK_KEY_D: key = K_D; break;
+    case VK_UP: key = K_W; break;
+    case VK_DOWN: key = K_S; break;
+    case VK_LEFT: key = K_A; break;
+    case VK_RIGHT: key = K_D; break;
     case VK_ESCAPE: key = K_ESCAPE; break;
     case 0x31: key = K_1; break;
     case 0x32: key = K_2; break;
@@ -392,11 +382,9 @@ void updateGame()       // gameplay logic
     inventoryInput();
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
-<<<<<<< HEAD
     stalkerMovement(Enemies);
     phantomMovement();
     //bossMovement(bossParticles);
-=======
 
     playerInteractions();
     // interactions
@@ -412,7 +400,7 @@ void updateGame()       // gameplay logic
 void updatePause()
 {
     processUserInput();
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
+
 }
 
 void moveCharacter()
@@ -515,7 +503,6 @@ void inventoryInput()
         }
     }
 
-<<<<<<< HEAD
 }
 
 bool coordCheck(std::string arr[100], std::string cmb)
@@ -702,24 +689,24 @@ void phantomMovement()
     phantomSearchPlayer();
     phantomFireProj();
     //fix rand spawn pt
-    if (g_sChar.m_cLocation.X < pro1.m_cLocation.X)
+    if (player->getX() < pro1.m_cLocation.X)
     {
         pro1.m_cLocation.X--;
     }
-    else if(g_sChar.m_cLocation.Y < pro1.m_cLocation.Y)
+    else if(player->getY() < pro1.m_cLocation.Y)
     {
         pro1.m_cLocation.Y--;
     }
-    else if (g_sChar.m_cLocation.X > pro1.m_cLocation.X)
+    else if (player->getX() > pro1.m_cLocation.X)
     {
         pro1.m_cLocation.X++;
     }
-    else if (g_sChar.m_cLocation.Y > pro1.m_cLocation.Y)
+    else if (player->getY() > pro1.m_cLocation.Y)
     {
         pro1.m_cLocation.Y++;
     }
-    else if((g_sChar.m_cLocation.X == pro1.m_cLocation.X)
-        && (g_sChar.m_cLocation.Y == pro1.m_cLocation.Y))
+    else if((player->getX() == pro1.m_cLocation.X)
+        && (player->getY() == pro1.m_cLocation.Y))
     {
         pro1.m_bActive = false; //bullet vanishes
         p1.m_bActive = false;   //phantom dies
@@ -730,22 +717,22 @@ char phantomSearchPlayer()
 {
     int dist = 15;
     
-    if ((p1.m_cLocation.X - dist <= g_sChar.m_cLocation.X)
-        && (g_sChar.m_cLocation.Y == p1.m_cLocation.Y))
+    if ((p1.m_cLocation.X - dist <= player->getX())
+        && (player->getY() == p1.m_cLocation.Y))
     {   // so that left side will not follow
-        if((p1.m_cLocation.X <= g_sChar.m_cLocation.X)
-            && (p1.m_cLocation.Y == g_sChar.m_cLocation.Y))
+        if((p1.m_cLocation.X <= player->getX())
+            && (p1.m_cLocation.Y == player->getY()))
             {
             return 'n';
             }
         return 'f'; // if player is infront of phantom
     }
-    else if ((p1.m_cLocation.Y - dist <= g_sChar.m_cLocation.Y)
-        && (g_sChar.m_cLocation.X == p1.m_cLocation.X))
+    else if ((p1.m_cLocation.Y - dist <= player->getY())
+        && (player->getX() == p1.m_cLocation.X))
     {
         // so bottom side will not follow
-        if ((p1.m_cLocation.Y <= g_sChar.m_cLocation.Y)
-            && (p1.m_cLocation.X == g_sChar.m_cLocation.X))
+        if ((p1.m_cLocation.Y <= player->getY())
+            && (p1.m_cLocation.X == player->getX()))
         {
             return 'n';
         }
@@ -827,10 +814,10 @@ bool stalkerSearchPlayer(SGameChar EArr[2])
     // check if the player and enemy are in the same lane
     for (int i = 0; i < 2; i++)
     {
-        if ((g_sChar.m_cLocation.Y == EArr[i].m_cLocation.Y + 5) ||
-            (g_sChar.m_cLocation.X == EArr[i].m_cLocation.X + 5))
+        if ((player->getY() == EArr[i].m_cLocation.Y + 5) ||
+            (player->getX() == EArr[i].m_cLocation.X + 5))
         {
-            if (g_sChar.m_cLocation.X - EArr[i].m_cLocation.X <= 2)
+            if (player->getX() - EArr[i].m_cLocation.X <= 2)
             {
                 return true;
             }
@@ -838,8 +825,8 @@ bool stalkerSearchPlayer(SGameChar EArr[2])
         // check for other possibilities
         else
         {
-            x_final = g_sChar.m_cLocation.X - EArr[i].m_cLocation.X;
-            y_final = g_sChar.m_cLocation.Y - EArr[i].m_cLocation.Y;
+            x_final = player->getX() - EArr[i].m_cLocation.X;
+            y_final = player->getY() - EArr[i].m_cLocation.Y;
             // remove negative val
             if (x_final < 0)
             {
@@ -869,29 +856,29 @@ void stalkerChasePlayer(SGameChar EArr[2])
         if (stalkerSearchPlayer(Enemies) == true)
         {
             // After 10 steps stop chasing
-            if ((g_sChar.m_cLocation.X - 10 <= EArr[i].m_cLocation.X) ||
-                (g_sChar.m_cLocation.Y - 10 <= EArr[i].m_cLocation.Y))
+            if ((player->getX() - 10 <= EArr[i].m_cLocation.X) ||
+                (player->getY() - 10 <= EArr[i].m_cLocation.Y))
             {
-                if (g_sChar.m_cLocation.X > EArr[i].m_cLocation.X)
+                if (player->getX() > EArr[i].m_cLocation.X)
                 {
                     EArr[i].m_cLocation.X++;
                 }
-                else if (g_sChar.m_cLocation.X < EArr[i].m_cLocation.X)
+                else if (player->getX() < EArr[i].m_cLocation.X)
                 {
                     EArr[i].m_cLocation.X--;
                 }
-                else if (g_sChar.m_cLocation.Y > EArr[i].m_cLocation.Y)
+                else if (player->getY() > EArr[i].m_cLocation.Y)
                 {
                     EArr[i].m_cLocation.Y++;
                 }
-                else if (g_sChar.m_cLocation.Y < EArr[i].m_cLocation.Y)
+                else if (player->getY() < EArr[i].m_cLocation.Y)
                 {
                     EArr[i].m_cLocation.Y--;
                 }
             }
         }
     }
-=======
+
     if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
         player->setHealth(player->getHealth() - 10);
 
@@ -904,7 +891,7 @@ void startInput()
         g_eGameState = S_GAME;
     if (g_skKeyEvent[K_ESCAPE].keyDown)
         g_bQuitGame = true;
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
+
 }
 
 void processUserInput()
@@ -1052,13 +1039,13 @@ void renderGame()
     loadmap();
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
-<<<<<<< HEAD
+
     renderEnemies(Enemies);    // renders the enemies into the buffer 
     //renderBossParticles(bossParticles);
     renderBoss(bossParticles);
-=======
+
     renderGUI();        // renders game user interface
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
+
 }
 
 void renderPauseScreen()
@@ -1241,19 +1228,22 @@ void renderGUI() // render game user inferface
 
 }
 
-<<<<<<< HEAD
+
 // colour for character
-void renderCharacter()
-{
-    // Draw the location of the character
-    WORD charColor = 0x0C; // background colour of character when non active. (Sherryan)
-    
-    if (g_sChar.m_bActive)
-=======
+//void renderCharacter()
+//{
+//    // Draw the location of the character
+//    WORD charColor = 0x0C; // background colour of character when non active. (Sherryan)
+//
+//    if (g_sChar.m_bActive)
+//    {
+//
+//    }
+//}
 void playerInteractions()
 {
     for (int i = 0; i < 10; i++) // player interacts with a chest
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
+
     {
         if (chest[i] != nullptr)
         {
@@ -1382,102 +1372,100 @@ void renderProj()
     }
 }
 
-void renderFramerate()
-{
-    COORD c;
-    // displays the framerate
-    std::ostringstream ss;
-    ss << std::fixed << std::setprecision(3);
-    ss << 1.0 / g_dDeltaTime << "fps";
-    c.X = g_Console.getConsoleSize().X - 9;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str());
-
-    // displays the elapsed time
-    ss.str("");
-    ss << g_dElapsedTime << "secs";
-    c.X = 0;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str(), 0x59);
-}
-
-// this is an example of how you would use the input events
-void renderInputEvents()
-{
-    // keyboard events
-<<<<<<< HEAD
-    // W, A ,S, D text show position
-    COORD startPos = {50, 2};
-=======
-    COORD startPos = { 210, 2 };
->>>>>>> 3b8cd5e980cb7c568731c82110f8782e0bb1a331
-    std::ostringstream ss;
-    std::string key;
-    for (int i = 0; i < K_COUNT; ++i)
-    {
-        ss.str("");
-        switch (i)
-        {
-        case K_W: key = "W";
-            break;
-        case K_S: key = "S";
-            break;
-        case K_A: key = "A";
-            break;
-        case K_D: key = "D";
-            break;
-        case K_SPACE: key = "SPACE";
-            break;
-        default: continue;
-        }
-        if (g_skKeyEvent[i].keyDown)
-            ss << key << " pressed";
-        else if (g_skKeyEvent[i].keyReleased)
-            ss << key << " released";
-        else
-            ss << key << " not pressed";
-
-        COORD c = { startPos.X, startPos.Y + i };
-        g_Console.writeToBuffer(c, ss.str(), 0x17);
-    }
-
-    // mouse events    
-    ss.str("");
-    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
-    g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
-    ss.str("");
-    switch (g_mouseEvent.eventFlags)
-    {
-    case 0:
-        if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-        {
-            ss.str("Left Button Pressed");
-            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 1, ss.str(), 0x59);
-        }
-        else if (g_mouseEvent.buttonState == RIGHTMOST_BUTTON_PRESSED)
-        {
-            ss.str("Right Button Pressed");
-            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 2, ss.str(), 0x59);
-        }
-        else
-        {
-            ss.str("Some Button Pressed");
-            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 3, ss.str(), 0x59);
-        }
-        break;
-    case DOUBLE_CLICK:
-        ss.str("Double Clicked");
-        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
-        break;
-    case MOUSE_WHEELED:
-        if (g_mouseEvent.buttonState & 0xFF000000)
-            ss.str("Mouse wheeled down");
-        else
-            ss.str("Mouse wheeled up");
-        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
-        break;
-    default:
-        break;
-    }
-
-}
+//void renderFramerate()
+//{
+//    COORD c;
+//    // displays the framerate
+//    std::ostringstream ss;
+//    ss << std::fixed << std::setprecision(3);
+//    ss << 1.0 / g_dDeltaTime << "fps";
+//    c.X = g_Console.getConsoleSize().X - 9;
+//    c.Y = 0;
+//    g_Console.writeToBuffer(c, ss.str());
+//
+//    // displays the elapsed time
+//    ss.str("");
+//    ss << g_dElapsedTime << "secs";
+//    c.X = 0;
+//    c.Y = 0;
+//    g_Console.writeToBuffer(c, ss.str(), 0x59);
+//}
+//
+//// this is an example of how you would use the input events
+//void renderInputEvents()
+//{
+//    // keyboard events
+//    // W, A ,S, D text show position
+//    COORD startPos = {50, 2};
+//
+//    COORD startPos = { 210, 2 };
+//
+//    std::ostringstream ss;
+//    std::string key;
+//    for (int i = 0; i < K_COUNT; ++i)
+//    {
+//        ss.str("");
+//        switch (i)
+//        {
+//        case K_W: key = "W";
+//            break;
+//        case K_S: key = "S";
+//            break;
+//        case K_A: key = "A";
+//            break;
+//        case K_D: key = "D";
+//            break;
+//        case K_SPACE: key = "SPACE";
+//            break;
+//        default: continue;
+//        }
+//        if (g_skKeyEvent[i].keyDown)
+//            ss << key << " pressed";
+//        else if (g_skKeyEvent[i].keyReleased)
+//            ss << key << " released";
+//        else
+//            ss << key << " not pressed";
+//
+//        COORD c = { startPos.X, startPos.Y + i };
+//        g_Console.writeToBuffer(c, ss.str(), 0x17);
+//    }
+//
+//    // mouse events    
+//    ss.str("");
+//    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
+//    g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
+//    ss.str("");
+//    switch (g_mouseEvent.eventFlags)
+//    {
+//    case 0:
+//        if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+//        {
+//            ss.str("Left Button Pressed");
+//            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 1, ss.str(), 0x59);
+//        }
+//        else if (g_mouseEvent.buttonState == RIGHTMOST_BUTTON_PRESSED)
+//        {
+//            ss.str("Right Button Pressed");
+//            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 2, ss.str(), 0x59);
+//        }
+//        else
+//        {
+//            ss.str("Some Button Pressed");
+//            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 3, ss.str(), 0x59);
+//        }
+//        break;
+//    case DOUBLE_CLICK:
+//        ss.str("Double Clicked");
+//        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
+//        break;
+//    case MOUSE_WHEELED:
+//        if (g_mouseEvent.buttonState & 0xFF000000)
+//            ss.str("Mouse wheeled down");
+//        else
+//            ss.str("Mouse wheeled up");
+//        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
+//        break;
+//    default:
+//        break;
+//    }
+//}
