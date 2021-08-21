@@ -548,7 +548,7 @@ void renderGame()
 
 void loadmap()
 {
-    std::ifstream infile("Maplvl1.txt");
+    std::ifstream infile("Maplv2.txt");
     std::string var;
     // Init and store Map
     int y = 0;
