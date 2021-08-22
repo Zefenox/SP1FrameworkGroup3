@@ -410,7 +410,13 @@ void moveCharacter()
     }
     if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
     {
-        if (map[y + 1][x] != '#')
+        if ((map[y + 1][x] != '#') &&
+            (map[y + 1][x] != '=') &&
+            (map[y + 1][x] != '[') &&
+            (map[y + 1][x] != ']') &&
+            (map[y + 1][x] != ')') &&
+            (map[y + 1][x] != '(') &&
+            (map[y + 1][x] != '*'))
         {
             //Beep(1440, 30);
             player->setPosition(player->getX(), player->getY() + 1);
@@ -418,7 +424,13 @@ void moveCharacter()
     }
     if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
-        if (map[y][x + 1] != '#')
+        if ((map[y][x + 1] != '#') &&
+            (map[y][x + 1] != '=') &&
+            (map[y][x + 1] != '[') &&
+            (map[y][x + 1] != ']') &&
+            (map[y][x + 1] != ')') &&
+            (map[y][x + 1] != '(') &&
+            (map[y][x + 1] != '*'))
         {
             //Beep(1440, 30);
             player->setPosition(player->getX() + 1, player->getY());
@@ -623,7 +635,7 @@ void renderGame()
 
 void loadmap()
 {
-    std::ifstream infile("Maplv1 .txt");
+    std::ifstream infile("MapLv1.txt");
     std::string var;
     // Init and store Map
     int y = 0;
