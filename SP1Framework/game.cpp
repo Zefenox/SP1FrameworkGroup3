@@ -12,13 +12,12 @@
 #include <stdio.h>
 #include <stdlib.h> 
 
-<<<<<<< HEAD
 // define WASD keys
 #define VK_KEY_W    0x57;
 #define VK_KEY_A    0x41;
 #define VK_KEY_S    0x53;
 #define VK_KEY_D    0x44;
-=======
+
 // define WASDQ keys
 
 #define VK_KEY_W    0x57
@@ -27,12 +26,10 @@
 #define VK_KEY_D    0x44
 #define VK_KEY_Q    0x51
 
->>>>>>> 951fe6af84ccad405d4c5323f2e1fcb9c64a0fc5
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
-
 
 // Set up sample colours, and output shadings
 const WORD colors[] = {
@@ -41,7 +38,6 @@ const WORD colors[] = {
 };
 
 COORD c;
-
 
 // Game specific variables here
 SGameChar   g_sChar;
@@ -117,6 +113,7 @@ void init(void)
 
 void gameInit()
 {
+    
     player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
     player->setLives(3);
@@ -455,16 +452,14 @@ void updateGame()       // gameplay logic
 void updatePause()
 {
     processUserInput();
-<<<<<<< HEAD
 
-=======
     pauseInput();
 }
 
 void updateLoss()
 {
     lossInput();
->>>>>>> 951fe6af84ccad405d4c5323f2e1fcb9c64a0fc5
+
 }
 
 void moveCharacter()
