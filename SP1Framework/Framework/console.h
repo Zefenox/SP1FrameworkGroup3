@@ -56,7 +56,9 @@ class Console
 		COORD getMaxConsoleSize() { return m_cMaxConsoleSize; };  // Gets the maximum allowable console size
         void setConsoleTitle(LPCSTR lpConsoleTitle); // sets the console title
         void setConsoleFont(SHORT width, SHORT height, LPCWSTR lpcwFontName); // sets the console font
-        void flushBufferToConsole(); // writes the contents of the buffer to the screen
+        void flushBufferToConsole();
+        BOOL __stdcall SetConsoleDisplayMode(DWORD dwFlags);
+        // writes the contents of the buffer to the screen
         void clearBuffer(WORD attribute = 0x0F); // clears the screen with this colour
 
         // writeToBuffer takes in a c-style string, c++ string, or a char
@@ -64,6 +66,7 @@ class Console
         void writeToBuffer(COORD c, LPCSTR str, WORD attribute = 0x0F, SHORT length = 32767);
         void writeToBuffer(COORD c, std::string& s, WORD attribute = 0x0F, SHORT length = 32767);
         void writeToBuffer(COORD c, char ch, WORD attribute = 0x0F);
+        void writeToBuffer(int x, int y, std::string& s, WORD attribute, SHORT length);
         void writeToBuffer(SHORT x, SHORT y, LPCSTR str, WORD attribute = 0x0F, SHORT length = 32767);
         void writeToBuffer(SHORT x, SHORT y, std::string& s, WORD attribute = 0x0F, SHORT length = 32767);
         void writeToBuffer(SHORT x, SHORT y, char ch, WORD attribute = 0x0F);
