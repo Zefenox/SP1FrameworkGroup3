@@ -15,12 +15,14 @@
 #include <stdio.h>
 #include <stdlib.h> 
 
-// define WASD keys
+// define WASDQ keys
 
 #define VK_KEY_W    0x57
 #define VK_KEY_A    0x41
 #define VK_KEY_S    0x53
 #define VK_KEY_D    0x44
+#define VK_KEY_Q    0x51
+
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
@@ -64,13 +66,7 @@ void init(void)
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
-    player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
-    player->setActive(true); // set him to be active
-
-    // initialises chests
-    chest[0] = new Chest; // initialise chest
-    chest[0]->setPosition(156, 36); // set its position
+    gameInit();
     
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
@@ -78,6 +74,24 @@ void init(void)
     // remember to set your keyboard handler, so that your functions can be notified of input events
     g_Console.setKeyboardHandler(keyboardHandler);
     g_Console.setMouseHandler(mouseHandler);
+}
+
+void gameInit()
+{
+    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
+    player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
+    player->setLives(3);
+    player->setMaxHealth(100);
+    player->setHealth(player->getMaxHealth());
+    player->setDirection('W');
+    player->setCharColour(0x84);
+    for (int i = 0; i < 5; i++)
+        player->setInventory(i, nullptr); // clear inventory
+    player->setActive(true); // set him to be active
+
+    // initialises chests
+    chest[0] = new Chest; // initialise chest
+    chest[0]->setPosition(156, 36); // set its position
 }
 
 //--------------------------------------------------------------
@@ -141,6 +155,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_PAUSESCREEN: pauseKBHandler(keyboardEvent); // handle pause screen keyboard event
         break;
+    case S_LOSS: lossKBHandler(keyboardEvent); // handle loss screen keyboard event
+        break;
     }
 }
 
@@ -171,6 +187,8 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     case S_GAME: gameplayMouseHandler(mouseEvent); // handle gameplay mouse event
         break;
     case S_PAUSESCREEN: pauseMouseHandler(mouseEvent); // handle pause screen mouse event
+        break;
+    case S_LOSS: lossMouseHandler(mouseEvent); // handle pause screen mouse event
         break;
     }
 }
@@ -239,11 +257,28 @@ void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     switch (keyboardEvent.wVirtualKeyCode)
     {
     case VK_ESCAPE: key = K_ESCAPE; break; // used pause screen controls
+    case VK_KEY_Q: key = K_Q; break;
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
     // if no key is pressed, no event would be fired.
     // so we are tracking if a key is either pressed, or released
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
+}
+
+void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    case VK_SPACE: key = K_SPACE; break; // used loss screen controls
+    case VK_KEY_Q: key = K_Q; break;
+    }
+
     if (key != K_COUNT)
     {
         g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
@@ -292,6 +327,16 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
+void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
 //--------------------------------------------------------------
 // Purpose  : Update function
 //            This is the update function
@@ -321,6 +366,8 @@ void update(double dt)
     case S_GAME: updateGame(); // gameplay logic when we are in the game
         break;
     case S_PAUSESCREEN: updatePause();
+        break;
+    case S_LOSS: updateLoss();
         break;
     }
 }
@@ -356,16 +403,21 @@ void updateGame()       // gameplay logic
     // interactions
     player->PlayerUpdate(); // checks for updates to player status
 
-    /*
-    * if (!player->getActive()) // if player is dead
-        // loss screen
-    */
+    if (!player->getActive()) // if player is dead
+        g_eGameState = S_LOSS;
+
 }
 
 
 void updatePause()
 {
     processUserInput();
+    pauseInput();
+}
+
+void updateLoss()
+{
+    lossInput();
 }
 
 void moveCharacter()
@@ -482,6 +534,23 @@ void startInput()
         g_bQuitGame = true;
 }
 
+void pauseInput()
+{
+    if (g_skKeyEvent[K_Q].keyDown)
+        g_bQuitGame = true;
+}
+
+void lossInput()
+{
+    if (g_skKeyEvent[K_Q].keyDown)
+        g_bQuitGame = true;
+    if (g_skKeyEvent[K_SPACE].keyDown)
+    {
+        gameInit();
+        g_eGameState = S_GAME;
+    }
+}
+
 void processUserInput()
 {
     // quits the game if player hits the escape key
@@ -520,6 +589,8 @@ void render()
     case S_GAME: renderGame();
         break;
     case S_PAUSESCREEN: renderPauseScreen();
+        break;
+    case S_LOSS: renderLoss();
         break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
@@ -634,6 +705,11 @@ void renderPauseScreen()
 {
     renderPauseBase();
     renderPauseOptions();
+}
+
+void renderLoss()
+{
+    renderLossOptions();
 }
 
 void loadmap()
@@ -774,15 +850,41 @@ void renderStartOptions()
 
 void renderPauseBase()
 {
-    COORD c = g_Console.getConsoleSize();
-    c.Y /= 20;
-    c.X = c.X / 10;
-    std::string PAUSE = "pause screen lol";
-    g_Console.writeToBuffer(c, PAUSE, 0x0c, PAUSE.length());
 }
 
 void renderPauseOptions()
 {
+    COORD c = g_Console.getConsoleSize();
+    c.Y = (c.Y / 20);
+    c.X = c.X / 10;
+
+    COORD cCONTINUE = { c.X, c.Y + 25 };
+    COORD cQUIT = { c.X, c.Y + 28 };
+
+    std::string CONTINUE = "PRESS ESC TO CONTINUE";
+    std::string QUIT = "PRESS Q TO QUIT";
+
+    g_Console.writeToBuffer(cCONTINUE, CONTINUE, 0x0c, CONTINUE.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+}
+
+void renderLossOptions()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y = (c.Y / 20);
+    c.X = c.X / 10;
+
+    COORD cLOST = { c.X, c.Y + 22 };
+    COORD cRETRY = { c.X, c.Y + 25 };
+    COORD cQUIT = { c.X, c.Y + 28 };
+
+    std::string LOST = "YOU LOST";
+    std::string RETRY = "PRESS SPACE TO RETRY";
+    std::string QUIT = "PRESS Q TO QUIT";
+
+    g_Console.writeToBuffer(cLOST, LOST, 0x0c, LOST.length());
+    g_Console.writeToBuffer(cRETRY, RETRY, 0x0c, RETRY.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
 }
 
 void renderGUI() // render game user inferface
