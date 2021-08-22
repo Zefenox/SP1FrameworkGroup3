@@ -29,6 +29,7 @@ enum EKEYS
     K_S, //K_DOWN
     K_A, //K_LEFT
     K_D, //K_RIGHT
+    K_Q,
     K_1,
     K_2, 
     K_3,
@@ -49,17 +50,12 @@ enum EGAMESTATES
     S_STARTSCREEN,
     S_GAME,
     S_PAUSESCREEN,
+    S_LOSS,
     S_COUNT
 };
 
-// struct for the game character
-struct SGameChar
-{
-    COORD m_cLocation;
-    bool  m_bActive;
-};
-
 void init        ( void );      // initialize your variables, allocate memory, etc
+void gameInit    ( void );      // initialize game variables
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
@@ -69,8 +65,11 @@ void splashScreenWait();    // waits for time to pass in splash screen
 void updateStart();         // updates start menu
 void updateGame();          // gameplay logic
 void updatePause();
+void updateLoss();
 void inventoryInput();
 void startInput();
+void pauseInput();
+void lossInput();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void playerInteractions();
@@ -80,6 +79,7 @@ void renderSplashScreen();  // renders the splash screen
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
+void renderLoss();
 void renderMap();           // renders the map to the buffer first
 void loadmap();
 void bulletLogic();
@@ -88,6 +88,7 @@ void renderCharacter();     // renders the character into the buffer
 void renderStartOptions();
 void renderPauseBase();
 void renderPauseOptions();
+void renderLossOptions();
 void renderGUI();
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
@@ -128,4 +129,7 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mous
 
 void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
+void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H
