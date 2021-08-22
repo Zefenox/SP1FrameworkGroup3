@@ -840,6 +840,13 @@ void playerInteractions()
         }
     }
     
+
+
+    //trap interaction
+    if (map[player->getY()][player->getX()] == '!')
+    {
+        player->setHealth(player->getHealth() - 2);
+    }
 }
 
 void renderCharacter()
