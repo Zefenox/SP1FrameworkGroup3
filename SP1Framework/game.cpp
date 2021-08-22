@@ -12,12 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h> 
 
-// define WASD keys
-#define VK_KEY_W    0x57;
-#define VK_KEY_A    0x41;
-#define VK_KEY_S    0x53;
-#define VK_KEY_D    0x44;
-
 // define WASDQ keys
 
 #define VK_KEY_W    0x57
@@ -31,6 +25,7 @@ double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
+
 // Set up sample colours, and output shadings
 const WORD colors[] = {
     0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
@@ -39,8 +34,6 @@ const WORD colors[] = {
 
 COORD c;
 
-// Game specific variables here
-SGameChar   g_sChar;
 // testing out enemy and enemy bullet vars:
 // stalkers
 SGameChar   s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
@@ -82,12 +75,10 @@ void init(void)
     g_dElapsedTime = 0.0;    
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
-    //player->getX() = g_Console.getConsoleSize().X / 2; (does not allow)
-    //player->getY() = g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
+
     // Enemy initial state
-    //s1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
-    //s1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
+    s1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
+    s1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
     //Testing Phantom:
     p1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
     p1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
@@ -113,7 +104,6 @@ void init(void)
 
 void gameInit()
 {
-    
     player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
     player->setLives(3);
@@ -246,10 +236,10 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     switch (keyboardEvent.wVirtualKeyCode)
     {
     case VK_SPACE: key = K_SPACE; break; // used gameplay controls
-    case VK_UP: key = K_W; break;
-    case VK_DOWN: key = K_S; break;
-    case VK_LEFT: key = K_A; break;
-    case VK_RIGHT: key = K_D; break;
+    case VK_KEY_W: key = K_W; break;
+    case VK_KEY_S: key = K_S; break;
+    case VK_KEY_A: key = K_A; break;
+    case VK_KEY_D: key = K_D; break;
     case VK_ESCAPE: key = K_ESCAPE; break;
     case 0x31: key = K_1; break;
     case 0x32: key = K_2; break;
@@ -452,14 +442,12 @@ void updateGame()       // gameplay logic
 void updatePause()
 {
     processUserInput();
-
     pauseInput();
 }
 
 void updateLoss()
 {
     lossInput();
-
 }
 
 void moveCharacter()

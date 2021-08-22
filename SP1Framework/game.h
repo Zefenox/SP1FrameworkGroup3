@@ -54,6 +54,12 @@ enum EGAMESTATES
     S_COUNT
 };
 
+struct SGameChar
+{
+    COORD m_cLocation;
+    bool  m_bActive;
+};
+
 void init        ( void );      // initialize your variables, allocate memory, etc
 void gameInit    ( void );      // initialize game variables
 void getInput    ( void );      // get input from player
