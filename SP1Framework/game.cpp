@@ -12,13 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h> 
 
-<<<<<<< HEAD
-// define WASD keys
-#define VK_KEY_W    0x57;
-#define VK_KEY_A    0x41;
-#define VK_KEY_S    0x53;
-#define VK_KEY_D    0x44;
-=======
 // define WASDQ keys
 
 #define VK_KEY_W    0x57
@@ -27,7 +20,6 @@
 #define VK_KEY_D    0x44
 #define VK_KEY_Q    0x51
 
->>>>>>> 951fe6af84ccad405d4c5323f2e1fcb9c64a0fc5
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
@@ -42,9 +34,6 @@ const WORD colors[] = {
 
 COORD c;
 
-
-// Game specific variables here
-SGameChar   g_sChar;
 // testing out enemy and enemy bullet vars:
 // stalkers
 SGameChar   s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
@@ -86,12 +75,10 @@ void init(void)
     g_dElapsedTime = 0.0;    
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
-    //player->getX() = g_Console.getConsoleSize().X / 2; (does not allow)
-    //player->getY() = g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
+
     // Enemy initial state
-    //s1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
-    //s1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
+    s1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
+    s1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
     //Testing Phantom:
     p1.m_cLocation.X = (g_Console.getConsoleSize().X / 2) + 10;
     p1.m_cLocation.Y = (g_Console.getConsoleSize().Y / 2) + 10;
@@ -249,10 +236,10 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     switch (keyboardEvent.wVirtualKeyCode)
     {
     case VK_SPACE: key = K_SPACE; break; // used gameplay controls
-    case VK_UP: key = K_W; break;
-    case VK_DOWN: key = K_S; break;
-    case VK_LEFT: key = K_A; break;
-    case VK_RIGHT: key = K_D; break;
+    case VK_KEY_W: key = K_W; break;
+    case VK_KEY_S: key = K_S; break;
+    case VK_KEY_A: key = K_A; break;
+    case VK_KEY_D: key = K_D; break;
     case VK_ESCAPE: key = K_ESCAPE; break;
     case 0x31: key = K_1; break;
     case 0x32: key = K_2; break;
@@ -455,16 +442,12 @@ void updateGame()       // gameplay logic
 void updatePause()
 {
     processUserInput();
-<<<<<<< HEAD
-
-=======
     pauseInput();
 }
 
 void updateLoss()
 {
     lossInput();
->>>>>>> 951fe6af84ccad405d4c5323f2e1fcb9c64a0fc5
 }
 
 void moveCharacter()
