@@ -36,10 +36,10 @@ COORD c;
 SGameChar   g_sChar;
 // testing out enemy and enemy bullet vars:
 // stalkers
-SGameChar   s1, s2;
-SGameChar Enemies[2] = { s1,s2 };
+SGameChar   s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+SGameChar Enemies[10] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10};
 // phantom
-SGameChar   p1;
+SGameChar   p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
 // projectile of phantom
 SGameChar pro1;
 // boss
@@ -75,8 +75,7 @@ void init(void)
     g_dElapsedTime = 0.0;    
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
-
-    //player->getX() = g_Console.getConsoleSize().X / 2;
+    //player->getX() = g_Console.getConsoleSize().X / 2; (does not allow)
     //player->getY() = g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // Enemy initial state
@@ -383,6 +382,7 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
     stalkerMovement(Enemies);
+    
     phantomMovement();
     //bossMovement(bossParticles);
 
@@ -505,9 +505,9 @@ void inventoryInput()
 
 }
 
-bool coordCheck(std::string arr[100], std::string cmb)
+bool coordCheck(std::string arr[10], std::string cmb)
 {
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 10; i++)
     {
         if (cmb == arr[i])
         {
@@ -522,13 +522,13 @@ bool coordCheck(std::string arr[100], std::string cmb)
 }
 
 
-void randEnemyCoord(SGameChar EArr[2])
+void randEnemyCoord(SGameChar EArr[10])
 {
-    int rndX, rndY;
-    std::string used[2]; // size dependent on num of enemies
+    int rndX, rndY, x, y;
+    std::string used[10]; // size dependent on num of enemies
     std::string cmb;
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 10; i++)
     {
         while (true)
         {
@@ -538,8 +538,15 @@ void randEnemyCoord(SGameChar EArr[2])
 
             EArr[i].m_cLocation.X = rndX;
             EArr[i].m_cLocation.Y = rndY;
-            used[i] = cmb[i];
-            if (coordCheck(used, cmb) == true)
+            used[i] += cmb;
+            x = rndX;
+            y = rndY;
+            if ((coordCheck(used, cmb) == true) || ((map[y][x] == '#') ||
+                (map[y][x] == '=') || (map[y][x] == '[') ||
+                (map[y][x] == ']') || (map[y][x] == ')') ||
+                (map[y][x] == '(') || (map[y][x] == '*') ||
+                (map[y][x] == '-') || (map[y][x] ==  '%') ||
+                (map[y][x] == '`')))
             {
                 continue;
             }
@@ -657,6 +664,7 @@ void phantomMovement()
         if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
             && (p1.m_cLocation.Y > 0))
         {
+
             p1.m_cLocation.X++;
             p1.m_cLocation.Y--;
         }
@@ -752,67 +760,263 @@ void phantomFireProj()
     }
 }
 
-void stalkerMovement(SGameChar EArr[2])
+int getSCurrPosX(SGameChar EArr[2])
 {
-    int dir = (rand() % 4) + 1;
-    //Note: find a way to make them move individually, arr[i] applies to both same.
-   
+    int pX;
     for (int i = 0; i < 2; i++)
     {
-        switch (dir)
-        {
-            //Up
-        case 1:
-            if (EArr[i].m_cLocation.Y > 0)
-            {
-                EArr[i].m_cLocation.Y--;
-            }
-            break;
-            //Left
-        case 2:
-            if (EArr[i].m_cLocation.X > 0)
-            {
-                EArr[i].m_cLocation.X--;
-            }
-            break;
-            //Down
-        case 3:
-            if (EArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            {
-                EArr[i].m_cLocation.Y++;
-            }
-            break;
-            //Right
-        case 4:
-            if (EArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            {
-                EArr[i].m_cLocation.X++;
-
-            }
-            break;
-
-        default:
-            break;
-        }
-        if ((EArr[0].m_cLocation.X == EArr[1].m_cLocation.X) &&
-            (EArr[0].m_cLocation.Y == EArr[1].m_cLocation.Y)) 
-        {
-            EArr[0].m_cLocation.Y -= 2;
-            EArr[1].m_cLocation.X -= 2;
-        }
+        pX = EArr[i].m_cLocation.X;
     }
-        
-    stalkerSearchPlayer(Enemies);
-    stalkerChasePlayer(Enemies);
+    return pX;
 }
 
-bool stalkerSearchPlayer(SGameChar EArr[2])
+int getSCurrPosY(SGameChar EArr[2])
+{
+    int pY;
+    for (int i = 0; i < 2; i++)
+    {
+        pY = EArr[i].m_cLocation.Y;
+    }
+    return pY;
+}
+
+void setSCurrPos(int x, int y)
+{
+    x = getSCurrPosX(Enemies);
+    y = getSCurrPosY(Enemies);
+}
+
+void stalkerMovement(SGameChar EArr[10])
+{
+    int dir = (rand() % 4) + 1;
+    int x, y;
+
+    //Note: find a way to make them move individually, arr[i] applies to both same.
+
+    for (int i = 0; i < 10; i++)
+    {
+        x = EArr[i].m_cLocation.X;
+        y = EArr[i].m_cLocation.Y;
+        if (i % 2 == 0) // every even enemy moves differently
+        {
+            switch (dir)
+            {
+                //Down
+            case 4:
+                if ((EArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1) &&
+                    (map[y + 2][x] != '#') &&
+                    (map[y + 2][x] != '=') &&
+                    (map[y + 2][x] != '[') &&
+                    (map[y + 2][x] != ']') &&
+                    (map[y + 2][x] != ')') &&
+                    (map[y + 2][x] != '(') &&
+                    (map[y + 2][x] != '*') &&
+                    (map[y + 2][x] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y + 2][x] != EArr[i - 1].m_cLocation.Y)
+                        {
+                            EArr[i].m_cLocation.Y += 2;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.Y += 2;
+                }
+
+                break;
+                //Right
+            case 3:
+                if ((EArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1) &&
+                    (map[y][x - 2] != '#') &&
+                    (map[y][x - 2] != '=') &&
+                    (map[y][x - 2] != '[') &&
+                    (map[y][x - 2] != ']') &&
+                    (map[y][x - 2] != ')') &&
+                    (map[y][x - 2] != '(') &&
+                    (map[y][x - 2] != '*') &&
+                    (map[y][x - 2] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y][x - 2] != EArr[i - 1].m_cLocation.X)
+                        {
+                            EArr[i].m_cLocation.X -= 2;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.X -= 2;
+                }
+
+
+                break;
+                //Up
+            case 2:
+                if ((EArr[i].m_cLocation.Y > 0) &&
+                    (map[y - 2][x] != '#') &&
+                    (map[y - 2][x] != '=') &&
+                    (map[y - 2][x] != '[') &&
+                    (map[y - 2][x] != ']') &&
+                    (map[y - 2][x] != ')') &&
+                    (map[y - 2][x] != '(') &&
+                    (map[y - 2][x] != '*') &&
+                    (map[y - 2][x] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y - 2][x] != EArr[i - 1].m_cLocation.Y)
+                        {
+                            EArr[i].m_cLocation.Y -= 2;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.Y -= 2;
+                }
+
+                break;
+                //Left
+            case 1:
+                if ((EArr[i].m_cLocation.X > 0) &&
+                    (map[y][x + 2] != '#') &&
+                    (map[y][x + 2] != '=') &&
+                    (map[y][x + 2] != '[') &&
+                    (map[y][x + 2] != ']') &&
+                    (map[y][x + 2] != ')') &&
+                    (map[y][x + 2] != '(') &&
+                    (map[y][x + 2] != '*') &&
+                    (map[y][x + 2] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y][x + 2] != EArr[i - 1].m_cLocation.X)
+                        {
+                            EArr[i].m_cLocation.X += 2;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.X += 2;
+                }
+
+                break;
+            }
+        }
+        else
+        {
+            switch (dir)
+            {
+                //Up
+            case 1:
+                if ((EArr[i].m_cLocation.Y > 0) &&
+                    (map[y - 1][x] != '#') &&
+                    (map[y - 1][x] != '=') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']') &&
+                    (map[y - 1][x] != ')') &&
+                    (map[y - 1][x] != '(') &&
+                    (map[y - 1][x] != '*') &&
+                    (map[y - 1][x] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y - 1][x] != EArr[i - 1].m_cLocation.Y)
+                        {
+                            EArr[i].m_cLocation.Y--;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.Y--;
+                }
+
+                break;
+                //Left
+            case 2:
+                if ((EArr[i].m_cLocation.X > 0) &&
+                    (map[y][x - 1] != '#') &&
+                    (map[y][x - 1] != '=') &&
+                    (map[y][x - 1] != '[') &&
+                    (map[y][x - 1] != ']') &&
+                    (map[y][x - 1] != ')') &&
+                    (map[y][x - 1] != '(') &&
+                    (map[y][x - 1] != '*') &&
+                    (map[y][x - 1] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y][x - 1] != EArr[i - 1].m_cLocation.X)
+                        {
+                            EArr[i].m_cLocation.X--;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.X--;
+                }
+
+
+                break;
+                //Down
+            case 3:
+                if ((EArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1) &&
+                    (map[y + 1][x] != '#') &&
+                    (map[y + 1][x] != '=') &&
+                    (map[y + 1][x] != '[') &&
+                    (map[y + 1][x] != ']') &&
+                    (map[y + 1][x] != ')') &&
+                    (map[y + 1][x] != '(') &&
+                    (map[y + 1][x] != '*') &&
+                    (map[y + 1][x] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y + 1][x] != EArr[i - 1].m_cLocation.Y)
+                        {
+                            EArr[i].m_cLocation.Y++;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.Y++;
+                }
+
+                break;
+                //Right
+            case 4:
+                if ((EArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1) &&
+                    (map[y][x + 1] != '#') &&
+                    (map[y][x + 1] != '=') &&
+                    (map[y][x + 1] != '[') &&
+                    (map[y][x + 1] != ']') &&
+                    (map[y][x + 1] != ')') &&
+                    (map[y][x + 1] != '(') &&
+                    (map[y][x + 1] != '*') &&
+                    (map[y][x + 1] != '`'))
+                {
+                    if (i > 0)
+                    {
+                        if (map[y][x + 1] != EArr[i - 1].m_cLocation.X)
+                        {
+                            EArr[i].m_cLocation.X++;
+                            break;
+                        }
+                    }
+                    EArr[i].m_cLocation.X++;
+                }
+
+                break;
+            }
+
+        }
+
+        stalkerSearchPlayer(Enemies);
+        stalkerChasePlayer(Enemies);
+    }
+}
+
+bool stalkerSearchPlayer(SGameChar EArr[10])
 {
     // Assume a 5x5 grid radius of range
     int x_final, y_final;
     int maxNumOfSteps = 0;
     // check if the player and enemy are in the same lane
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 10; i++)
     {
         if ((player->getY() == EArr[i].m_cLocation.Y + 5) ||
             (player->getX() == EArr[i].m_cLocation.X + 5))
@@ -849,9 +1053,9 @@ bool stalkerSearchPlayer(SGameChar EArr[2])
     // player not in range of enemy
 }
 
-void stalkerChasePlayer(SGameChar EArr[2]) 
+void stalkerChasePlayer(SGameChar EArr[10]) 
 {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 10; i++)
     {
         if (stalkerSearchPlayer(Enemies) == true)
         {
@@ -875,13 +1079,17 @@ void stalkerChasePlayer(SGameChar EArr[2])
                 {
                     EArr[i].m_cLocation.Y--;
                 }
+                else if ((player->getY() && player->getX())
+                    == (EArr[i].m_cLocation.Y && EArr[i].m_cLocation.X))
+                {
+                    player->getHealth() - 5; // lose hp
+                }
             }
         }
     }
 
-    if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
-        player->setHealth(player->getHealth() - 10);
-
+    //if (g_skKeyEvent[K_SPACE].keyDown) // debugging purposes
+    //    player->setHealth(player->getHealth() - 10);
 
 }
 
@@ -1042,7 +1250,7 @@ void renderGame()
 
     renderEnemies(Enemies);    // renders the enemies into the buffer 
     //renderBossParticles(bossParticles);
-    renderBoss(bossParticles);
+    //renderBoss(bossParticles);
 
     renderGUI();        // renders game user interface
 
@@ -1289,11 +1497,11 @@ void playerInteractions()
 
 void renderCharacter()
 {
-    // Draw the location of the character
-    g_Console.writeToBuffer(player->getPosition(), (char)1, player->getCharColour());
+    // Draw the location of the character // was 1 for char
+    g_Console.writeToBuffer(player->getPosition(), (char)80 , player->getCharColour());
 }
 
-void renderEnemies(SGameChar EArr[2])
+void renderEnemies(SGameChar EArr[10])
 {
     WORD charEnemyColor = 0x0A; // when non active. 
     WORD pcolor = 0x5E;
@@ -1304,7 +1512,7 @@ void renderEnemies(SGameChar EArr[2])
     {
         charEnemyColor = 0x0A;
     }
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 10; i++)
     {
         g_Console.writeToBuffer(EArr[i].m_cLocation, (char)83, charEnemyColor);
     }
@@ -1372,100 +1580,100 @@ void renderProj()
     }
 }
 
-//void renderFramerate()
-//{
-//    COORD c;
-//    // displays the framerate
-//    std::ostringstream ss;
-//    ss << std::fixed << std::setprecision(3);
-//    ss << 1.0 / g_dDeltaTime << "fps";
-//    c.X = g_Console.getConsoleSize().X - 9;
-//    c.Y = 0;
-//    g_Console.writeToBuffer(c, ss.str());
-//
-//    // displays the elapsed time
-//    ss.str("");
-//    ss << g_dElapsedTime << "secs";
-//    c.X = 0;
-//    c.Y = 0;
-//    g_Console.writeToBuffer(c, ss.str(), 0x59);
-//}
-//
-//// this is an example of how you would use the input events
-//void renderInputEvents()
-//{
-//    // keyboard events
-//    // W, A ,S, D text show position
-//    COORD startPos = {50, 2};
-//
-//    COORD startPos = { 210, 2 };
-//
-//    std::ostringstream ss;
-//    std::string key;
-//    for (int i = 0; i < K_COUNT; ++i)
-//    {
-//        ss.str("");
-//        switch (i)
-//        {
-//        case K_W: key = "W";
-//            break;
-//        case K_S: key = "S";
-//            break;
-//        case K_A: key = "A";
-//            break;
-//        case K_D: key = "D";
-//            break;
-//        case K_SPACE: key = "SPACE";
-//            break;
-//        default: continue;
-//        }
-//        if (g_skKeyEvent[i].keyDown)
-//            ss << key << " pressed";
-//        else if (g_skKeyEvent[i].keyReleased)
-//            ss << key << " released";
-//        else
-//            ss << key << " not pressed";
-//
-//        COORD c = { startPos.X, startPos.Y + i };
-//        g_Console.writeToBuffer(c, ss.str(), 0x17);
-//    }
-//
-//    // mouse events    
-//    ss.str("");
-//    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
-//    g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
-//    ss.str("");
-//    switch (g_mouseEvent.eventFlags)
-//    {
-//    case 0:
-//        if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-//        {
-//            ss.str("Left Button Pressed");
-//            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 1, ss.str(), 0x59);
-//        }
-//        else if (g_mouseEvent.buttonState == RIGHTMOST_BUTTON_PRESSED)
-//        {
-//            ss.str("Right Button Pressed");
-//            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 2, ss.str(), 0x59);
-//        }
-//        else
-//        {
-//            ss.str("Some Button Pressed");
-//            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 3, ss.str(), 0x59);
-//        }
-//        break;
-//    case DOUBLE_CLICK:
-//        ss.str("Double Clicked");
-//        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
-//        break;
-//    case MOUSE_WHEELED:
-//        if (g_mouseEvent.buttonState & 0xFF000000)
-//            ss.str("Mouse wheeled down");
-//        else
-//            ss.str("Mouse wheeled up");
-//        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
-//        break;
-//    default:
-//        break;
-//    }
-//}
+void renderFramerate()
+{
+    COORD c;
+    // displays the framerate
+    std::ostringstream ss;
+    ss << std::fixed << std::setprecision(3);
+    ss << 1.0 / g_dDeltaTime << "fps";
+    c.X = g_Console.getConsoleSize().X - 9;
+    c.Y = 0;
+    g_Console.writeToBuffer(c, ss.str());
+
+    // displays the elapsed time
+    ss.str("");
+    ss << g_dElapsedTime << "secs";
+    c.X = 0;
+    c.Y = 0;
+    g_Console.writeToBuffer(c, ss.str(), 0x59);
+}
+
+// this is an example of how you would use the input events
+void renderInputEvents()
+{
+    // keyboard events
+    // W, A ,S, D text show position
+    //COORD startPos = {50, 2};
+
+    COORD startPos = { 210, 2 };
+
+    std::ostringstream ss;
+    std::string key;
+    for (int i = 0; i < K_COUNT; ++i)
+    {
+        ss.str("");
+        switch (i)
+        {
+        case K_W: key = "W";
+            break;
+        case K_S: key = "S";
+            break;
+        case K_A: key = "A";
+            break;
+        case K_D: key = "D";
+            break;
+        case K_SPACE: key = "SPACE";
+            break;
+        default: continue;
+        }
+        if (g_skKeyEvent[i].keyDown)
+            ss << key << " pressed";
+        else if (g_skKeyEvent[i].keyReleased)
+            ss << key << " released";
+        else
+            ss << key << " not pressed";
+
+        COORD c = { startPos.X, startPos.Y + i };
+        g_Console.writeToBuffer(c, ss.str(), 0x17);
+    }
+
+    // mouse events    
+    ss.str("");
+    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
+    g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
+    ss.str("");
+    switch (g_mouseEvent.eventFlags)
+    {
+    case 0:
+        if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        {
+            ss.str("Left Button Pressed");
+            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 1, ss.str(), 0x59);
+        }
+        else if (g_mouseEvent.buttonState == RIGHTMOST_BUTTON_PRESSED)
+        {
+            ss.str("Right Button Pressed");
+            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 2, ss.str(), 0x59);
+        }
+        else
+        {
+            ss.str("Some Button Pressed");
+            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 3, ss.str(), 0x59);
+        }
+        break;
+    case DOUBLE_CLICK:
+        ss.str("Double Clicked");
+        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
+        break;
+    case MOUSE_WHEELED:
+        if (g_mouseEvent.buttonState & 0xFF000000)
+            ss.str("Mouse wheeled down");
+        else
+            ss.str("Mouse wheeled up");
+        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
+        break;
+    default:
+        break;
+    }
+}

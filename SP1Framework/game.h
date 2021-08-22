@@ -101,16 +101,19 @@ void bossDeath();
 void phantomMovement();        // Phantom movement
 char phantomSearchPlayer();    // Phantom looks out for player to shoot
 void phantomFireProj();         //Phantom fires a proj randomly
-void stalkerMovement(SGameChar EArr[2]); // Stalker movement, collision detection
-bool stalkerSearchPlayer(SGameChar EArr[2]);   // enemy lookout for player to stalk
-void stalkerChasePlayer(SGameChar EArr[2]);    // enemy chase player function once searched
+int getSCurrPosX(SGameChar EArr[2]);
+int getSCurrPosY(SGameChar EArr[2]);
+void setSCurrPos(int x, int y);
+void stalkerMovement(SGameChar EArr[10]); // Stalker movement, collision detection
+bool stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
+void stalkerChasePlayer(SGameChar EArr[10]);    // enemy chase player function once searched
 // Enemy spawn functions
-void renderEnemies(SGameChar EArr[2]); // renders enemies into the buffer (Sherryan)
+void renderEnemies(SGameChar EArr[10]); // renders enemies into the buffer (Sherryan)
 void renderBoss(SGameChar BArr[15]);
 void renderBossParticles(SGameChar BArr[15]);
 void renderProj();
-bool coordCheck(std::string arr[100], std::string cmb); // Ensures enemies all different x and y values
-void randEnemyCoord(SGameChar EArr[2]); // random generates enemies with different x and y values
+bool coordCheck(std::string arr[10], std::string cmb); // Ensures enemies all different x and y values
+void randEnemyCoord(SGameChar EArr[10]); // random generates enemies with different x and y values
 void bossBodyCoord(SGameChar BArr[15]); //generates boss body coords that are side - by - side.
 
 // keyboard and mouse input event managers
