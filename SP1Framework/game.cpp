@@ -593,27 +593,21 @@ bool coordCheck(std::string arr[20], std::string cmb)
 
 void randEnemyCoord(SGameChar EArr[10], int rnum)
 {
-<<<<<<< HEAD
-    int rndX, rndY, x, y;
-    std::string used[20]; // size dependent on num of enemies
-=======
+
     int rndX, rndY, x, y, X, Y;
     std::string used[10]; // size dependent on num of enemies
->>>>>>> 914e07b5a2066302890cf0ed19378935ed01f589
     std::string cmb;
 
     for (int i = 0; i < 10; i++)
     {
         while (true)
         {
-<<<<<<< HEAD
             rndX = (rand() % g_Console.getConsoleSize().X / 2) + rnum;
             rndY = (rand() % g_Console.getConsoleSize().Y / 2) + rnum;
             cmb = std::to_string(rndX) + std::to_string(rndY);
 
             EArr[i].m_cLocation.X = rndX;
             EArr[i].m_cLocation.Y = rndY;
-=======
             switch (i)
             {
             case 0:
@@ -657,22 +651,6 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
                 Y = 15;
                 break;
             }
-            EArr[i].m_cLocation.X = X;
-            EArr[i].m_cLocation.Y = Y;
-            cmb = std::to_string(X) + std::to_string(Y);
->>>>>>> 914e07b5a2066302890cf0ed19378935ed01f589
-            used[i] += cmb;
-            x = X;
-            y = Y;
-
-            //rndX = (rand() % g_Console.getConsoleSize().X / 2) + 5;
-            //rndY = (rand() % g_Console.getConsoleSize().Y / 2) + 2;
-            //cmb = std::to_string(rndX) + std::to_string(rndY);
-            //EArr[i].m_cLocation.X = rndX;
-            //EArr[i].m_cLocation.Y = rndY;
-            //used[i] += cmb;
-            //x = rndX;
-            //y = rndY;
 
             if ((coordCheck(used, cmb) == true) || ((map[y][x] == '#') ||
                 (map[y][x] == '=') || (map[y][x] == '[') ||
@@ -1588,10 +1566,6 @@ void renderSplashScreen()  // renders the splash screen
         {
             g_Console.writeToBuffer(x, i, " ", 0x80);
         }
-<<<<<<< HEAD
-    }
-=======
-
     }
 
     renderTitle();
@@ -1651,10 +1625,6 @@ void loadmap()
         for (unsigned i = 0; i < var.length(); ++i)
         {
             map[y][i] = var.at(i);
-<<<<<<< HEAD
-            map[y][i] = line.at(i);
-=======
->>>>>>> 914e07b5a2066302890cf0ed19378935ed01f589
         }
         y++;
     }
