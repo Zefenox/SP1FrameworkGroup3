@@ -67,6 +67,8 @@ Console g_Console(300, 64, "ESCAPE THE DUNGEON");
 // map
 char map[65][300];
 
+
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -117,7 +119,7 @@ void init(void)
 
 void gameInit()
 {
-    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
+    player->setSpawnPoint(4,16); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
     player->setLives(3);
     player->setMaxHealth(100);
@@ -129,8 +131,45 @@ void gameInit()
     player->setActive(true); // set him to be active
 
     // initialises chests
+    // for floor 1
     chest[0] = new Chest; // initialise chest
     chest[0]->setPosition(156, 36); // set its position
+    chest[1] = new Chest;
+    chest[1]->setPosition(41, 4);
+    chest[2] = new Chest;
+    chest[2]->setPosition(89, 30);
+    chest[3] = new Chest;
+    chest[3]->setPosition(141, 10);
+    chest[4] = new Chest;
+    chest[4]->setPosition(191, 46);
+    chest[5] = new Chest;
+    chest[5]->setPosition(197, 46);
+    chest[6] = new Chest;
+    chest[6]->setPosition(203, 46);
+
+    // for floor 2
+    /*
+    * chest[0] = new Chest; // initialise chest
+    chest[0]->setPosition(35, 19); // set its position
+    chest[1] = new Chest;
+    chest[1]->setPosition(122, 14);
+    chest[2] = new Chest;
+    chest[2]->setPosition(140, 24);
+    chest[3] = new Chest;
+    chest[3]->setPosition(140, 27);
+    chest[4] = new Chest;
+    chest[4]->setPosition(140, 30);
+    chest[5] = new Chest;
+    chest[5]->setPosition(140, 33);
+    chest[6] = new Chest;
+    chest[6]->setPosition(218, 11);
+    chest[7] = new Chest;
+    chest[7]->setPosition(158, 61);
+    chest[8] = new Chest;
+    chest[8]->setPosition(102, 46);
+    chest[9] = new Chest;
+    chest[9]->setPosition(98, 54);
+    */
 }
 
 //--------------------------------------------------------------
@@ -412,7 +451,7 @@ void update(double dt)
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to start screen, else do nothing
+    if (g_dElapsedTime > 5.0) // wait for 3 seconds to switch to start screen, else do nothing
         g_eGameState = S_STARTSCREEN;
 
 
@@ -1450,55 +1489,59 @@ void clearScreen()
 
 void renderTitle() // function to render title
 {
+    const WORD colors[] = {
+        0x8F, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    };
     COORD c = g_Console.getConsoleSize();
-    c.Y /= 20;
+    c.Y /= 10;
     c.X = c.X / 10;
 
     // ESCAPE
-    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", 0x0F);
+    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", 0x0F);
+    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "  / ____       ", 0x0F);
+    g_Console.writeToBuffer(c, "  / ____       ", colors[0]);
     c.X += 15;
-    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    g_Console.writeToBuffer(c, (char)92, colors[0]);
     c.X += 1;
-    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    g_Console.writeToBuffer(c, (char)92, colors[0]);
     c.X += 1;
-    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", 0x0F);
+    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", colors[0]);
     c.X -= 17;
     c.Y += 1;
-    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", 0x0F);
+    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", 0x0F);
+    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", colors[0]);
 
 
     // THE
     c.Y += 2;
     c.X += 15;
-    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", 0x0F);
+    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", 0x0F);
+    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", 0x0F);
+    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, " / /    //    / / //          ", 0x0F);
+    g_Console.writeToBuffer(c, " / /    //    / / //          ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", 0x0F);
+    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", colors[0]);
 
 
     // DUNGEON
     c.Y += 2;
     c.X -= 20;
-    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", 0x0F);
+    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", 0x0F);
+    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", 0x0F);
+    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", 0x0F);
+    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", 0x0F);
+    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", colors[0]);
     c.Y += 1;
 }
 
@@ -1516,20 +1559,30 @@ void renderSplashScreen()  // renders the splash screen
         0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
     };
 
+    loadStartmap();
+    renderStartmap();
+
     //render's BG
-    COORD size = g_Console.getConsoleSize();
+    /*COORD size = g_Console.getConsoleSize();
     for (int i = 0; i < size.Y; i++)
     {
         for (int x = 0; x < size.X; x++)
         {
             g_Console.writeToBuffer(x, i, " ", 0x80);
         }
+<<<<<<< HEAD
     }
+=======
+
+    }*/
+
+>>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
     renderTitle();
 }
 
 void renderStart()
 {
+    renderStartmap();
     renderTitle();
     renderStartOptions();
 }
@@ -1551,6 +1604,7 @@ void renderGame()
 
 void renderPauseScreen()
 {
+    renderGame();
     renderPauseBase();
     renderPauseOptions();
 }
@@ -1560,17 +1614,73 @@ void renderLoss()
     renderLossOptions();
 }
 
-void loadmap()
+void loadStartmap()
 {
-    std::ifstream infile("MapLv1.txt");
-    std::string var;
+    std::ifstream startscreen("Startscreen.txt");
+    std::string line;
     // Init and store Map
     int y = 0;
-    while (getline(infile, var)) {
+    while (getline(startscreen, line)) {
         // Output the text from the file
-        for (unsigned i = 0; i < var.length(); ++i)
+        for (unsigned i = 0; i < line.length(); ++i)
         {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+}
+
+void renderStartmap()
+{
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '=')
+            {
+                g_Console.writeToBuffer(x, y, (char)186, 0x00);
+            }
+            else if (map[y][x] == '#')
+            {
+                g_Console.writeToBuffer(x, y,' ', 0x80);
+            }
+            else if (map[y][x] == '+')
+            {
+                g_Console.writeToBuffer(x, y,' ', 0x22);
+            }
+            else if (map[y][x] == '~')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+            else if (map[y][x] == '"')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0xCC);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x77);
+            }
+        }
+    }
+}
+
+void loadmap()
+{
+    std::ifstream Lv1("MapLv1.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(Lv1, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+<<<<<<< HEAD
             map[y][i] = var.at(i);
+=======
+            map[y][i] = line.at(i);
+
+>>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
         }
         y++;
     }
@@ -1683,7 +1793,7 @@ void renderStartOptions()
 {
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
-    c.X = c.X / 10;
+    c.X = c.X / 3;
 
     COORD cSTART = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
@@ -1697,13 +1807,27 @@ void renderStartOptions()
 
 void renderPauseBase()
 {
+    COORD c = g_Console.getConsoleSize();
+    c.X = c.X / 4;
+    c.Y = c.Y / 3;
+
+    for (int i = 0; i < 15; i++)
+    {
+        for (int i = 0; i < c.X; i++)
+        {
+            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0x33);
+        }
+        c.Y++;
+    }
+    
+
 }
 
 void renderPauseOptions()
 {
     COORD c = g_Console.getConsoleSize();
-    c.Y = (c.Y / 20);
-    c.X = c.X / 10;
+    c.Y = (c.Y / 25);
+    c.X = c.X / 3;
 
     COORD cCONTINUE = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
@@ -1758,7 +1882,21 @@ void renderGUI() // render game user inferface
     }
 }
 
+<<<<<<< HEAD
 
+=======
+// colour for character
+//void renderCharacter()
+//{
+//    // Draw the location of the character
+//    WORD charColor = 0x0C; // background colour of character when non active. (Sherryan)
+//
+//    if (g_sChar.m_bActive)
+//    {
+//
+//    }
+//}
+>>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
 void playerInteractions()
 {
     for (int i = 0; i < 10; i++) // player interacts with a chest
@@ -1809,9 +1947,23 @@ void playerInteractions()
     {
         player->setHealth(player->getHealth() - 2);
     }
+<<<<<<< HEAD
     //Enemy interaction
     stalkerReachPlayer(stalkers);
     projReachPlayer();
+=======
+    if ((map[player->getY()][player->getX()] == '0') ||
+        (map[player->getY()][player->getX()] == '1') || 
+        (map[player->getY()][player->getX()] == '2') || 
+        (map[player->getY()][player->getX()] == '3'))
+    {
+        player->setHealth(player->getHealth() - 5);
+    }
+    if (map[player->getY()][player->getX()] == '&')
+    {
+        player->setSpawnPoint(player->getX(), player->getY());
+    }
+>>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
 }
 
 void renderCharacter()
