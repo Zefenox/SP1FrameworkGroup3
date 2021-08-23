@@ -583,7 +583,7 @@ bool coordCheck(std::string arr[10], std::string cmb)
 
 void randEnemyCoord(SGameChar EArr[10])
 {
-    int rndX, rndY, x, y, X, Y;
+    int rndX, rndY, x, y;
     std::string used[10]; // size dependent on num of enemies
     std::string cmb;
 
@@ -591,65 +591,15 @@ void randEnemyCoord(SGameChar EArr[10])
     {
         while (true)
         {
-            switch (i)
-            {
-            case 0:
-                X = 70;
-                Y = 10;
-                break;
-            case 1:
-                X = 70;
-                Y = 30;
-                break;
-            case 2:
-                X = 50;
-                Y = 5;
-                break;
-            case 3:
-                X = 30;
-                Y = 40;
-                break;
-            case 4:
-                X = 70;
-                Y = 50;
-                break;
-            case 5:
-                X = 80;
-                Y = 50;
-                break;
-            case 6:
-                X = 90;
-                Y = 50;
-                break;
-            case 7:
-                X = 130;
-                Y = 30;
-                break;
-            case 8:
-                X = 165;
-                Y = 25;
-                break;
-            case 9:
-                X = 170; 
-                Y = 15;
-                break;
-            }
-            EArr[i].m_cLocation.X = X;
-            EArr[i].m_cLocation.Y = Y;
-            cmb = std::to_string(X) + std::to_string(Y);
+            rndX = (rand() % g_Console.getConsoleSize().X / 2) + 5;
+            rndY = (rand() % g_Console.getConsoleSize().Y / 2) + 2;
+            cmb = std::to_string(rndX) + std::to_string(rndY);
+
+            EArr[i].m_cLocation.X = rndX;
+            EArr[i].m_cLocation.Y = rndY;
             used[i] += cmb;
-            x = X;
-            y = Y;
-
-            //rndX = (rand() % g_Console.getConsoleSize().X / 2) + 5;
-            //rndY = (rand() % g_Console.getConsoleSize().Y / 2) + 2;
-            //cmb = std::to_string(rndX) + std::to_string(rndY);
-            //EArr[i].m_cLocation.X = rndX;
-            //EArr[i].m_cLocation.Y = rndY;
-            //used[i] += cmb;
-            //x = rndX;
-            //y = rndY;
-
+            x = rndX;
+            y = rndY;
             if ((coordCheck(used, cmb) == true) || ((map[y][x] == '#') ||
                 (map[y][x] == '=') || (map[y][x] == '[') ||
                 (map[y][x] == ']') || (map[y][x] == ')') ||
@@ -1395,20 +1345,9 @@ void renderLoss()
     renderLossOptions();
 }
 
-int level = 1;
-std::string text;
-
 void loadmap()
 {
-    if (level == 1)
-    {
-        text = "MapLv1.txt";
-    }
-    if (level == 2);
-    {
-        text = "MapLv2.txt";
-    }
-    std::ifstream infile(text);
+    std::ifstream infile("MapLv1.txt");
     std::string var;
     // Init and store Map
     int y = 0;
@@ -1417,6 +1356,7 @@ void loadmap()
         for (unsigned i = 0; i < var.length(); ++i)
         {
             map[y][i] = var.at(i);
+
         }
         y++;
     }
@@ -1678,10 +1618,6 @@ void playerInteractions()
     if (map[player->getY()][player->getX()] == '&')
     {
         player->setSpawnPoint(player->getX(), player->getY());
-    }
-    if (map[player->getY()][player->getX()] == '~')
-    {
-        level++;
     }
 }
 
