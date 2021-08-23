@@ -19,6 +19,7 @@
 #define VK_KEY_S    0x53
 #define VK_KEY_D    0x44
 #define VK_KEY_Q    0x51
+#define VK_KEY_L    0x4C
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
@@ -59,7 +60,7 @@ Console g_Console(300, 64, "ESCAPE THE DUNGEON");
 // map
 char map[65][300];
 
-
+Bullet* bulletArray[100] = { nullptr };
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -106,12 +107,13 @@ void init(void)
 
 void gameInit()
 {
+    g_Console.clearBuffer();
     player->setSpawnPoint(4,16); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
     player->setLives(3);
     player->setMaxHealth(100);
     player->setHealth(player->getMaxHealth());
-    player->setDirection('W');
+    player->setDirection('R');
     player->setCharColour(0x84);
     for (int i = 0; i < 5; i++)
         player->setInventory(i, nullptr); // clear inventory
@@ -285,6 +287,7 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case 0x33: key = K_3; break;
     case 0x34: key = K_4; break;
     case 0x35: key = K_5; break;
+    case 0x4C: key = K_L; break;
 
     }
     // a key pressed event would be one with bKeyDown == true
@@ -463,12 +466,14 @@ void updateGame()       // gameplay logic
     inventoryInput();
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+    shootInput();
     stalkerMovement(Enemies);
     
     phantomMovement();
     //bossMovement(bossParticles);
 
     playerInteractions();
+    bulletInteraction();
     // interactions
     player->PlayerUpdate(); // checks for updates to player status
 
@@ -512,6 +517,7 @@ void moveCharacter()
             //Beep(1440, 30);
             player->setPosition(player->getX(), player->getY() - 1);
         }
+        player->setDirection('U');
     }
     if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
     {
@@ -526,6 +532,7 @@ void moveCharacter()
             //Beep(1440, 30);
             player->setPosition(player->getX() - 1, player->getY());
         }
+        player->setDirection('L');
     }
     if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
     {
@@ -540,6 +547,7 @@ void moveCharacter()
             //Beep(1440, 30);
             player->setPosition(player->getX(), player->getY() + 1);
         }
+        player->setDirection('D');
     }
     if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
     {
@@ -554,6 +562,7 @@ void moveCharacter()
             //Beep(1440, 30);
             player->setPosition(player->getX() + 1, player->getY());
         }
+        player->setDirection('R');
     }
 
 }
@@ -601,6 +610,14 @@ void inventoryInput()
         }
     }
 
+}
+
+void shootInput()
+{
+    if (g_skKeyEvent[K_L].keyReleased)
+    {
+        shoot();
+    }
 }
 
 bool coordCheck(std::string arr[10], std::string cmb)
@@ -1212,6 +1229,7 @@ void lossInput()
         g_bQuitGame = true;
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        /*shutdown();*/
         gameInit();
         g_eGameState = S_GAME;
     }
@@ -1374,8 +1392,10 @@ void renderGame()
     renderCharacter();  // renders the character into the buffer
 
     renderEnemies(Enemies);    // renders the enemies into the buffer 
+    renderBullets();
     //renderBossParticles(bossParticles);
     //renderBoss(bossParticles);
+    
 
     renderGUI();        // renders game user interface
 
@@ -1439,6 +1459,48 @@ void renderStartmap()
             else //empty space
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x77);
+            }
+        }
+    }
+}
+
+void shoot()
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if (bulletArray[i] == nullptr)
+        {
+            bulletArray[i] = new Bullet(player->getX(), player->getY(), player->getDirection());
+            return;
+        }
+    }
+}
+
+void bulletInteraction()
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if (bulletArray[i] != nullptr)
+        {
+            bulletArray[i]->updatebulletpos();
+            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
+            {
+                delete bulletArray[i];
+                bulletArray[i] = nullptr;
+            }
+        }
+    }
+}
+
+void renderBullets()
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if (bulletArray[i] != nullptr)
+        {
+            if (map[bulletArray[i]->Y][bulletArray[i]->X] != '#')
+            {
+                bulletArray[i]->print();
             }
         }
     }

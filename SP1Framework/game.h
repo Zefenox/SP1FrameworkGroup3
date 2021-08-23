@@ -5,6 +5,10 @@
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
+class Console;
+extern Console g_Console;
+class Bullet;
+extern Bullet* bulletArray[100];
 // struct to store keyboard events
 // a small subset of KEY_EVENT_RECORD
 struct SKeyEvent
@@ -35,6 +39,7 @@ enum EKEYS
     K_3,
     K_4,
     K_5,
+    K_L,
     K_ESCAPE,
     K_SPACE,
     K_UP,
@@ -90,7 +95,10 @@ void renderMap();           // renders the map to the buffer first
 void loadmap();
 void loadStartmap();
 void renderStartmap();
-void bulletLogic();
+void shootInput();
+void shoot();
+void bulletInteraction();
+void renderBullets();
 
 void renderCharacter();     // renders the character into the buffer
 void renderStartOptions();
