@@ -85,7 +85,7 @@ void moveCharacter();       // moves the character, collision detection, physics
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void playerInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
-void renderTitle();
+void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
 void renderStart();
 void renderGame();          // renders the game stuff
