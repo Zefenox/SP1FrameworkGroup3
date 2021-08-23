@@ -636,7 +636,7 @@ bool coordCheck(std::string arr[20], std::string cmb)
 void randEnemyCoord(SGameChar EArr[10], int rnum)
 {
 
-    int rndX, rndY, X, Y;
+    int x, y, X, Y;
     std::string used[10]; // size dependent on num of enemies
     std::string cmb;
 
@@ -644,12 +644,7 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
     {
         while (true)
         {
-            rndX = (rand() % g_Console.getConsoleSize().X / 2) + rnum;
-            rndY = (rand() % g_Console.getConsoleSize().Y / 2) + rnum;
-            cmb = std::to_string(rndX) + std::to_string(rndY);
 
-            EArr[i].m_cLocation.X = rndX;
-            EArr[i].m_cLocation.Y = rndY;
             switch (i)
             {
             case 0:
@@ -693,39 +688,21 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
                 Y = 15;
                 break;
             }
-<<<<<<< HEAD
-
+                EArr[i].m_cLocation.X = X;
+                EArr[i].m_cLocation.Y = Y;
+                cmb = std::to_string(X) + std::to_string(Y);
+                used[i] += cmb;
+                x = X;
+                y = Y;
             if ((coordCheck(used, cmb) == true) || ((map[X][Y] == '#') ||
                 (map[X][Y] == '=') || (map[X][Y] == '[') ||
                 (map[X][Y] == ']') || (map[X][Y] == ')') ||
                 (map[X][Y] == '(') || (map[X][Y] == '*') ||
                 (map[X][Y] == '-') || (map[X][Y] ==  '%') ||
                 (map[X][Y] == '`')))
-=======
-            EArr[i].m_cLocation.X = X;
-            EArr[i].m_cLocation.Y = Y;
-            cmb = std::to_string(X) + std::to_string(Y);
-            used[i] += cmb;
-            x = X;
-            y = Y;
-
-            //rndX = (rand() % g_Console.getConsoleSize().X / 2) + 5;
-            //rndY = (rand() % g_Console.getConsoleSize().Y / 2) + 2;
-            //cmb = std::to_string(rndX) + std::to_string(rndY);
-            //EArr[i].m_cLocation.X = rndX;
-            //EArr[i].m_cLocation.Y = rndY;
-            //used[i] += cmb;
-            //x = rndX;
-            //y = rndY;
-            
-            if ((coordCheck(used, cmb) == true) || ((map[y][x] == '#') ||
-                (map[y][x] == '=') || (map[y][x] == '[') ||
-                (map[y][x] == ']') || (map[y][x] == ')') ||
-                (map[y][x] == '(') || (map[y][x] == '*') ||
-                (map[y][x] == '-') || (map[y][x] ==  '%') ||
-                (map[y][x] == '`')))
->>>>>>> a0c94aca975c4ce5130aa85a54e2d094effbd7a1
             {
+                
+
                 continue;
             }
             else
