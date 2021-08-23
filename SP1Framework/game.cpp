@@ -116,8 +116,45 @@ void gameInit()
     player->setActive(true); // set him to be active
 
     // initialises chests
+    // for floor 1
     chest[0] = new Chest; // initialise chest
     chest[0]->setPosition(156, 36); // set its position
+    chest[1] = new Chest;
+    chest[1]->setPosition(41, 4);
+    chest[2] = new Chest;
+    chest[2]->setPosition(89, 30);
+    chest[3] = new Chest;
+    chest[3]->setPosition(141, 10);
+    chest[4] = new Chest;
+    chest[4]->setPosition(191, 46);
+    chest[5] = new Chest;
+    chest[5]->setPosition(197, 46);
+    chest[6] = new Chest;
+    chest[6]->setPosition(203, 46);
+
+    // for floor 2
+    /*
+    * chest[0] = new Chest; // initialise chest
+    chest[0]->setPosition(35, 19); // set its position
+    chest[1] = new Chest;
+    chest[1]->setPosition(122, 14);
+    chest[2] = new Chest;
+    chest[2]->setPosition(140, 24);
+    chest[3] = new Chest;
+    chest[3]->setPosition(140, 27);
+    chest[4] = new Chest;
+    chest[4]->setPosition(140, 30);
+    chest[5] = new Chest;
+    chest[5]->setPosition(140, 33);
+    chest[6] = new Chest;
+    chest[6]->setPosition(218, 11);
+    chest[7] = new Chest;
+    chest[7]->setPosition(158, 61);
+    chest[8] = new Chest;
+    chest[8]->setPosition(102, 46);
+    chest[9] = new Chest;
+    chest[9]->setPosition(98, 54);
+    */
 }
 
 //--------------------------------------------------------------
