@@ -88,6 +88,8 @@ void renderPauseScreen();   // renders the pause screen
 void renderLoss();
 void renderMap();           // renders the map to the buffer first
 void loadmap();
+void loadStartmap();
+void renderStartmap();
 void bulletLogic();
 
 void renderCharacter();     // renders the character into the buffer

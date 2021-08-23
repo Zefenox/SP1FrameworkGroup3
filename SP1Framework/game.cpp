@@ -59,6 +59,8 @@ Console g_Console(300, 64, "ESCAPE THE DUNGEON");
 // map
 char map[65][300];
 
+
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -401,7 +403,7 @@ void update(double dt)
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to start screen, else do nothing
+    if (g_dElapsedTime > 5.0) // wait for 3 seconds to switch to start screen, else do nothing
         g_eGameState = S_STARTSCREEN;
 
 
@@ -1233,55 +1235,59 @@ void clearScreen()
 
 void renderTitle() // function to render title
 {
+    const WORD colors[] = {
+        0x8F, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    };
     COORD c = g_Console.getConsoleSize();
-    c.Y /= 20;
+    c.Y /= 10;
     c.X = c.X / 10;
 
     // ESCAPE
-    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", 0x0F);
+    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", 0x0F);
+    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "  / ____       ", 0x0F);
+    g_Console.writeToBuffer(c, "  / ____       ", colors[0]);
     c.X += 15;
-    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    g_Console.writeToBuffer(c, (char)92, colors[0]);
     c.X += 1;
-    g_Console.writeToBuffer(c, (char)92, 0x0F);
+    g_Console.writeToBuffer(c, (char)92, colors[0]);
     c.X += 1;
-    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", 0x0F);
+    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", colors[0]);
     c.X -= 17;
     c.Y += 1;
-    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", 0x0F);
+    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", 0x0F);
+    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", colors[0]);
 
 
     // THE
     c.Y += 2;
     c.X += 15;
-    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", 0x0F);
+    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", 0x0F);
+    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", 0x0F);
+    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, " / /    //    / / //          ", 0x0F);
+    g_Console.writeToBuffer(c, " / /    //    / / //          ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", 0x0F);
+    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", colors[0]);
 
 
     // DUNGEON
     c.Y += 2;
     c.X -= 20;
-    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", 0x0F);
+    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", 0x0F);
+    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", 0x0F);
+    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", 0x0F);
+    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", colors[0]);
     c.Y += 1;
-    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", 0x0F);
+    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", colors[0]);
     c.Y += 1;
 }
 
@@ -1299,8 +1305,11 @@ void renderSplashScreen()  // renders the splash screen
         0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
     };
 
+    loadStartmap();
+    renderStartmap();
+
     //render's BG
-    COORD size = g_Console.getConsoleSize();
+    /*COORD size = g_Console.getConsoleSize();
     for (int i = 0; i < size.Y; i++)
     {
         for (int x = 0; x < size.X; x++)
@@ -1308,7 +1317,7 @@ void renderSplashScreen()  // renders the splash screen
             g_Console.writeToBuffer(x, i, " ", 0x80);
         }
 
-    }
+    }*/
 
     renderTitle();
 
@@ -1316,6 +1325,7 @@ void renderSplashScreen()  // renders the splash screen
 
 void renderStart()
 {
+    renderStartmap();
     renderTitle();
     renderStartOptions();
 }
@@ -1336,6 +1346,7 @@ void renderGame()
 
 void renderPauseScreen()
 {
+    renderGame();
     renderPauseBase();
     renderPauseOptions();
 }
@@ -1345,17 +1356,68 @@ void renderLoss()
     renderLossOptions();
 }
 
-void loadmap()
+void loadStartmap()
 {
-    std::ifstream infile("MapLv1.txt");
-    std::string var;
+    std::ifstream startscreen("Startscreen.txt");
+    std::string line;
     // Init and store Map
     int y = 0;
-    while (getline(infile, var)) {
+    while (getline(startscreen, line)) {
         // Output the text from the file
-        for (unsigned i = 0; i < var.length(); ++i)
+        for (unsigned i = 0; i < line.length(); ++i)
         {
-            map[y][i] = var.at(i);
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+}
+
+void renderStartmap()
+{
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '=')
+            {
+                g_Console.writeToBuffer(x, y, (char)186, 0x00);
+            }
+            else if (map[y][x] == '#')
+            {
+                g_Console.writeToBuffer(x, y,' ', 0x80);
+            }
+            else if (map[y][x] == '+')
+            {
+                g_Console.writeToBuffer(x, y,' ', 0x22);
+            }
+            else if (map[y][x] == '~')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+            else if (map[y][x] == '"')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0xCC);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x77);
+            }
+        }
+    }
+}
+
+void loadmap()
+{
+    std::ifstream Lv1("MapLv1.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(Lv1, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
 
         }
         y++;
@@ -1469,7 +1531,7 @@ void renderStartOptions()
 {
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
-    c.X = c.X / 10;
+    c.X = c.X / 3;
 
     COORD cSTART = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
@@ -1483,13 +1545,27 @@ void renderStartOptions()
 
 void renderPauseBase()
 {
+    COORD c = g_Console.getConsoleSize();
+    c.X = c.X / 4;
+    c.Y = c.Y / 3;
+
+    for (int i = 0; i < 15; i++)
+    {
+        for (int i = 0; i < c.X; i++)
+        {
+            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0x33);
+        }
+        c.Y++;
+    }
+    
+
 }
 
 void renderPauseOptions()
 {
     COORD c = g_Console.getConsoleSize();
-    c.Y = (c.Y / 20);
-    c.X = c.X / 10;
+    c.Y = (c.Y / 25);
+    c.X = c.X / 3;
 
     COORD cCONTINUE = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
