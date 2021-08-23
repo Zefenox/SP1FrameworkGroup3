@@ -1576,7 +1576,6 @@ void renderSplashScreen()  // renders the splash screen
 
     }*/
 
->>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
     renderTitle();
 }
 
@@ -1675,16 +1674,13 @@ void loadmap()
         // Output the text from the file
         for (unsigned i = 0; i < line.length(); ++i)
         {
-<<<<<<< HEAD
             map[y][i] = var.at(i);
-=======
             map[y][i] = line.at(i);
-
->>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
         }
         y++;
     }
 }
+
 void renderMap()
 {
     //render Map
@@ -1882,21 +1878,6 @@ void renderGUI() // render game user inferface
     }
 }
 
-<<<<<<< HEAD
-
-=======
-// colour for character
-//void renderCharacter()
-//{
-//    // Draw the location of the character
-//    WORD charColor = 0x0C; // background colour of character when non active. (Sherryan)
-//
-//    if (g_sChar.m_bActive)
-//    {
-//
-//    }
-//}
->>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
 void playerInteractions()
 {
     for (int i = 0; i < 10; i++) // player interacts with a chest
@@ -1947,11 +1928,11 @@ void playerInteractions()
     {
         player->setHealth(player->getHealth() - 2);
     }
-<<<<<<< HEAD
+
     //Enemy interaction
     stalkerReachPlayer(stalkers);
     projReachPlayer();
-=======
+
     if ((map[player->getY()][player->getX()] == '0') ||
         (map[player->getY()][player->getX()] == '1') || 
         (map[player->getY()][player->getX()] == '2') || 
@@ -1963,7 +1944,6 @@ void playerInteractions()
     {
         player->setSpawnPoint(player->getX(), player->getY());
     }
->>>>>>> 06a2ec793f279454570bacd393256ee7509f8423
 }
 
 void renderCharacter()
