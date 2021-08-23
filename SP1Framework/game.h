@@ -112,15 +112,19 @@ void phantomMovement();
 void phantomMovement2();
 void phantomMovement3();
 void phantomMovement4();
+void phantomMovement5();
 char phantomSearchPlayer();
 char phantomSearchPlayer2();
 char phantomSearchPlayer3();
 char phantomSearchPlayer4();
+char phantomSearchPlayer5();
 void phantomFireProj();         //Phantom fires a proj randomly
 void phantomFireProj2();
 void phantomFireProj3();
 void phantomFireProj4();
+void phantomFireProj5();
 void projReachPlayer();
+//stalker functions
 void stalkerMovement(SGameChar EArr[10]); // Stalker movement, collision detection
 bool stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
 void stalkerChasePlayer(SGameChar EArr[10]);    // enemy chase player function once searched
@@ -133,6 +137,7 @@ char renderProj();
 char renderProj2();
 char renderProj3();
 char renderProj4();
+char renderProj5();
 bool coordCheck(std::string arr[20], std::string cmb); // Ensures enemies all different x and y values
 void randEnemyCoord(SGameChar EArr[10], int rnum); // random generates enemies with different x and y values
 void bossBodyCoord(SGameChar BArr[15]); //generates boss body coords that are side - by - side.
