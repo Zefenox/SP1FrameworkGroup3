@@ -104,7 +104,7 @@ void init(void)
 
 void gameInit()
 {
-    player->setSpawnPoint(g_Console.getConsoleSize().X / 2, g_Console.getConsoleSize().Y / 2); // set spawn point
+    player->setSpawnPoint(4,16); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
     player->setLives(3);
     player->setMaxHealth(100);
@@ -1545,7 +1545,6 @@ void renderGUI() // render game user inferface
 
 }
 
-
 // colour for character
 //void renderCharacter()
 //{
@@ -1608,6 +1607,17 @@ void playerInteractions()
     if (map[player->getY()][player->getX()] == '!')
     {
         player->setHealth(player->getHealth() - 2);
+    }
+    if ((map[player->getY()][player->getX()] == '0') ||
+        (map[player->getY()][player->getX()] == '1') || 
+        (map[player->getY()][player->getX()] == '2') || 
+        (map[player->getY()][player->getX()] == '3'))
+    {
+        player->setHealth(player->getHealth() - 5);
+    }
+    if (map[player->getY()][player->getX()] == '&')
+    {
+        player->setSpawnPoint(player->getX(), player->getY());
     }
 }
 
