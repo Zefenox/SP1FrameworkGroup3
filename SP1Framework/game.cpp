@@ -132,8 +132,46 @@ void gameInit()
     player->setActive(true); // set him to be active
 
     // initialises chests
+    // for floor 1
     chest[0] = new Chest; // initialise chest
     chest[0]->setPosition(156, 36); // set its position
+    chest[1] = new Chest;
+    chest[1]->setPosition(41, 4);
+    chest[2] = new Chest;
+    chest[2]->setPosition(89, 30);
+    chest[3] = new Chest;
+    chest[3]->setPosition(141, 10);
+    chest[4] = new Chest;
+    chest[4]->setPosition(191, 46);
+    chest[5] = new Chest;
+    chest[5]->setPosition(197, 46);
+    chest[6] = new Chest;
+    chest[6]->setPosition(203, 46);
+
+    // for floor 2
+    /*
+    * chest[0] = new Chest; // initialise chest
+    chest[0]->setPosition(35, 19); // set its position
+    chest[1] = new Chest;
+    chest[1]->setPosition(122, 14);
+    chest[2] = new Chest;
+    chest[2]->setPosition(140, 24);
+    chest[3] = new Chest;
+    chest[3]->setPosition(140, 27);
+    chest[4] = new Chest;
+    chest[4]->setPosition(140, 30);
+    chest[5] = new Chest;
+    chest[5]->setPosition(140, 33);
+    chest[6] = new Chest;
+    chest[6]->setPosition(218, 11);
+    chest[7] = new Chest;
+    chest[7]->setPosition(158, 61);
+    chest[8] = new Chest;
+    chest[8]->setPosition(102, 46);
+    chest[9] = new Chest;
+    chest[9]->setPosition(98, 54);
+    */
+    
 }
 
 //--------------------------------------------------------------
@@ -651,10 +689,11 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
                 Y = 25;
                 break;
             case 9:
-                X = 170; 
+                X = 170;
                 Y = 15;
                 break;
             }
+<<<<<<< HEAD
 
             if ((coordCheck(used, cmb) == true) || ((map[X][Y] == '#') ||
                 (map[X][Y] == '=') || (map[X][Y] == '[') ||
@@ -662,6 +701,30 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
                 (map[X][Y] == '(') || (map[X][Y] == '*') ||
                 (map[X][Y] == '-') || (map[X][Y] ==  '%') ||
                 (map[X][Y] == '`')))
+=======
+            EArr[i].m_cLocation.X = X;
+            EArr[i].m_cLocation.Y = Y;
+            cmb = std::to_string(X) + std::to_string(Y);
+            used[i] += cmb;
+            x = X;
+            y = Y;
+
+            //rndX = (rand() % g_Console.getConsoleSize().X / 2) + 5;
+            //rndY = (rand() % g_Console.getConsoleSize().Y / 2) + 2;
+            //cmb = std::to_string(rndX) + std::to_string(rndY);
+            //EArr[i].m_cLocation.X = rndX;
+            //EArr[i].m_cLocation.Y = rndY;
+            //used[i] += cmb;
+            //x = rndX;
+            //y = rndY;
+            
+            if ((coordCheck(used, cmb) == true) || ((map[y][x] == '#') ||
+                (map[y][x] == '=') || (map[y][x] == '[') ||
+                (map[y][x] == ']') || (map[y][x] == ')') ||
+                (map[y][x] == '(') || (map[y][x] == '*') ||
+                (map[y][x] == '-') || (map[y][x] ==  '%') ||
+                (map[y][x] == '`')))
+>>>>>>> a0c94aca975c4ce5130aa85a54e2d094effbd7a1
             {
                 continue;
             }
@@ -1685,28 +1748,18 @@ void renderLoss()
     renderLossOptions();
 }
 
-int level = 1;
-std::string text;
-
 void loadmap()
 {
-    if (level == 1)
-    {
-        text = "MapLv1.txt";
-    }
-    if (level == 2);
-    {
-        text = "MapLv2.txt";
-    }
-    std::ifstream infile(text);
-    std::string var;
+    std::ifstream Lv1("MapLv1.txt");
+    std::string line;
     // Init and store Map
     int y = 0;
-    while (getline(infile, var)) {
+    while (getline(Lv1, line)) 
+    {
         // Output the text from the file
-        for (unsigned i = 0; i < var.length(); ++i)
+        for (unsigned i = 0; i < line.length(); ++i)
         {
-            map[y][i] = var.at(i);
+            map[y][i] = line.at(i);
         }
         y++;
     }
@@ -1960,10 +2013,6 @@ void playerInteractions()
     if (map[player->getY()][player->getX()] == '&')
     {
         player->setSpawnPoint(player->getX(), player->getY());
-    }
-    if (map[player->getY()][player->getX()] == '~')
-    {
-        level++;
     }
 }
 
