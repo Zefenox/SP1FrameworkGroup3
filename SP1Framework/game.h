@@ -111,10 +111,10 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
-void bossMovement(SGameChar BArr[15]); // Boss movement
+void bossMovement(SGameChar BArr[9]); // Boss movement
 void bossAttackSeq();           // Boss attack
 void bossSearchPlayer();
-void bossDeath();
+void bossDeath(SGameChar BArr[9]);
 //phantom movements (Hardcoded for now)
 void phantomMovement();
 void phantomMovement2();
@@ -139,16 +139,15 @@ void stalkerChasePlayer(SGameChar EArr[10]);    // enemy chase player function o
 void stalkerReachPlayer(SGameChar EArr[10]); // enemy corners player in a group
 // Enemy spawn functions
 void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
-void renderBoss(SGameChar BArr[15]);
-void renderBossParticles(SGameChar BArr[15]);
+void renderBoss(SGameChar BArr[9]);
+void renderBossParticles(SGameChar BArr[9]);
 char renderProj();
 char renderProj2();
 char renderProj3();
 char renderProj4();
 char renderProj5();
-bool coordCheck(std::string arr[20], std::string cmb); // Ensures enemies all different x and y values
-void randEnemyCoord(SGameChar EArr[10], int rnum); // random generates enemies with different x and y values
-void bossBodyCoord(SGameChar BArr[15]); //generates boss body coords that are side - by - side.
+void setStalkerCoords(SGameChar EArr[10]); // random generates enemies with different x and y values
+void bossBodyCoord(SGameChar BArr[9], int x, int y); //generates boss body coords that are side - by - side.
 
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events
