@@ -46,6 +46,16 @@ void Bullet::print()
 	}
 }
 
+int Bullet::getX()
+{
+	return X;
+}
+
+int Bullet::getY()
+{
+	return Y;
+}
+
 void Bullet::updatebulletpos()
 {
 	if (bdirection == 'U')

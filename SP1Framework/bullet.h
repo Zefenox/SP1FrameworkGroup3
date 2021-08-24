@@ -11,6 +11,9 @@ public:
 	~Bullet();
 	void print();
 
+	int getX();
+	int getY();
+
 
 
 	void updatebulletpos();

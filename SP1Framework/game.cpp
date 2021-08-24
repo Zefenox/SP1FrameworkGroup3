@@ -40,6 +40,7 @@ SGameChar   s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 WORD sColor = 0x0A;
 int snum = 83;
 // phantom
+
 WORD pcolor = 0x5E;
 int pnum = 43;
 SGameChar stalkers[10] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10};
@@ -53,9 +54,16 @@ SGameChar pro1, pro2, pro3, pro4, pro5;
 WORD projColor = 0x4D;
 int projnum = 60;
 // boss
+<<<<<<< HEAD
 SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9;
 SGameChar bossParticles[9] = { b1,b2,b3,b4,b5,b6,b7,b8,b9 };
 int bossHp = 150;
+=======
+SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
+SGameChar bossParticles[15] = {b1,b2,b3,b4,b5,b6,b7,b8,b9,
+                                b10,b11,b12,b13,b14,b15};
+int bossHp;
+>>>>>>> 3bac7ffdc59751abd7251649f881c165d4ddfa5a
 
 Player* player = new Player; // player initialisation
 Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }; // chests initialisation
@@ -88,7 +96,7 @@ void init(void)
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    // Enemy initial state (for now some hard coded - only works for array values)
+    // Enemy initial state (for now some hard coded)
     p1.m_bActive = true;
     p2.m_bActive = true;
     p3.m_bActive = true;
@@ -104,8 +112,8 @@ void init(void)
     p4.m_cLocation.Y = 25;
     p5.m_cLocation.X = 200;
     p5.m_cLocation.Y = 60;
-    setStalkerCoords(stalkers); // stalker spawn
-    bossBodyCoord(bossParticles, 150, 50); // boss spawn
+    randEnemyCoord(stalkers, spawnRange);
+    bossBodyCoord(bossParticles);
  
     g_dElapsedTime = 0.0;
 
@@ -497,6 +505,7 @@ void updateGame()       // gameplay logic
 
     if (!player->getActive()) // if player is dead
         g_eGameState = S_LOSS;
+
 }
 
 
@@ -637,12 +646,33 @@ void shootInput()
     }
 }
 
-void setStalkerCoords(SGameChar EArr[10])
+bool coordCheck(std::string arr[20], std::string cmb)
 {
-    int X, Y;
+    for (int i = 0; i < 20; i++)
+    {
+        if (cmb == arr[i])
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+void randEnemyCoord(SGameChar EArr[10], int rnum)
+{
+
+    int x, y, X, Y;
+    std::string used[10]; // size dependent on num of enemies
+    std::string cmb;
 
     for (int i = 0; i < 10; i++)
     {
+        while (true)
+        {
+
             switch (i)
             {
             case 0:
@@ -688,45 +718,70 @@ void setStalkerCoords(SGameChar EArr[10])
             }
                 EArr[i].m_cLocation.X = X;
                 EArr[i].m_cLocation.Y = Y;
+                cmb = std::to_string(X) + std::to_string(Y);
+                used[i] += cmb;
+                x = X;
+                y = Y;
+            if ((coordCheck(used, cmb) == true) || ((map[X][Y] == '#') ||
+                (map[X][Y] == '=') || (map[X][Y] == '[') ||
+                (map[X][Y] == ']') || (map[X][Y] == ')') ||
+                (map[X][Y] == '(') || (map[X][Y] == '*') ||
+                (map[X][Y] == '-') || (map[X][Y] ==  '%') ||
+                (map[X][Y] == '`')))
+            {
+                
+
+                continue;
+            }
+            else
+            {
                 EArr[i].m_bActive = true;
+                break;
+            }
+        }
     }
 }
 
-void bossBodyCoord(SGameChar BArr[9], int x, int y)
+void bossBodyCoord(SGameChar BArr[15])
 {
     int count = 0;
+    int rndX  = (rand() % g_Console.getConsoleSize().X / 2) + 5;
+    int rndY  = (rand() % g_Console.getConsoleSize().Y / 2) + 5;
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 15; i++)
     {
-        BArr[0].m_cLocation.X = x;
-        BArr[0].m_cLocation.Y = y;
+        BArr[0].m_cLocation.X = rndX;
+        BArr[0].m_cLocation.Y = rndY;
         count++;
         if (i > 0)
         {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count - 1;
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-1;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y;
         }
-        if (i > 2)
+        if (i > 4)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
         }
-        if (i > 3)
-        {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count - 4;
-            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
-        }
         if (i > 5)
         {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X - count + 9;
-            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 2;
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-6;
+            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y;
         }
-
-        BArr[i].m_bActive = true;
+        if (i > 9)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
+            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y + 1;
+        }
+        if (i > 10) 
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-11;
+            BArr[i].m_cLocation.Y = BArr[10].m_cLocation.Y;
+        }
     }
 }
 
-void bossMovement(SGameChar BArr[9])
+void bossMovement(SGameChar BArr[15])
 {
     int dir = (rand() % 4) + 1;
     for (int i = 0; i < 15; i++)
@@ -735,32 +790,35 @@ void bossMovement(SGameChar BArr[9])
         {
             //Up
         case 1:
-            if (BArr[i].m_cLocation.Y > 0)
+            if (BArr[i].m_cLocation.Y > 0 && BArr[i].m_cLocation.Y < 5)
             {
                 BArr[i].m_cLocation.Y--;
             }
             break;
             //Left
         case 2:
-            if (BArr[i].m_cLocation.X > 0)
+            if (BArr[i].m_cLocation.X > 0 && BArr[i].m_cLocation.X < 5)
             {
                 BArr[i].m_cLocation.X--;
             }
             break;
             //Down
         case 3:
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 20)
             {
                 BArr[i].m_cLocation.Y++;
             }
             break;
             //Right
         case 4:
-            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
+            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 20)
             {
                 BArr[i].m_cLocation.X++;
 
             }
+            break;
+
+        default:
             break;
         }
     }
@@ -776,9 +834,9 @@ void bossAttackSeq()
 
 }
 
-void bossDeath(SGameChar BArr[9])
+void bossDeath()
 {
-    
+
 }
 
 void phantomMovement()
@@ -979,7 +1037,7 @@ void phantomMovement5()
         break;
     case 4:
         if ((p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p5.m_cLocation.X > 0))
+            && (p4.m_cLocation.X > 0))
         {
             p5.m_cLocation.X--;
             p5.m_cLocation.Y++;
@@ -1710,6 +1768,7 @@ void startInput()
         g_eGameState = S_GAME;
     if (g_skKeyEvent[K_ESCAPE].keyDown)
         g_bQuitGame = true;
+
 }
 
 void pauseInput()
@@ -1986,6 +2045,10 @@ void bulletInteraction(SGameChar EArr[10])
         if (bulletArray[i] != nullptr)
         {
             bulletArray[i]->updatebulletpos();
+            int x, y;
+            x = bulletArray[i]->getX();
+            y = bulletArray[i]->getY();
+
             if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || 
                 bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || 
                 map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
@@ -1994,10 +2057,28 @@ void bulletInteraction(SGameChar EArr[10])
                 bulletArray[i] = nullptr;
             }
             // detect enemies
+<<<<<<< HEAD
           
+=======
+            for (int l = 0; l < 10; l++)
+            {
+                if ((stalkers[l].m_cLocation.X == x) && (stalkers[l].m_cLocation.Y == y))
+                {
+                    stalkers[l].m_bActive = false;
+                    delete bulletArray[i];
+                    bulletArray[i] = nullptr;
+                    return;
+                }
+                
+            }
+            
+>>>>>>> 3bac7ffdc59751abd7251649f881c165d4ddfa5a
         }
     }
 }
+
+
+
 
 void renderBullets()
 {
@@ -2324,7 +2405,7 @@ void playerInteractions()
 void renderCharacter()
 {
     // Draw the location of the character // was 1 for char
-    g_Console.writeToBuffer(player->getPosition(), (char)80 , player->getCharColour());
+    g_Console.writeToBuffer(player->getPosition(), 'P', player->getCharColour());
 }
 
 void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
@@ -2369,24 +2450,24 @@ void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
         g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
 }
 
-void renderBossParticles(SGameChar BArr[9])
+void renderBossParticles(SGameChar BArr[15])
 {
     WORD bossColor = 0x0A;
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 15; i++)
     {
         g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossColor);
     }
 }
 
-void renderBoss(SGameChar BArr[9])
+void renderBoss(SGameChar BArr[15])
 {
     WORD bossColor = 0x5E;
     WORD bossCorner = 0x4D;
-
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 15; i++)
     {
-        if (BArr[i].m_bActive == true)
+        if (i == 0 || i == 4 || i == 10 || i == 14)
         {
+<<<<<<< HEAD
             if (i == 0 || i == 2 || i == 6 || i == 8)
             {
                 g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
@@ -2427,6 +2508,14 @@ void renderBoss(SGameChar BArr[9])
                 g_Console.writeToBuffer(BArr[i].m_cLocation, (char)33, bossColor);
             } 
         }   
+=======
+            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
+        }
+        else
+        {
+            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)1, bossColor);
+        } 
+>>>>>>> 3bac7ffdc59751abd7251649f881c165d4ddfa5a
     }
 }
 
