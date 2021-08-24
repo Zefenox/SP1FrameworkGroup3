@@ -133,9 +133,13 @@ void phantomFireProj4();
 void phantomFireProj5();
 void projReachPlayer();
 //stalker functions
+void checkerX1(int i, int n);
+void checkerY1(int i, int n);
+void checkerX2(int i, int n);
+void checkerY2(int i, int n);
 void stalkerMovement(SGameChar EArr[10]); // Stalker movement, collision detection
 char stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
-void stalkerChasePlayer(SGameChar EArr[10]);    // enemy chase player function once searched
+void stalkerChasePlayer();    // enemy chase player function once searched
 void stalkerReachPlayer(SGameChar EArr[10]); // enemy corners player in a group
 // Enemy spawn functions
 void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)

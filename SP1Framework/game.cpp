@@ -44,8 +44,6 @@ int snum = 83;
 WORD pcolor = 0x5E;
 int pnum = 43;
 SGameChar stalkers[10] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10};
-bool canStalkerSee[10] = {false,false,false,false,false,false,false,false,false};
-char StalkerSee[10] = {'n','n', 'n', 'n', 'n', 'n', 'n', 'n', 'n','n'};
 
 //phantoms
 SGameChar   p1, p2, p3, p4, p5;
@@ -54,16 +52,10 @@ SGameChar pro1, pro2, pro3, pro4, pro5;
 WORD projColor = 0x4D;
 int projnum = 60;
 // boss
-<<<<<<< HEAD
+
 SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9;
 SGameChar bossParticles[9] = { b1,b2,b3,b4,b5,b6,b7,b8,b9 };
 int bossHp = 150;
-=======
-SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
-SGameChar bossParticles[15] = {b1,b2,b3,b4,b5,b6,b7,b8,b9,
-                                b10,b11,b12,b13,b14,b15};
-int bossHp;
->>>>>>> 3bac7ffdc59751abd7251649f881c165d4ddfa5a
 
 Player* player = new Player; // player initialisation
 Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }; // chests initialisation
@@ -112,8 +104,8 @@ void init(void)
     p4.m_cLocation.Y = 25;
     p5.m_cLocation.X = 200;
     p5.m_cLocation.Y = 60;
-    randEnemyCoord(stalkers, spawnRange);
-    bossBodyCoord(bossParticles);
+    setStalkerCoords(stalkers);
+    bossBodyCoord(bossParticles, 150, 30);
  
     g_dElapsedTime = 0.0;
 
@@ -646,27 +638,11 @@ void shootInput()
     }
 }
 
-bool coordCheck(std::string arr[20], std::string cmb)
-{
-    for (int i = 0; i < 20; i++)
-    {
-        if (cmb == arr[i])
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
 
-void randEnemyCoord(SGameChar EArr[10], int rnum)
+void setStalkerCoords(SGameChar EArr[10])
 {
 
-    int x, y, X, Y;
-    std::string used[10]; // size dependent on num of enemies
-    std::string cmb;
+    int X, Y;
 
     for (int i = 0; i < 10; i++)
     {
@@ -718,47 +694,28 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
             }
                 EArr[i].m_cLocation.X = X;
                 EArr[i].m_cLocation.Y = Y;
-                cmb = std::to_string(X) + std::to_string(Y);
-                used[i] += cmb;
-                x = X;
-                y = Y;
-            if ((coordCheck(used, cmb) == true) || ((map[X][Y] == '#') ||
-                (map[X][Y] == '=') || (map[X][Y] == '[') ||
-                (map[X][Y] == ']') || (map[X][Y] == ')') ||
-                (map[X][Y] == '(') || (map[X][Y] == '*') ||
-                (map[X][Y] == '-') || (map[X][Y] ==  '%') ||
-                (map[X][Y] == '`')))
-            {
-                
-
-                continue;
-            }
-            else
-            {
                 EArr[i].m_bActive = true;
                 break;
-            }
+            
         }
     }
 }
 
-void bossBodyCoord(SGameChar BArr[15])
+void bossBodyCoord(SGameChar BArr[15], int x, int y)
 {
     int count = 0;
-    int rndX  = (rand() % g_Console.getConsoleSize().X / 2) + 5;
-    int rndY  = (rand() % g_Console.getConsoleSize().Y / 2) + 5;
 
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 9; i++)
     {
-        BArr[0].m_cLocation.X = rndX;
-        BArr[0].m_cLocation.Y = rndY;
+        BArr[0].m_cLocation.X = x;
+        BArr[0].m_cLocation.Y = y;
         count++;
         if (i > 0)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-1;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y;
         }
-        if (i > 4)
+        if (i > 2)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
@@ -768,15 +725,10 @@ void bossBodyCoord(SGameChar BArr[15])
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-6;
             BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y;
         }
-        if (i > 9)
+        if (i > 7)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
             BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y + 1;
-        }
-        if (i > 10) 
-        {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-11;
-            BArr[i].m_cLocation.Y = BArr[10].m_cLocation.Y;
         }
     }
 }
@@ -1238,6 +1190,84 @@ void projReachPlayer()
     }
 }
 
+void checkerY1(int i, int n) // y--
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getY() - 5 <= stalkers[i].m_cLocation.Y)
+        if (player->getY() < stalkers[i].m_cLocation.Y)
+            if((map[y + n][x] != '#') &&
+                (map[y + n][x] != '=') &&
+                (map[y + n][x] != '[') &&
+                (map[y + n][x] != ']') &&
+                (map[y + n][x] != ')') &&
+                (map[y + n][x] != '(') &&
+                (map[y + n][x] != '*') &&
+                (map[y + n][x] != '`'))
+                {
+                    stalkers[i].m_cLocation.Y+=n;
+                }
+}
+
+void checkerY2(int i, int n) // y++
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if(player->getY() - 5 <= stalkers[i].m_cLocation.Y)
+       if(player->getY() > stalkers[i].m_cLocation.Y)
+            if ((map[y + n][x] != '#') &&
+                (map[y + n][x] != '=') &&
+                (map[y + n][x] != '[') &&
+                (map[y + n][x] != ']') &&
+                (map[y + n][x] != ')') &&
+                (map[y + n][x] != '(') &&
+                (map[y + n][x] != '*') &&
+                (map[y + n][x] != '`'))
+            {
+                stalkers[i].m_cLocation.Y+=n;
+            }
+}
+
+void checkerX1(int i, int n) // x--
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getX() - 5 <= stalkers[i].m_cLocation.X)
+        if (player->getX() < stalkers[i].m_cLocation.X)
+            if ((map[y][x + n] != '#') &&
+                (map[y][x + n] != '=') &&
+                (map[y][x + n] != '[') &&
+                (map[y][x + n] != ']') &&
+                (map[y][x + n] != ')') &&
+                (map[y][x + n] != '(') &&
+                (map[y][x + n] != '*') &&
+                (map[y][x + n] != '`'))
+            {
+                stalkers[i].m_cLocation.X += n;
+            }
+}
+
+
+void checkerX2(int i, int n)// x++
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getX() - 5 <= stalkers[i].m_cLocation.X)
+        if (player->getX() > stalkers[i].m_cLocation.X)
+            if ((map[y][x + n] != '#') &&
+                (map[y][x + n] != '=') &&
+                (map[y][x + n] != '[') &&
+                (map[y][x + n] != ']') &&
+                (map[y][x + n] != ')') &&
+                (map[y][x + n] != '(') &&
+                (map[y][x + n] != '*') &&
+                (map[y][x + n] != '`'))
+            {
+                stalkers[i].m_cLocation.X += n;
+            }
+}
+
+
 
 void stalkerMovement(SGameChar EArr[10])
 {
@@ -1449,7 +1479,7 @@ void stalkerMovement(SGameChar EArr[10])
             }
         }
         stalkerSearchPlayer(stalkers);
-        stalkerChasePlayer(stalkers);
+        stalkerChasePlayer();
     }
 }
 
@@ -1466,7 +1496,7 @@ char stalkerSearchPlayer(SGameChar EArr[10])
         {
             if (player->getX() - EArr[i].m_cLocation.X <= 2)
             {
-                //canStalkerSee[i] = true; 
+                
                 switch (i)
                 {
                 case 0:
@@ -1541,194 +1571,68 @@ char stalkerSearchPlayer(SGameChar EArr[10])
     // player not in range of enemy
 }
 
-void stalkerChasePlayer(SGameChar EArr[10]) 
+void stalkerChasePlayer() 
 {
     if(stalkerSearchPlayer(stalkers) != 'n')
         switch (stalkerSearchPlayer(stalkers))
         {
         case 'a':
-            if ((player->getX() - 5 <= stalkers[0].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[0].m_cLocation.Y))
-                if (player->getX() > EArr[0].m_cLocation.X)
-                {
-                    EArr[0].m_cLocation.X += 2;
-                }
-                else if (player->getX() < stalkers[0].m_cLocation.X)
-                {
-                    stalkers[0].m_cLocation.X -= 2;
-                }
-                else if (player->getY() > stalkers[0].m_cLocation.Y)
-                {
-                    stalkers[0].m_cLocation.Y += 2;
-                }
-                else if (player->getY() < stalkers[0].m_cLocation.Y)
-                {
-                    stalkers[0].m_cLocation.Y -= 2;
-                }
-                break;  
+            checkerX1(0, -2);
+            checkerX2(0, 2);
+            checkerY1(0, -2);
+            checkerY2(0, 2);
+            break;  
         case 'b':
-            if ((player->getX() - 5 <= stalkers[1].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[1].m_cLocation.Y))
-                if (player->getX() > stalkers[1].m_cLocation.X)
-                {
-                    stalkers[1].m_cLocation.X++;
-                }
-                else if (player->getX() < stalkers[1].m_cLocation.X)
-                {
-                    stalkers[1].m_cLocation.X--;
-                }
-                else if (player->getY() > stalkers[1].m_cLocation.Y)
-                {
-                    stalkers[1].m_cLocation.Y++;
-                }
-                else if (player->getY() < stalkers[1].m_cLocation.Y)
-                {
-                    stalkers[1].m_cLocation.Y--;
-                }
-                break;
+            checkerX1(1, -1);
+            checkerX2(1, 1);
+            checkerY1(1, -1);
+            checkerY2(1, 1);
+            break;
         case 'c':
-            if ((player->getX() - 5 <= stalkers[2].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[2].m_cLocation.Y))
-                if (player->getX() > stalkers[2].m_cLocation.X)
-                {
-                    stalkers[2].m_cLocation.X += 2;
-                }
-                else if (player->getX() < stalkers[2].m_cLocation.X)
-                {
-                    stalkers[2].m_cLocation.X -= 2;
-                }
-                else if (player->getY() > stalkers[2].m_cLocation.Y)
-                {
-                    stalkers[2].m_cLocation.Y += 2;
-                }
-                else if (player->getY() < stalkers[2].m_cLocation.Y)
-                {
-                    stalkers[2].m_cLocation.Y -= 2;
-                }
-                break;
+            checkerX1(2, -1);
+            checkerX2(2, 1);
+            checkerY1(2, -1);
+            checkerY2(2, 1);
+            break;
         case 'd':
-            if ((player->getX() - 5 <= stalkers[3].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[3].m_cLocation.Y))
-                if (player->getX() > stalkers[3].m_cLocation.X)
-                {
-                    stalkers[3].m_cLocation.X++;
-                }
-                else if (player->getX() < stalkers[3].m_cLocation.X)
-                {
-                    stalkers[3].m_cLocation.X--;
-                }
-                else if (player->getY() > stalkers[3].m_cLocation.Y)
-                {
-                    stalkers[3].m_cLocation.Y++;
-                }
-                else if (player->getY() < stalkers[3].m_cLocation.Y)
-                {
-                    stalkers[3].m_cLocation.Y--;
-                }
-                break;
+            checkerX1(3, -1);
+            checkerX2(3, 1);
+            checkerY1(3, -1);
+            checkerY2(3, 1);
+            break;
         case 'e':
-            if ((player->getX() - 5 <= stalkers[4].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[4].m_cLocation.Y))
-                if (player->getX() > stalkers[4].m_cLocation.X)
-                {
-                    stalkers[4].m_cLocation.X += 2;
-                }
-                else if (player->getX() < stalkers[4].m_cLocation.X)
-                {
-                    stalkers[4].m_cLocation.X -= 2;
-                }
-                else if (player->getY() > stalkers[4].m_cLocation.Y)
-                {
-                    stalkers[4].m_cLocation.Y += 2;
-                }
-                else if (player->getY() < stalkers[4].m_cLocation.Y)
-                {
-                    stalkers[4].m_cLocation.Y -= 2;
-                }
-                break;
+            checkerX1(4, -1);
+            checkerX2(4, 1);
+            checkerY1(4, -1);
+            checkerY2(4, 1);
+            break;
         case 'f':
-            if ((player->getX() - 5 <= stalkers[5].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[5].m_cLocation.Y))
-                if (player->getX() > stalkers[5].m_cLocation.X)
-                {
-                    stalkers[5].m_cLocation.X++;
-                }
-                else if (player->getX() < stalkers[5].m_cLocation.X)
-                {
-                    stalkers[5].m_cLocation.X--;
-                }
-                else if (player->getY() > stalkers[5].m_cLocation.Y)
-                {
-                    stalkers[5].m_cLocation.Y++;
-                }
-                else if (player->getY() < stalkers[5].m_cLocation.Y)
-                {
-                    stalkers[5].m_cLocation.Y--;
-                }
-                break;
+            checkerX1(5, -2);
+            checkerX2(5, 2);
+            checkerY1(5, -2);
+            checkerY2(5, 2);
+            break;
         case 'g':
-            if ((player->getX() - 5 <= stalkers[6].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[6].m_cLocation.Y))
-                if (player->getX() > stalkers[6].m_cLocation.X)
-                {
-                    stalkers[6].m_cLocation.X += 2;
-                }
-                else if (player->getX() < stalkers[6].m_cLocation.X)
-                {
-                    stalkers[6].m_cLocation.X -= 2;
-                }
-                else if (player->getY() > stalkers[6].m_cLocation.Y)
-                {
-                    stalkers[6].m_cLocation.Y += 2;
-                }
-                else if (player->getY() < stalkers[6].m_cLocation.Y)
-                {
-                    stalkers[6].m_cLocation.Y -= 2;
-                }
+            checkerX1(6, -1);
+            checkerX2(6, 1);
+            checkerY1(6, -1);
+            checkerY2(6, 1);
                 break;
         case 'h':
-            if ((player->getX() - 5 <= stalkers[7].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[7].m_cLocation.Y))
-                if (player->getX() > stalkers[7].m_cLocation.X)
-                {
-                    stalkers[7].m_cLocation.X++;
-                }
-                else if (player->getX() < stalkers[7].m_cLocation.X)
-                {
-                    stalkers[7].m_cLocation.X--;
-                }
-                else if (player->getY() > stalkers[7].m_cLocation.Y)
-                {
-                    stalkers[7].m_cLocation.Y++;
-                }
-                else if (player->getY() < stalkers[7].m_cLocation.Y)
-                {
-                    stalkers[7].m_cLocation.Y--;
-                }
-                break;
+            checkerX1(7, -2);
+            checkerX2(7, 2);
+            checkerY1(7, -2);
+            checkerY2(7, 2);
+            break;
         case 'i':
-            if ((player->getX() - 5 <= stalkers[8].m_cLocation.X) ||
-                (player->getY() - 5 <= stalkers[8].m_cLocation.Y))
-                if (player->getX() > stalkers[8].m_cLocation.X)
-                {
-                    stalkers[8].m_cLocation.X += 2;
-                }
-                else if (player->getX() < stalkers[8].m_cLocation.X)
-                {
-                    stalkers[8].m_cLocation.X -= 2;
-                }
-                else if (player->getY() > stalkers[8].m_cLocation.Y)
-                {
-                    stalkers[8].m_cLocation.Y += 2;
-                }
-                else if (player->getY() < stalkers[8].m_cLocation.Y)
-                {
-                    stalkers[8].m_cLocation.Y -= 2;
-                }
-                break;
+            checkerX1(8, -1);
+            checkerX2(8, 1);
+            checkerY1(8, -1);
+            checkerY2(8, 1);
+            break;
 
         case 'j':
-            if ((player->getX() - 5 <= stalkers[9].m_cLocation.X) ||
+            /*if ((player->getX() - 5 <= stalkers[9].m_cLocation.X) ||
                 (player->getY() - 5 <= stalkers[9].m_cLocation.Y))
                 if (player->getX() > stalkers[9].m_cLocation.X)
                 {
@@ -1745,8 +1649,12 @@ void stalkerChasePlayer(SGameChar EArr[10])
                 else if (player->getY() < stalkers[9].m_cLocation.Y)
                 {
                     stalkers[9].m_cLocation.Y--;
-                }
-                break;
+                }*/
+            checkerX1(9, -2);
+            checkerX2(9, 2);
+            checkerY1(9, -2);
+            checkerY2(9, 2);
+            break;
 
    }
 }
@@ -1953,7 +1861,7 @@ void renderGame()
     //renderEnemies(phantoms, pnum, pcolor);
     //renderEnemies(projectiles, projnum, projColor);
     //renderBossParticles(bossParticles);
-    renderBoss(bossParticles);
+    //renderBoss(bossParticles);
     renderBullets();
 
     renderGUI();        // renders game user interface
@@ -2057,9 +1965,6 @@ void bulletInteraction(SGameChar EArr[10])
                 bulletArray[i] = nullptr;
             }
             // detect enemies
-<<<<<<< HEAD
-          
-=======
             for (int l = 0; l < 10; l++)
             {
                 if ((stalkers[l].m_cLocation.X == x) && (stalkers[l].m_cLocation.Y == y))
@@ -2071,8 +1976,7 @@ void bulletInteraction(SGameChar EArr[10])
                 }
                 
             }
-            
->>>>>>> 3bac7ffdc59751abd7251649f881c165d4ddfa5a
+
         }
     }
 }
@@ -2453,21 +2357,18 @@ void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
 void renderBossParticles(SGameChar BArr[15])
 {
     WORD bossColor = 0x0A;
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 19; i++)
     {
         g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossColor);
     }
 }
 
-void renderBoss(SGameChar BArr[15])
+void renderBoss(SGameChar BArr[9])
 {
     WORD bossColor = 0x5E;
     WORD bossCorner = 0x4D;
     for (int i = 0; i < 15; i++)
     {
-        if (i == 0 || i == 4 || i == 10 || i == 14)
-        {
-<<<<<<< HEAD
             if (i == 0 || i == 2 || i == 6 || i == 8)
             {
                 g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
@@ -2506,17 +2407,9 @@ void renderBoss(SGameChar BArr[15])
             else
             {
                 g_Console.writeToBuffer(BArr[i].m_cLocation, (char)33, bossColor);
-            } 
-        }   
-=======
-            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
-        }
-        else
-        {
-            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)1, bossColor);
-        } 
->>>>>>> 3bac7ffdc59751abd7251649f881c165d4ddfa5a
-    }
+            }
+     }
+    
 }
 
 char renderProj()
