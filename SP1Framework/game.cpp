@@ -41,7 +41,6 @@ WORD sColor = 0x0A;
 int snum = 83;
 int spawnRange = 19;
 // phantom
-
 WORD pcolor = 0x5E;
 int pnum = 43;
 SGameChar stalkers[10] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10};
@@ -53,9 +52,8 @@ WORD projColor = 0x4D;
 int projnum = 60;
 
 // boss
-SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
-SGameChar bossParticles[15] = {b1,b2,b3,b4,b5,b6,b7,b8,b9,
-                                b10,b11,b12,b13,b14,b15};
+SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9;
+SGameChar bossParticles[9] = { b1,b2,b3,b4,b5,b6,b7,b8,b9 };
 int bossHp;
 
 Player* player = new Player; // player initialisation
@@ -176,6 +174,7 @@ void gameInit()
         chest[9] = new Chest;
         chest[9]->setPosition(98, 54);
     }
+
     
 }
 
@@ -497,7 +496,6 @@ void updateGame()       // gameplay logic
 
     if (!player->getActive()) // if player is dead
         g_eGameState = S_LOSS;
-
 }
 
 
@@ -632,39 +630,18 @@ void inventoryInput()
 
 void shootInput()
 {
-    if (g_skKeyEvent[K_L].keyReleased)
+    if (g_skKeyEvent[K_L].keyReleased || g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
     {
         shoot();
     }
 }
 
-bool coordCheck(std::string arr[20], std::string cmb)
+void setStalkerCoords(SGameChar EArr[10])
 {
-    for (int i = 0; i < 20; i++)
-    {
-        if (cmb == arr[i])
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-void randEnemyCoord(SGameChar EArr[10], int rnum)
-{
-
-    int x, y, X, Y;
-    std::string used[10]; // size dependent on num of enemies
-    std::string cmb;
+    int X, Y;
 
     for (int i = 0; i < 10; i++)
     {
-        while (true)
-        {
-
             switch (i)
             {
             case 0:
@@ -710,70 +687,45 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
             }
                 EArr[i].m_cLocation.X = X;
                 EArr[i].m_cLocation.Y = Y;
-                cmb = std::to_string(X) + std::to_string(Y);
-                used[i] += cmb;
-                x = X;
-                y = Y;
-            if ((coordCheck(used, cmb) == true) || ((map[X][Y] == '#') ||
-                (map[X][Y] == '=') || (map[X][Y] == '[') ||
-                (map[X][Y] == ']') || (map[X][Y] == ')') ||
-                (map[X][Y] == '(') || (map[X][Y] == '*') ||
-                (map[X][Y] == '-') || (map[X][Y] ==  '%') ||
-                (map[X][Y] == '`')))
-            {
-                
-
-                continue;
-            }
-            else
-            {
                 EArr[i].m_bActive = true;
-                break;
-            }
-        }
     }
 }
 
-void bossBodyCoord(SGameChar BArr[15])
+void bossBodyCoord(SGameChar BArr[9], int x, int y)
 {
     int count = 0;
-    int rndX  = (rand() % g_Console.getConsoleSize().X / 2) + 5;
-    int rndY  = (rand() % g_Console.getConsoleSize().Y / 2) + 5;
 
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 9; i++)
     {
-        BArr[0].m_cLocation.X = rndX;
-        BArr[0].m_cLocation.Y = rndY;
+        BArr[0].m_cLocation.X = x;
+        BArr[0].m_cLocation.Y = y;
         count++;
         if (i > 0)
         {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-1;
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count - 1;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y;
         }
-        if (i > 4)
+        if (i > 2)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
         }
+        if (i > 3)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count - 4;
+            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
+        }
         if (i > 5)
         {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-6;
-            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y;
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X - count + 9;
+            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 2;
         }
-        if (i > 9)
-        {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
-            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y + 1;
-        }
-        if (i > 10) 
-        {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-11;
-            BArr[i].m_cLocation.Y = BArr[10].m_cLocation.Y;
-        }
+
+        BArr[i].m_bActive = true;
     }
 }
 
-void bossMovement(SGameChar BArr[15])
+void bossMovement(SGameChar BArr[9])
 {
     int dir = (rand() % 4) + 1;
     for (int i = 0; i < 15; i++)
@@ -782,35 +734,32 @@ void bossMovement(SGameChar BArr[15])
         {
             //Up
         case 1:
-            if (BArr[i].m_cLocation.Y > 0 && BArr[i].m_cLocation.Y < 5)
+            if (BArr[i].m_cLocation.Y > 0)
             {
                 BArr[i].m_cLocation.Y--;
             }
             break;
             //Left
         case 2:
-            if (BArr[i].m_cLocation.X > 0 && BArr[i].m_cLocation.X < 5)
+            if (BArr[i].m_cLocation.X > 0)
             {
                 BArr[i].m_cLocation.X--;
             }
             break;
             //Down
         case 3:
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 20)
+            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
                 BArr[i].m_cLocation.Y++;
             }
             break;
             //Right
         case 4:
-            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 20)
+            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
                 BArr[i].m_cLocation.X++;
 
             }
-            break;
-
-        default:
             break;
         }
     }
@@ -826,9 +775,9 @@ void bossAttackSeq()
 
 }
 
-void bossDeath()
+void bossDeath(SGameChar BArr[9])
 {
-
+    
 }
 
 void phantomMovement()
@@ -1029,7 +978,7 @@ void phantomMovement5()
         break;
     case 4:
         if ((p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p4.m_cLocation.X > 0))
+            && (p5.m_cLocation.X > 0))
         {
             p5.m_cLocation.X--;
             p5.m_cLocation.Y++;
@@ -1547,23 +1496,51 @@ void stalkerReachPlayer(SGameChar EArr[10])
         if ((player->getX() == EArr[i].m_cLocation.X) && (player->getY() == EArr[i].m_cLocation.Y))
         {
             player->setHealth(player->getHealth() - 1);
+            setStalkerCoords(stalkers);
         }
     }
 }
 
 void startInput()
 {
+    // (100 - 123, 28)
+    for (int x = 100; x <= 123; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 120, 31)
+    for (int x = 100; x <= 120; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
+
     if (g_skKeyEvent[K_SPACE].keyDown)
         g_eGameState = S_GAME;
     if (g_skKeyEvent[K_ESCAPE].keyDown)
         g_bQuitGame = true;
-
 }
 
 void pauseInput()
 {
     if (g_skKeyEvent[K_Q].keyDown)
         g_bQuitGame = true;
+
+    // (100 - 124, 27)
+    for (int x = 100; x <= 124; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 27 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 118, 30)
+    for (int x = 100; x <= 118; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 30 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
 }
 
 void lossInput()
@@ -1574,6 +1551,22 @@ void lossInput()
     {
         gameInit();
         g_eGameState = S_GAME;
+    }
+
+    // (30 - 53, 28)
+    for (int x = 30; x <= 53; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        {
+            gameInit();
+            g_eGameState = S_GAME;
+        }
+    }
+    // (30 - 48, 31)
+    for (int x = 30; x <= 48; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
     }
 }
 
@@ -1739,8 +1732,6 @@ void renderGame()
     renderCharacter();  // renders the character into the buffer
 
     renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
-    //renderEnemies(phantoms, pnum, pcolor);
-    //renderEnemies(projectiles, projnum, projColor);
     renderBossParticles(bossParticles);
     renderBoss(bossParticles);
     renderBullets();
@@ -1799,9 +1790,13 @@ void renderStartmap()
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x00);
             }
-            else if (map[y][x] == '"')
+            else if (map[y][x] == '!')
             {
                 g_Console.writeToBuffer(x, y, ' ', 0xCC);
+            }
+            else if (map[y][x] == '"')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x44);
             }
             else //empty space
             {
@@ -1830,11 +1825,17 @@ void bulletInteraction()
         if (bulletArray[i] != nullptr)
         {
             bulletArray[i]->updatebulletpos();
-            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
+            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || 
+                bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || 
+                map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
             {
                 delete bulletArray[i];
                 bulletArray[i] = nullptr;
             }
+            // detect enemies
+
+
+
         }
     }
 }
@@ -2002,15 +2003,29 @@ void renderStartOptions()
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
     c.X = c.X / 3;
+    
+    WORD STARTcolour = 0x0F;
+    WORD QUITcolour = 0x0F;
 
     COORD cSTART = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string START = "PRESS SPACE TO START";
-    std::string QUIT = "PRESS ESC TO QUIT";
+    std::string START = "> PRESS SPACE TO START <";
+    std::string QUIT = "> PRESS ESC TO QUIT <";
 
-    g_Console.writeToBuffer(cSTART, START, 0x0c, START.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cSTART.X; x < cSTART.X + START.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cSTART.Y)
+            STARTcolour = 0x0c;
+    }
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cSTART, START, STARTcolour, START.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderPauseBase()
@@ -2035,14 +2050,30 @@ void renderPauseOptions()
     c.Y = (c.Y / 25);
     c.X = c.X / 3;
 
+    WORD CONTINUEcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
     COORD cCONTINUE = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string CONTINUE = "PRESS ESC TO CONTINUE";
-    std::string QUIT = "PRESS Q TO QUIT";
+    std::string CONTINUE = "> PRESS ESC TO CONTINUE <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
 
-    g_Console.writeToBuffer(cCONTINUE, CONTINUE, 0x0c, CONTINUE.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cCONTINUE.X; x < cCONTINUE.X + CONTINUE.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cCONTINUE.Y)
+            CONTINUEcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cCONTINUE, CONTINUE, CONTINUEcolour, CONTINUE.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
+
 }
 
 void renderLossOptions()
@@ -2051,17 +2082,32 @@ void renderLossOptions()
     c.Y = (c.Y / 20);
     c.X = c.X / 10;
 
+    WORD RETRYcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
     COORD cLOST = { c.X, c.Y + 22 };
     COORD cRETRY = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
     std::string LOST = "YOU LOST";
-    std::string RETRY = "PRESS SPACE TO RETRY";
-    std::string QUIT = "PRESS Q TO QUIT";
+    std::string RETRY = "> PRESS SPACE TO RETRY <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
 
-    g_Console.writeToBuffer(cLOST, LOST, 0x0c, LOST.length());
-    g_Console.writeToBuffer(cRETRY, RETRY, 0x0c, RETRY.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cRETRY.X; x < cRETRY.X + RETRY.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cRETRY.Y)
+            RETRYcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cLOST, LOST, 0x0f, LOST.length());
+    g_Console.writeToBuffer(cRETRY, RETRY, RETRYcolour, RETRY.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderGUI() // render game user inferface
@@ -2217,29 +2263,33 @@ void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
         g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
 }
 
-void renderBossParticles(SGameChar BArr[15])
+void renderBossParticles(SGameChar BArr[9])
 {
     WORD bossColor = 0x0A;
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 9; i++)
     {
         g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossColor);
     }
 }
 
-void renderBoss(SGameChar BArr[15])
+void renderBoss(SGameChar BArr[9])
 {
     WORD bossColor = 0x5E;
     WORD bossCorner = 0x4D;
-    for (int i = 0; i < 15; i++)
+
+    for (int i = 0; i < 9; i++)
     {
-        if (i == 0 || i == 4 || i == 10 || i == 14)
+        if (BArr[i].m_bActive == true)
         {
-            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
-        }
-        else
-        {
-            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)1, bossColor);
-        } 
+            if (i == 0 || i == 2 || i == 6 || i == 8)
+            {
+                g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
+            }
+            else
+            {
+                g_Console.writeToBuffer(BArr[i].m_cLocation, (char)1, bossColor);
+            } 
+        }   
     }
 }
 
