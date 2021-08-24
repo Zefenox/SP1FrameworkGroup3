@@ -97,7 +97,7 @@ void loadStartmap();
 void renderStartmap();
 void shootInput();
 void shoot();
-void bulletInteraction();
+void bulletInteraction(SGameChar EArr[10]);
 void renderBullets();
 
 void renderCharacter();     // renders the character into the buffer
@@ -134,7 +134,7 @@ void phantomFireProj5();
 void projReachPlayer();
 //stalker functions
 void stalkerMovement(SGameChar EArr[10]); // Stalker movement, collision detection
-bool stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
+char stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
 void stalkerChasePlayer(SGameChar EArr[10]);    // enemy chase player function once searched
 void stalkerReachPlayer(SGameChar EArr[10]); // enemy corners player in a group
 // Enemy spawn functions
