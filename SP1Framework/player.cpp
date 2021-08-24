@@ -8,7 +8,7 @@ Player::Player()
     position = { 0, 0 };
     spawnPoint = { 0, 0 };
     direction = 'R';
-    charColour = 0x84;
+    charColour = 0x34;
     active = true;
     inventory[0] = nullptr; // starting inventory ( items inside for debugging purposes rn )
     inventory[1] = nullptr;

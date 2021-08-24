@@ -1741,7 +1741,7 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
 
-    /*renderEnemies(stalkers, snum, sColor);*/    // renders the enemies into the buffer 
+    renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
     //renderEnemies(phantoms, pnum, pcolor);
     //renderEnemies(projectiles, projnum, projColor);
     //renderBossParticles(bossParticles);
@@ -1837,6 +1837,10 @@ void bulletInteraction()
         if (bulletArray[i] != nullptr)
         {
             bulletArray[i]->updatebulletpos();
+            int x, y;
+            x = bulletArray[i]->getX();
+            y = bulletArray[i]->getY();
+
             if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || 
                 bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || 
                 map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
@@ -1845,12 +1849,24 @@ void bulletInteraction()
                 bulletArray[i] = nullptr;
             }
             // detect enemies
-
-
-
+            for (int l = 0; l < 10; l++)
+            {
+                if ((stalkers[l].m_cLocation.X == x) && (stalkers[l].m_cLocation.Y == y))
+                {
+                    stalkers[l].m_bActive = false;
+                    delete bulletArray[i];
+                    bulletArray[i] = nullptr;
+                    return;
+                }
+                
+            }
+            
         }
     }
 }
+
+
+
 
 void renderBullets()
 {
@@ -2177,7 +2193,7 @@ void playerInteractions()
 void renderCharacter()
 {
     // Draw the location of the character // was 1 for char
-    g_Console.writeToBuffer(player->getPosition(), (char)80 , player->getCharColour());
+    g_Console.writeToBuffer(player->getPosition(), 'P', player->getCharColour());
 }
 
 void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
