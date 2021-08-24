@@ -83,30 +83,6 @@ void init(void)
 {
     // assigning seed
     srand((unsigned int)time(NULL));
-
-    // Set precision for floating point output
-    g_dElapsedTime = 0.0;    
-    // sets the initial state for the game
-    g_eGameState = S_SPLASHSCREEN;
-
-    // Enemy initial state (for now some hard coded)
-    p1.m_bActive = true;
-    p2.m_bActive = true;
-    p3.m_bActive = true;
-    p4.m_bActive = true;
-    p5.m_bActive = true;
-    p1.m_cLocation.X = 150;
-    p1.m_cLocation.Y = 30;
-    p2.m_cLocation.X = 40;
-    p2.m_cLocation.Y = 50;
-    p3.m_cLocation.X = 100;
-    p3.m_cLocation.Y = 80;
-    p4.m_cLocation.X = 30;
-    p4.m_cLocation.Y = 25;
-    p5.m_cLocation.X = 200;
-    p5.m_cLocation.Y = 60;
-    randEnemyCoord(stalkers, spawnRange);
-    bossBodyCoord(bossParticles);
  
     g_dElapsedTime = 0.0;
 
@@ -116,7 +92,7 @@ void init(void)
     gameInit();
     
     // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(0, 12, L"Consolas");
+    g_Console.setConsoleFont(0, 14, L"Consolas");
 
     // remember to set your keyboard handler, so that your functions can be notified of input events
     g_Console.setKeyboardHandler(keyboardHandler);
@@ -137,46 +113,69 @@ void gameInit()
         player->setInventory(i, nullptr); // clear inventory
     player->setActive(true); // set him to be active
 
-    // initialises chests
-    // for floor 1
-    chest[0] = new Chest; // initialise chest
-    chest[0]->setPosition(156, 36); // set its position
-    chest[1] = new Chest;
-    chest[1]->setPosition(41, 4);
-    chest[2] = new Chest;
-    chest[2]->setPosition(89, 30);
-    chest[3] = new Chest;
-    chest[3]->setPosition(141, 10);
-    chest[4] = new Chest;
-    chest[4]->setPosition(191, 46);
-    chest[5] = new Chest;
-    chest[5]->setPosition(197, 46);
-    chest[6] = new Chest;
-    chest[6]->setPosition(203, 46);
+    if (!map1Clear)
+    {
+        // initialises chests
+        // for floor 1
+        chest[0] = new Chest; // initialise chest
+        chest[0]->setPosition(156, 36); // set its position
+        chest[1] = new Chest;
+        chest[1]->setPosition(41, 4);
+        chest[2] = new Chest;
+        chest[2]->setPosition(89, 30);
+        chest[3] = new Chest;
+        chest[3]->setPosition(141, 10);
+        chest[4] = new Chest;
+        chest[4]->setPosition(191, 46);
+        chest[5] = new Chest;
+        chest[5]->setPosition(197, 46);
+        chest[6] = new Chest;
+        chest[6]->setPosition(203, 46);
 
-    // for floor 2
-    /*
-    * chest[0] = new Chest; // initialise chest
-    chest[0]->setPosition(35, 19); // set its position
-    chest[1] = new Chest;
-    chest[1]->setPosition(122, 14);
-    chest[2] = new Chest;
-    chest[2]->setPosition(140, 24);
-    chest[3] = new Chest;
-    chest[3]->setPosition(140, 27);
-    chest[4] = new Chest;
-    chest[4]->setPosition(140, 30);
-    chest[5] = new Chest;
-    chest[5]->setPosition(140, 33);
-    chest[6] = new Chest;
-    chest[6]->setPosition(218, 11);
-    chest[7] = new Chest;
-    chest[7]->setPosition(158, 61);
-    chest[8] = new Chest;
-    chest[8]->setPosition(102, 46);
-    chest[9] = new Chest;
-    chest[9]->setPosition(98, 54);
-    */
+        // Enemy initial state (for now some hard coded)
+        p1.m_bActive = true;
+        p2.m_bActive = true;
+        p3.m_bActive = true;
+        p4.m_bActive = true;
+        p5.m_bActive = true;
+        p1.m_cLocation.X = 150;
+        p1.m_cLocation.Y = 30;
+        p2.m_cLocation.X = 40;
+        p2.m_cLocation.Y = 50;
+        p3.m_cLocation.X = 100;
+        p3.m_cLocation.Y = 80;
+        p4.m_cLocation.X = 30;
+        p4.m_cLocation.Y = 25;
+        p5.m_cLocation.X = 200;
+        p5.m_cLocation.Y = 60;
+        randEnemyCoord(stalkers, spawnRange);
+        bossBodyCoord(bossParticles);
+    }
+
+    if (map1Clear)
+    {
+        // for floor 2
+        chest[0] = new Chest; // initialise chest
+        chest[0]->setPosition(35, 19); // set its position
+        chest[1] = new Chest;
+        chest[1]->setPosition(122, 14);
+        chest[2] = new Chest;
+        chest[2]->setPosition(140, 24);
+        chest[3] = new Chest;
+        chest[3]->setPosition(140, 27);
+        chest[4] = new Chest;
+        chest[4]->setPosition(140, 30);
+        chest[5] = new Chest;
+        chest[5]->setPosition(140, 33);
+        chest[6] = new Chest;
+        chest[6]->setPosition(218, 11);
+        chest[7] = new Chest;
+        chest[7]->setPosition(158, 61);
+        chest[8] = new Chest;
+        chest[8]->setPosition(102, 46);
+        chest[9] = new Chest;
+        chest[9]->setPosition(98, 54);
+    }
     
 }
 
@@ -464,12 +463,12 @@ void splashScreenWait()    // waits for time to pass in splash screen
         g_eGameState = S_STARTSCREEN;
 
 
-    /*processUserInput();*/
-    /*getInput();*/
-    /*if (g_skKeyEvent[K_SPACE].keyReleased)
+    processUserInput();
+    getInput();
+    if (g_skKeyEvent[K_SPACE].keyReleased)
     {
         g_eGameState = S_GAME;
-    }*/
+    }
 }
 
 void updateStart()
@@ -490,7 +489,7 @@ void updateGame()       // gameplay logic
     phantomMovement3();
     phantomMovement4();
     phantomMovement5();
-    //bossMovement(bossParticles);
+    bossMovement(bossParticles);
     playerInteractions();
     bulletInteraction();
     // interactions
@@ -1085,7 +1084,7 @@ char phantomSearchPlayer2()
 {
     int dist = 30;
     if ((p2.m_cLocation.Y - dist <= player->getY())
-        && (player->getX() == p1.m_cLocation.X))
+        && (player->getX() == p2.m_cLocation.X))
     {
         // so bottom side will not follow
         if ((p2.m_cLocation.Y <= player->getY())
@@ -1301,7 +1300,15 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y - 2][x] != ')') &&
                     (map[y - 2][x] != '(') &&
                     (map[y - 2][x] != '*') &&
-                    (map[y - 2][x] != '`'))
+                    (map[y - 2][x] != '`') &&
+                    (map[y - 1][x] != '#') &&
+                    (map[y - 1][x] != '=') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']') &&
+                    (map[y - 1][x] != ')') &&
+                    (map[y - 1][x] != '(') &&
+                    (map[y - 1][x] != '*') &&
+                    (map[y - 1][x] != '`'))
                 {
                     if (i > 0)
                     {
@@ -1324,7 +1331,15 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y][x + 2] != ')') &&
                     (map[y][x + 2] != '(') &&
                     (map[y][x + 2] != '*') &&
-                    (map[y][x + 2] != '`'))
+                    (map[y][x + 2] != '`') &&
+                    (map[y][x + 1] != '#') &&
+                    (map[y][x + 1] != '=') &&
+                    (map[y][x + 1] != '[') &&
+                    (map[y][x + 1] != ']') &&
+                    (map[y][x + 1] != ')') &&
+                    (map[y][x + 1] != '(') &&
+                    (map[y][x + 1] != '*') &&
+                    (map[y][x + 1] != '`'))
                 {
                     if (i > 0)
                     {
@@ -1455,35 +1470,15 @@ bool stalkerSearchPlayer(SGameChar EArr[10])
     // check if the player and enemy are in the same lane
     for (int i = 0; i < 10; i++)
     {
-        if ((player->getY() == EArr[i].m_cLocation.Y + 5) ||
-            (player->getX() == EArr[i].m_cLocation.X + 5))
+        if ((player->getY() - EArr[i].m_cLocation.Y <= 3) && 
+            (player->getX() - EArr[i].m_cLocation.X <= 3) &&
+            (player->getX() - EArr[i].m_cLocation.X >= -3) &&
+            (player->getX() - EArr[i].m_cLocation.X >= -3))
         {
-            if (player->getX() - EArr[i].m_cLocation.X <= 2)
-            {
-                return true;
-            }
+            return true;
         }
         // check for other possibilities
-        else
-        {
-            x_final = player->getX() - EArr[i].m_cLocation.X;
-            y_final = player->getY() - EArr[i].m_cLocation.Y;
-            // remove negative val
-            if (x_final < 0)
-            {
-                x_final *= -1;
-            }
-            if (y_final < 0)
-            {
-                y_final *= -1;
-            }
-            // add together
-            maxNumOfSteps += x_final += y_final;
-            if (maxNumOfSteps <= 4)
-            {
-                return true;
-            }
-        }
+
     }
     return false;
     // if both conditions not met, 
@@ -1497,8 +1492,10 @@ void stalkerChasePlayer(SGameChar EArr[10])
         if (stalkerSearchPlayer(stalkers) == true)
         {
             // After 10 steps stop chasing or else all will chase
-            if ((player->getX() - 5 <= EArr[i].m_cLocation.X) ||
-                (player->getY() - 5 <= EArr[i].m_cLocation.Y))
+            if ((player->getY() - EArr[i].m_cLocation.Y <= 3) &&
+                (player->getX() - EArr[i].m_cLocation.X <= 3) &&
+                (player->getX() - EArr[i].m_cLocation.X >= -3) &&
+                (player->getX() - EArr[i].m_cLocation.X >= -3))
             {
                 if (i % 2 == 0)
                 {
@@ -1741,11 +1738,11 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
 
-    /*renderEnemies(stalkers, snum, sColor);*/    // renders the enemies into the buffer 
+    renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
     //renderEnemies(phantoms, pnum, pcolor);
     //renderEnemies(projectiles, projnum, projColor);
-    //renderBossParticles(bossParticles);
-    //renderBoss(bossParticles);
+    renderBossParticles(bossParticles);
+    renderBoss(bossParticles);
     renderBullets();
 
     renderGUI();        // renders game user interface
@@ -1987,6 +1984,10 @@ void renderMap()
             {
                 g_Console.writeToBuffer(x, y, (char)237, 0x8B);
             }
+            else if (map[y][x] == '"') //Book to end game
+            {
+                g_Console.writeToBuffer(x, y, (char)240, 0x8B);
+            }
             else //empty space
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x80);
@@ -2138,10 +2139,6 @@ void playerInteractions()
         player->setHealth(player->getHealth() - 2);
     }
 
-    //Enemy interaction
-    stalkerReachPlayer(stalkers);
-    projReachPlayer();
-
     if ((map[player->getY()][player->getX()] == '0') ||
         (map[player->getY()][player->getX()] == '1') || 
         (map[player->getY()][player->getX()] == '2') || 
@@ -2162,6 +2159,14 @@ void playerInteractions()
         g_Console.clearBuffer();
         gameInit();
     }
+    if (map[player->getY()][player->getX()] == '"') //book
+    {
+        //end game
+    }
+
+    //Enemy interaction
+    stalkerReachPlayer(stalkers);
+    projReachPlayer();
 }
 
 void renderCharacter()
