@@ -10,7 +10,7 @@ Player::Player()
     direction = 'R';
     charColour = 0x34;
     active = true;
-    inventory[0] = nullptr; // starting inventory ( items inside for debugging purposes rn )
+    inventory[0] = nullptr;
     inventory[1] = nullptr;
     inventory[2] = nullptr;
     inventory[3] = nullptr;
