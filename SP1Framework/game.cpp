@@ -69,6 +69,8 @@ Console g_Console(300, 64, "ESCAPE THE DUNGEON");
 char map[65][300];
 // bullet array
 Bullet* bulletArray[100] = { nullptr };
+// lv 1 Clear bool
+bool map1Clear = false;
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -114,7 +116,7 @@ void init(void)
     gameInit();
     
     // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(0, 16, L"Consolas");
+    g_Console.setConsoleFont(0, 12, L"Consolas");
 
     // remember to set your keyboard handler, so that your functions can be notified of input events
     g_Console.setKeyboardHandler(keyboardHandler);
@@ -1739,7 +1741,7 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
 
-    renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
+    /*renderEnemies(stalkers, snum, sColor);*/    // renders the enemies into the buffer 
     //renderEnemies(phantoms, pnum, pcolor);
     //renderEnemies(projectiles, projnum, projColor);
     //renderBossParticles(bossParticles);
@@ -1856,18 +1858,37 @@ void renderBullets()
 
 void loadmap()
 {
-    std::ifstream Lv1("MapLv1.txt");
-    std::string line;
-    // Init and store Map
-    int y = 0;
-    while (getline(Lv1, line)) 
+    if (map1Clear != true)
     {
-        // Output the text from the file
-        for (unsigned i = 0; i < line.length(); ++i)
+        std::ifstream Lv1("MapLv1.txt");
+        std::string line;
+        // Init and store Map
+        int y = 0;
+        while (getline(Lv1, line))
         {
-            map[y][i] = line.at(i);
+            // Output the text from the file
+            for (unsigned i = 0; i < line.length(); ++i)
+            {
+                map[y][i] = line.at(i);
+            }
+            y++;
         }
-        y++;
+    }
+    else
+    {
+        std::ifstream Lv2("MapLv2.txt");
+        std::string line;
+        // Init and store Map
+        int y = 0;
+        while (getline(Lv2, line))
+        {
+            // Output the text from the file
+            for (unsigned i = 0; i < line.length(); ++i)
+            {
+                map[y][i] = line.at(i);
+            }
+            y++;
+        }
     }
 }
 
@@ -2128,9 +2149,18 @@ void playerInteractions()
     {
         player->setHealth(player->getHealth() - 5);
     }
+    // checkpoint
     if (map[player->getY()][player->getX()] == '&')
     {
         player->setSpawnPoint(player->getX(), player->getY());
+    }
+
+    //portal
+    if (map[player->getY()][player->getX()] == '~')
+    {
+        map1Clear = true;
+        g_Console.clearBuffer();
+        gameInit();
     }
 }
 
