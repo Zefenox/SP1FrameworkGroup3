@@ -81,30 +81,6 @@ void init(void)
 {
     // assigning seed
     srand((unsigned int)time(NULL));
-
-    // Set precision for floating point output
-    g_dElapsedTime = 0.0;    
-    // sets the initial state for the game
-    g_eGameState = S_SPLASHSCREEN;
-
-    // Enemy initial state (for now some hard coded)
-    p1.m_bActive = true;
-    p2.m_bActive = true;
-    p3.m_bActive = true;
-    p4.m_bActive = true;
-    p5.m_bActive = true;
-    p1.m_cLocation.X = 150;
-    p1.m_cLocation.Y = 30;
-    p2.m_cLocation.X = 40;
-    p2.m_cLocation.Y = 50;
-    p3.m_cLocation.X = 100;
-    p3.m_cLocation.Y = 80;
-    p4.m_cLocation.X = 30;
-    p4.m_cLocation.Y = 25;
-    p5.m_cLocation.X = 200;
-    p5.m_cLocation.Y = 60;
-    randEnemyCoord(stalkers, spawnRange);
-    bossBodyCoord(bossParticles);
  
     g_dElapsedTime = 0.0;
 
@@ -134,6 +110,26 @@ void gameInit()
     for (int i = 0; i < 5; i++)
         player->setInventory(i, nullptr); // clear inventory
     player->setActive(true); // set him to be active
+
+    // initialises enemies
+    // Enemy initial state (for now some hard coded)
+    p1.m_bActive = true;
+    p2.m_bActive = true;
+    p3.m_bActive = true;
+    p4.m_bActive = true;
+    p5.m_bActive = true;
+    p1.m_cLocation.X = 150;
+    p1.m_cLocation.Y = 30;
+    p2.m_cLocation.X = 40;
+    p2.m_cLocation.Y = 50;
+    p3.m_cLocation.X = 100;
+    p3.m_cLocation.Y = 80;
+    p4.m_cLocation.X = 30;
+    p4.m_cLocation.Y = 25;
+    p5.m_cLocation.X = 200;
+    p5.m_cLocation.Y = 60;
+    randEnemyCoord(stalkers, spawnRange);
+    bossBodyCoord(bossParticles);
 
     // initialises chests
     // for floor 1
@@ -631,7 +627,7 @@ void inventoryInput()
 
 void shootInput()
 {
-    if (g_skKeyEvent[K_L].keyReleased)
+    if (g_skKeyEvent[K_L].keyReleased || g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
     {
         shoot();
     }
@@ -1554,17 +1550,44 @@ void stalkerReachPlayer(SGameChar EArr[10])
 
 void startInput()
 {
+    // (100 - 123, 28)
+    for (int x = 100; x <= 123; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 120, 31)
+    for (int x = 100; x <= 120; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
+
     if (g_skKeyEvent[K_SPACE].keyDown)
         g_eGameState = S_GAME;
     if (g_skKeyEvent[K_ESCAPE].keyDown)
         g_bQuitGame = true;
-
 }
 
 void pauseInput()
 {
     if (g_skKeyEvent[K_Q].keyDown)
         g_bQuitGame = true;
+
+    // (100 - 124, 27)
+    for (int x = 100; x <= 124; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 27 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 118, 30)
+    for (int x = 100; x <= 118; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 30 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
 }
 
 void lossInput()
@@ -1575,6 +1598,22 @@ void lossInput()
     {
         gameInit();
         g_eGameState = S_GAME;
+    }
+
+    // (30 - 53, 28)
+    for (int x = 30; x <= 53; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        {
+            gameInit();
+            g_eGameState = S_GAME;
+        }
+    }
+    // (30 - 48, 31)
+    for (int x = 30; x <= 48; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
     }
 }
 
@@ -1980,15 +2019,29 @@ void renderStartOptions()
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
     c.X = c.X / 3;
+    
+    WORD STARTcolour = 0x0F;
+    WORD QUITcolour = 0x0F;
 
     COORD cSTART = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string START = "PRESS SPACE TO START";
-    std::string QUIT = "PRESS ESC TO QUIT";
+    std::string START = "> PRESS SPACE TO START <";
+    std::string QUIT = "> PRESS ESC TO QUIT <";
 
-    g_Console.writeToBuffer(cSTART, START, 0x0c, START.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cSTART.X; x < cSTART.X + START.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cSTART.Y)
+            STARTcolour = 0x0c;
+    }
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cSTART, START, STARTcolour, START.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderPauseBase()
@@ -2013,14 +2066,30 @@ void renderPauseOptions()
     c.Y = (c.Y / 25);
     c.X = c.X / 3;
 
+    WORD CONTINUEcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
     COORD cCONTINUE = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string CONTINUE = "PRESS ESC TO CONTINUE";
-    std::string QUIT = "PRESS Q TO QUIT";
+    std::string CONTINUE = "> PRESS ESC TO CONTINUE <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
 
-    g_Console.writeToBuffer(cCONTINUE, CONTINUE, 0x0c, CONTINUE.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cCONTINUE.X; x < cCONTINUE.X + CONTINUE.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cCONTINUE.Y)
+            CONTINUEcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cCONTINUE, CONTINUE, CONTINUEcolour, CONTINUE.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
+
 }
 
 void renderLossOptions()
@@ -2029,17 +2098,32 @@ void renderLossOptions()
     c.Y = (c.Y / 20);
     c.X = c.X / 10;
 
+    WORD RETRYcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
     COORD cLOST = { c.X, c.Y + 22 };
     COORD cRETRY = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
     std::string LOST = "YOU LOST";
-    std::string RETRY = "PRESS SPACE TO RETRY";
-    std::string QUIT = "PRESS Q TO QUIT";
+    std::string RETRY = "> PRESS SPACE TO RETRY <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
 
-    g_Console.writeToBuffer(cLOST, LOST, 0x0c, LOST.length());
-    g_Console.writeToBuffer(cRETRY, RETRY, 0x0c, RETRY.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cRETRY.X; x < cRETRY.X + RETRY.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cRETRY.Y)
+            RETRYcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cLOST, LOST, 0x0f, LOST.length());
+    g_Console.writeToBuffer(cRETRY, RETRY, RETRYcolour, RETRY.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderGUI() // render game user inferface
