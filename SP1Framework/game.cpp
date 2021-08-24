@@ -146,8 +146,7 @@ void gameInit()
         p4.m_cLocation.Y = 25;
         p5.m_cLocation.X = 200;
         p5.m_cLocation.Y = 60;
-        randEnemyCoord(stalkers, spawnRange);
-        bossBodyCoord(bossParticles);
+        bossBodyCoord(bossParticles, 150, 50);
     }
 
     if (map1Clear)
