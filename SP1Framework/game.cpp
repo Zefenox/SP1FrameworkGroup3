@@ -1802,9 +1802,13 @@ void renderStartmap()
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x00);
             }
-            else if (map[y][x] == '"')
+            else if (map[y][x] == '!')
             {
                 g_Console.writeToBuffer(x, y, ' ', 0xCC);
+            }
+            else if (map[y][x] == '"')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x44);
             }
             else //empty space
             {
@@ -1833,11 +1837,17 @@ void bulletInteraction()
         if (bulletArray[i] != nullptr)
         {
             bulletArray[i]->updatebulletpos();
-            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
+            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || 
+                bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || 
+                map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
             {
                 delete bulletArray[i];
                 bulletArray[i] = nullptr;
             }
+            // detect enemies
+
+
+
         }
     }
 }
