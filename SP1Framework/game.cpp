@@ -87,6 +87,7 @@ void init(void)
     // assigning seed
     srand((unsigned int)time(NULL));
 
+
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
     // sets the initial state for the game
@@ -175,7 +176,7 @@ void gameInit()
         p4.m_cLocation.Y = 25;
         p5.m_cLocation.X = 200;
         p5.m_cLocation.Y = 60;
-       // bossBodyCoord(bossParticles, 180, 15);
+        //bossBodyCoord(bossParticles, 180, 15);
     }
 
     if (map1Clear)
@@ -790,6 +791,7 @@ void bossBodyCoord(SGameChar BArr[9], int x, int y)
 
 void bossMovement(SGameChar BArr[9])
 {
+    int count = 0;
     bool fire = false;
     int dir = (rand() % 2) + 1;
     int x, y;
@@ -819,35 +821,37 @@ void bossMovement(SGameChar BArr[9])
     }*/
     bossSearchPlayer(bossParticles);
     bossAttackSeq();
-    if(bossProj() == 's')
+    if(bossProj() == 't')
    
         fire = true;
-        bpro.m_cLocation.X--;
-    
-        if(fire == true)
+    if(fire == true)
+    bpro.m_cLocation.X = bossParticles[4].m_cLocation.X;
+    bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+    bpro.m_cLocation.X--;
+            if (player->getX() < bpro.m_cLocation.X)
+            {
+                bpro.m_cLocation.X--;
+            }
+            else if (player->getX() > bpro.m_cLocation.X)
+            {
+                bpro.m_cLocation.X++;
+            }
+            else if (player->getY() < bpro.m_cLocation.Y)
+            {
+                bpro.m_cLocation.Y--;
+            }
+            else if (player->getY() > bpro.m_cLocation.Y)
+            {
+                bpro.m_cLocation.Y++;
+            }
            
            
-    bossSearchPlayer(bossParticles);
-    bossAttackSeq();
-    if (bossProj() != 's')
-    {
-        if (player->getX() < bpro.m_cLocation.X)
-        {
-            bpro.m_cLocation.X--;
-        }
-        else if (player->getX() > bpro.m_cLocation.X)
-        {
-            bpro.m_cLocation.X++;
-        }
-        else if (player->getY() < bpro.m_cLocation.Y)
-        {
-            bpro.m_cLocation.Y--;
-        }
-        else if (player->getY() > bpro.m_cLocation.Y)
-        {
-            bpro.m_cLocation.Y++;
-        }
-    }
+  /*  bossSearchPlayer(bossParticles);
+    bossAttackSeq();*/
+   /* if (bossProj() != 's')
+    {*/
+        
+   // }
     bossDeath();
 }
 
@@ -1321,6 +1325,9 @@ void projReachPlayer()
     {
         player->setHealth(player->getHealth() - 10);
         bpro.m_bActive = false;
+        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X;
+        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+
     }
 }
 
