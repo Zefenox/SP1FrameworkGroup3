@@ -2026,6 +2026,7 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
     renderBullets();
+    renderInteractions();
 
     renderGUI();        // renders game user interface
 
@@ -2056,6 +2057,23 @@ void loadStartmap()
     // Init and store Map
     int y = 0;
     while (getline(startscreen, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+}
+
+void loadLosescreen()
+{
+    std::ifstream losescreen("LoseScreen.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(losescreen, line)) {
         // Output the text from the file
         for (unsigned i = 0; i < line.length(); ++i)
         {
@@ -2607,6 +2625,29 @@ void playerInteractions()
         g_Console.clearBuffer();
         gameInit();
     }
+}
+
+void renderInteractions()
+{
+    // trap interaction
+    if (map[player->getY()][player->getX()] == '!')
+    {
+        g_Console.writeToBuffer(player->getX() - 5, player->getY() - 1, "Wah Pain Lah!");
+    }
+    // checkpoint
+    if (map[player->getY()][player->getX()] == '&')
+    {
+        g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "YAY Checkpoint!!!");
+    }
+    // chests
+    //for (int i = 0; i < 10; i++) // player interacts with a chest
+
+    //{
+    //    if (player->getX() == chest[i]->getX() && player->getY() == chest[i]->getY()) // check for same position
+    //    {
+    //        g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "WOW A CHEST COOL!!!");
+    //    }
+    //}
 }
 
 void renderCharacter()
