@@ -75,6 +75,9 @@ Bullet* bulletArray[100] = { nullptr };
 // lv 1 Clear bool
 bool map1Clear = false;
 
+int dis = 0;
+double cap = 1.0;
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -489,8 +492,21 @@ void update(double dt)
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to start screen, else do nothing
+    if (g_dElapsedTime > 5.0)
+    {
         g_eGameState = S_STARTSCREEN;
+    }
+    else {
+        /*if (g_dElapsedTime < 2.0)
+        {
+            renderSplashScreen();
+        }*/
+        
+
+    }
+    
+     // wait for 3 seconds to switch to start screen, else do nothing
+        
 
 
     /*processUserInput();*/
@@ -1896,7 +1912,7 @@ void render()
         break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
-    renderInputEvents();    // renders status of input events
+    //renderInputEvents();    // renders status of input events
     renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
 }
 
@@ -1972,22 +1988,16 @@ void renderToScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
-    loadStartmap();
 
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
+    
 
     //render's BG
     COORD size = g_Console.getConsoleSize();
-    /*while (g_dElapsedTime)
-    {
-
-    }*/
-    for (int pos = 0; pos < 40; pos++)
+    
+    if (g_dElapsedTime < 4)
     {
         g_Console.clearBuffer();
+        dis++;
         for (int i = 0; i < size.Y; i++)
         {
             for (int x = 0; x < size.X; x++)
@@ -1995,14 +2005,25 @@ void renderSplashScreen()  // renders the splash screen
                 g_Console.writeToBuffer(x, i, " ", 0x80);
             }
         }
-        renderTitle(100,65 - pos);
+        renderTitle(100, 65 - dis);
+    }
+    else
+    {
+        for (int i = 0; i < size.Y; i++)
+        {
+            for (int x = 0; x < size.X; x++)
+            {
+                g_Console.writeToBuffer(x, i, " ", 0x80);
+            }
+        }
+        renderTitle(100, 20);
     }
     
 }
 
 void renderStart()
 {
-    
+    loadStartmap();
     renderStartmap();
     renderTitle(30,10);
     renderStartOptions();
@@ -2358,7 +2379,7 @@ void renderPauseBase()
     {
         for (int i = 0; i < c.X; i++)
         {
-            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0x33);
+            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0);
         }
         c.Y++;
     }
@@ -2397,6 +2418,14 @@ void renderPauseOptions()
 
 void renderLossOptions()
 {
+    for (int y = 0; y < 65; y++) // renders bg
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            g_Console.writeToBuffer(x, y, ' ', 0);
+        }
+    }
+
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
     c.X = c.X / 10;
@@ -2408,7 +2437,7 @@ void renderLossOptions()
     COORD cRETRY = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string LOST = "YOU LOST";
+    std::string LOST = "YOU LOST :(";
     std::string RETRY = "> PRESS SPACE TO RETRY <";
     std::string QUIT = "> PRESS Q TO QUIT <";
 
@@ -2437,18 +2466,36 @@ void renderGUI() // render game user inferface
     std::string inventoryList = "Inventory: ";
     std::string tempStr;
 
-    WORD healthColour = 0x0f;
+    WORD healthColour = 0xAF;
+    WORD healthBarColor = 0xAA;
 
     if (player->getHealth() <= 75)
+    {
         healthColour = 14;
+        healthBarColor = 0xEE;
+    }
     if (player->getHealth() <= 50)
+    {
         healthColour = 12;
+        healthBarColor = 0xCC;
+    }
+        
     if (player->getHealth() <= 25)
+    {
         healthColour = 4;
+        healthBarColor = 0x44;
+    }
+        
     // yellow = 14, light red = 12, red = 4
     g_Console.writeToBuffer(1, 1, objective, 0x0f, objective.length());
     g_Console.writeToBuffer(1, 2, lifeBar, 0x0f, lifeBar.length());
-    g_Console.writeToBuffer(1, 3, healthBar, healthColour, healthBar.length());
+    g_Console.writeToBuffer(50, 1, healthBar, healthColour, healthBar.length());
+    // health bar
+    for (int i = 0;i < player->getHealth(); i++)
+    {
+        g_Console.writeToBuffer(70 + i, 1, ' ', healthBarColor);
+    }
+
     g_Console.writeToBuffer(1, 6, inventoryList, 0x0f, inventoryList.length());
 
     for (int i = 0; i < 5; i++) // print inventory contents
