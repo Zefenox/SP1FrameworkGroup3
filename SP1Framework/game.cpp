@@ -55,6 +55,7 @@ int projnum = 60;
 
 SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9;
 SGameChar bossParticles[9] = { b1,b2,b3,b4,b5,b6,b7,b8,b9 };
+SGameChar bpro;
 int bossHp = 150;
 
 Player* player = new Player; // player initialisation
@@ -88,7 +89,8 @@ void init(void)
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    // Enemy initial state (for now some hard coded)
+    // Enemy initial state
+    bpro.m_bActive = true;
     p1.m_bActive = true;
     p2.m_bActive = true;
     p3.m_bActive = true;
@@ -489,7 +491,7 @@ void updateGame()       // gameplay logic
     phantomMovement3();
     phantomMovement4();
     phantomMovement5();
-    //bossMovement(bossParticles);
+    bossMovement(bossParticles);
     playerInteractions();
     bulletInteraction();
     // interactions
@@ -741,62 +743,137 @@ void bossBodyCoord(SGameChar BArr[9], int x, int y)
     }
 }
 
-void bossMovement(SGameChar BArr[15])
+void bossMovement(SGameChar BArr[9])
 {
     int dir = (rand() % 4) + 1;
-    for (int i = 0; i < 15; i++)
+    int x, y;
+    for (int i = 0; i < 9; i++)
     {
+        x = BArr[i].m_cLocation.X;
+        y = BArr[i].m_cLocation.Y;
+
         switch (dir)
         {
             //Up
         case 1:
-            if (BArr[i].m_cLocation.Y > 0 && BArr[i].m_cLocation.Y < 5)
+            if (BArr[i].m_cLocation.Y > 0)
             {
-                BArr[i].m_cLocation.Y--;
+                if(map[y - 1][x] != '#')
+                    BArr[i].m_cLocation.Y--;
             }
             break;
             //Left
         case 2:
-            if (BArr[i].m_cLocation.X > 0 && BArr[i].m_cLocation.X < 5)
+            if (BArr[i].m_cLocation.X > 0)
             {
-                BArr[i].m_cLocation.X--;
+                if(map[y][x + 1] != '#')
+                    BArr[i].m_cLocation.X++;
             }
             break;
             //Down
         case 3:
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 20)
+            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-                BArr[i].m_cLocation.Y++;
+                if(map[y + 1][x] != '#')
+                    BArr[i].m_cLocation.Y++;
             }
             break;
             //Right
         case 4:
-            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 20)
+            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
-                BArr[i].m_cLocation.X++;
-
+                if (map[y][x - 1] != '#')
+                    BArr[i].m_cLocation.X--;
             }
-            break;
-
-        default:
             break;
         }
     }
+    bossSearchPlayer(bossParticles);
+    bossAttackSeq();
+    if (bossProj() != 's')
+    {
+        if (player->getX() < bpro.m_cLocation.X)
+        {
+            bpro.m_cLocation.X--;
+        }
+        else if (player->getX() > bpro.m_cLocation.X)
+        {
+            bpro.m_cLocation.X++;
+        }
+        else if (player->getY() < bpro.m_cLocation.Y)
+        {
+            bpro.m_cLocation.Y--;
+        }
+        else if (player->getY() > bpro.m_cLocation.Y)
+        {
+            bpro.m_cLocation.Y++;
+        }
+    }
+    bossDeath();
 }
 
-void bossSearchPlayer()
+char bossSearchPlayer(SGameChar BArr[9])
 {
+    int diagX, diagY;
+    int final = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        // same lanes
+        if((player->getX() == BArr[i].m_cLocation.X) ||
+            (player->getY() == BArr[i].m_cLocation.Y))
+            if ((player->getX() - BArr[i].m_cLocation.X <= 10) &&
+                (player->getY() - BArr[i].m_cLocation.Y <= 10))
+            {
+                return 'y';
+            }
+       else
+       {
+            diagX = player->getX() - BArr[i].m_cLocation.Y;
+            diagY = player->getY() - BArr[i].m_cLocation.X;
+            if (diagX < 0)
+            {
+                diagX *= -1;
+            }
+            if (diagY < 0)
+            {
+                diagY *= -1;
+            }
+            final += diagX += diagY;
+            if (final <= 10)
+            {
+                return 'y';
+            }
+       }
+
+    }
     
+    return 'n';
 }
 
 void bossAttackSeq()
 {
+    if (bossSearchPlayer(bossParticles) != 'n')
+    {
+        bossProj();
+    }
+}
 
+char bossProj()
+{
+    bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 1;
+    bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+    return 'f';
 }
 
 void bossDeath()
 {
-
+    if (bossHp == 0)
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            bossParticles[i].m_bActive = false;
+        }
+    }
 }
 
 void phantomMovement()
@@ -1954,7 +2031,29 @@ void bulletInteraction()
                     bulletArray[i] = nullptr;
                     return;
                 }
-                
+            }
+            // detect boss
+            for (int j = 0; j < 9; j++)
+            {
+                if (j == 0 || j == 2 || j == 6 || j == 8)
+                {
+                    if ((bossParticles[j].m_cLocation.X == x) && (bossParticles[j].m_cLocation.Y == y))
+                    {
+                        bossHp - 5;
+                        delete bulletArray[i];
+                        bulletArray[i] = nullptr;
+                        return;
+                    }
+                }
+            }
+            // detect boss bullet
+            if ((x == bpro.m_cLocation.X) && (y == bpro.m_cLocation.Y))
+            {
+                bpro.m_bActive = false;
+                delete bulletArray[i];
+                bulletArray[i] = nullptr;
+                return;
+
             }
 
         }
@@ -2329,6 +2428,11 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 
     if (pro5.m_bActive == true)
         g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
+
+    if (bpro.m_bActive == true)
+    {
+        g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
+    }
 }
 
 //void renderBossParticles(SGameChar BArr[9])
@@ -2376,10 +2480,6 @@ void renderBoss(SGameChar BArr[9])
                     }
                     break;
                 }
-            }
-            else if (bossHp == 0)
-            {
-                g_Console.writeToBuffer(BArr[i].m_cLocation, (char)68, bossColor);
             }
             else
             {

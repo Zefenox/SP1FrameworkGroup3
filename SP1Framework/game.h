@@ -112,9 +112,10 @@ void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
 void bossMovement(SGameChar BArr[9]); // Boss movement
-void bossAttackSeq();           // Boss attack
-void bossSearchPlayer();
-void bossDeath(SGameChar BArr[9]);
+void bossAttackSeq(); // Boss attack
+char bossSearchPlayer(SGameChar BArr[9]);
+char bossProj();
+void bossDeath();
 //phantom movements (Hardcoded for now)
 void phantomMovement();
 void phantomMovement2();
