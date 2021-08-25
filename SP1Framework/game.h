@@ -34,6 +34,9 @@ enum EKEYS
     K_A, //K_LEFT
     K_D, //K_RIGHT
     K_Q,
+    K_T,
+    K_Y,
+    K_U,
     K_1,
     K_2, 
     K_3,
@@ -78,6 +81,7 @@ void updateStart();         // updates start menu
 void updateGame();          // gameplay logic
 void updatePause();
 void updateLoss();
+void cheatInput();
 void inventoryInput();
 void startInput();
 void pauseInput();
