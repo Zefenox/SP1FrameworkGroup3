@@ -758,7 +758,13 @@ void bossMovement(SGameChar BArr[9])
         case 1:
             if (BArr[i].m_cLocation.Y > 0)
             {
-                if(map[y - 1][x] != '#')
+                if ((map[y - 1][x] != '#') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']')&&
+                    (map[y - 1][x] != '=') && 
+                    (map[y - 1][x] != (char)43) &&
+                    (map[y - 1][x] != (char)33))
+
                     BArr[i].m_cLocation.Y--;
             }
             break;
@@ -766,7 +772,13 @@ void bossMovement(SGameChar BArr[9])
         case 2:
             if (BArr[i].m_cLocation.X > 0)
             {
-                if(map[y][x + 1] != '#')
+                if ((map[y][x + 1] != '#') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']') &&
+                    (map[y - 1][x] != '=') &&
+                    (map[y - 1][x] != (char)43) &&
+                    (map[y - 1][x] != (char)33))
+
                     BArr[i].m_cLocation.X++;
             }
             break;
@@ -774,7 +786,13 @@ void bossMovement(SGameChar BArr[9])
         case 3:
             if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-                if(map[y + 1][x] != '#')
+                if ((map[y + 1][x] != '#') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']') &&
+                    (map[y - 1][x] != '=') &&
+                    (map[y - 1][x] != (char)43) &&
+                    (map[y - 1][x] != (char)33))
+
                     BArr[i].m_cLocation.Y++;
             }
             break;
@@ -782,7 +800,12 @@ void bossMovement(SGameChar BArr[9])
         case 4:
             if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
-                if (map[y][x - 1] != '#')
+                if ((map[y][x - 1] != '#') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']') &&
+                    (map[y - 1][x] != '=') &&
+                    (map[y - 1][x] != (char)43) &&
+                    (map[y - 1][x] != (char)33))
                     BArr[i].m_cLocation.X--;
             }
             break;
@@ -2157,7 +2180,7 @@ void renderMap()
             {
                 g_Console.writeToBuffer(x, y, (char)177, 0x8C);
             }
-            else if (map[y][x] == '$') //Dungeon gate, cannot pass
+            else if (map[y][x] == '$') //Dungeon gate, can pass
             {
                 g_Console.writeToBuffer(x, y, (char)215, 0x86);
             }
@@ -2205,7 +2228,7 @@ void renderMap()
             {
                 g_Console.writeToBuffer(x, y, (char)237, 0x8B);
             }
-            else if (map[y][x] == '"') //Checkpoint, sets player spawn pos
+            else if (map[y][x] == '"') //book, ends game
             {
                 g_Console.writeToBuffer(x, y, (char)240, 0x8B);
             }
