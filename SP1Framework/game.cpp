@@ -86,7 +86,6 @@ void init(void)
 {
     // assigning seed
     srand((unsigned int)time(NULL));
-<<<<<<< HEAD
 
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
@@ -113,8 +112,6 @@ void init(void)
     p5.m_cLocation.Y = 45;
     setStalkerCoords(stalkers);
     bossBodyCoord(bossParticles, 20, 8);
-=======
->>>>>>> a7d645c1f5441b5fb31017ba571617a589e91adb
  
     g_dElapsedTime = 0.0;
 
@@ -828,72 +825,8 @@ void bossMovement(SGameChar BArr[9])
         bpro.m_cLocation.X--;
     
         if(fire == true)
-            if (player->getX() > bpro.m_cLocation.X)
-            {
-<<<<<<< HEAD
-                bpro.m_cLocation.X++;
-            }
-            else if (player->getX() < bpro.m_cLocation.X)
-=======
-                if ((map[y - 2][x] != '#') &&
-                    (map[y - 2][x] != '[') &&
-                    (map[y - 2][x] != ']')&&
-                    (map[y - 2][x] != '=') && 
-                    (map[y - 2][x] != (char)43) &&
-                    (map[y - 2][x] != (char)33))
-
-                    BArr[i].m_cLocation.Y--;
-            }
-            break;
-            //Left
-        case 2:
-            if (BArr[i].m_cLocation.X > 0)
->>>>>>> a7d645c1f5441b5fb31017ba571617a589e91adb
-            {
-                bpro.m_cLocation.X--;
-            }
-<<<<<<< HEAD
-            else if (player->getY() > bpro.m_cLocation.Y)
-            {
-                bpro.m_cLocation.Y++;
-            }
-            else if (player->getY() < bpro.m_cLocation.Y)
-=======
-            break;
-            //Down
-        case 3:
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            {
-                if ((map[y + 2][x] != '#') &&
-                    (map[y + 2][x] != '[') &&
-                    (map[y + 2][x] != ']') &&
-                    (map[y + 2][x] != '=') &&
-                    (map[y + 2][x] != (char)43) &&
-                    (map[y + 2][x] != (char)33))
-
-                    BArr[i].m_cLocation.Y++;
-            }
-            break;
-            //Right
-        case 4:
-            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
->>>>>>> a7d645c1f5441b5fb31017ba571617a589e91adb
-            {
-                bpro.m_cLocation.Y--;
-            }
-<<<<<<< HEAD
-            else if ((player->getX() == bpro.m_cLocation.X) &&
-                (player->getY() == bpro.m_cLocation.Y))
-            {
-                player->setHealth(player->getHealth() - 1);
-                bpro.m_bActive = false;
-            
-            }
-
-=======
-            break;
-        }
-    }
+           
+           
     bossSearchPlayer(bossParticles);
     bossAttackSeq();
     if (bossProj() != 's')
@@ -915,7 +848,6 @@ void bossMovement(SGameChar BArr[9])
             bpro.m_cLocation.Y++;
         }
     }
->>>>>>> a7d645c1f5441b5fb31017ba571617a589e91adb
     bossDeath();
 }
 
@@ -926,35 +858,34 @@ char bossSearchPlayer(SGameChar BArr[9])
     for (int i = 0; i < 9; i++)
     {
         // same lanes
-        if((player->getX() == BArr[i].m_cLocation.X) ||
+        if ((player->getX() == BArr[i].m_cLocation.X) ||
             (player->getY() == BArr[i].m_cLocation.Y))
             if ((player->getX() - BArr[i].m_cLocation.X <= 10) &&
                 (player->getY() - BArr[i].m_cLocation.Y <= 10))
             {
                 return 'y';
             }
-       else
-       {
-            diagX = player->getX() - BArr[i].m_cLocation.Y;
-            diagY = player->getY() - BArr[i].m_cLocation.X;
-            if (diagX < 0)
+            else
             {
-                diagX *= -1;
+                diagX = player->getX() - BArr[i].m_cLocation.Y;
+                diagY = player->getY() - BArr[i].m_cLocation.X;
+                if (diagX < 0)
+                {
+                    diagX *= -1;
+                }
+                if (diagY < 0)
+                {
+                    diagY *= -1;
+                }
+                final += diagX += diagY;
+                if (final <= 10)
+                {
+                    return 'y';
+                }
             }
-            if (diagY < 0)
-            {
-                diagY *= -1;
-            }
-            final += diagX += diagY;
-            if (final <= 10)
-            {
-                return 'y';
-            }
-       }
 
+        return 'n';
     }
-    
-    return 'n';
 }
 
 bool bossAttackSeq()
