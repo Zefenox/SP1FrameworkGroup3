@@ -2372,7 +2372,7 @@ void renderPauseBase()
     {
         for (int i = 0; i < c.X; i++)
         {
-            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0x33);
+            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0);
         }
         c.Y++;
     }
@@ -2411,6 +2411,14 @@ void renderPauseOptions()
 
 void renderLossOptions()
 {
+    for (int y = 0; y < 65; y++) // renders bg
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            g_Console.writeToBuffer(x, y, ' ', 0);
+        }
+    }
+
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
     c.X = c.X / 10;
@@ -2422,7 +2430,7 @@ void renderLossOptions()
     COORD cRETRY = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string LOST = "YOU LOST";
+    std::string LOST = "YOU LOST :(";
     std::string RETRY = "> PRESS SPACE TO RETRY <";
     std::string QUIT = "> PRESS Q TO QUIT <";
 
