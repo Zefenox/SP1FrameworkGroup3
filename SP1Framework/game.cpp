@@ -758,57 +758,57 @@ void bossMovement(SGameChar BArr[9])
         case 1:
             if (BArr[i].m_cLocation.Y > 0)
             {
-                if ((map[y - 1][x] != '#') &&
-                    (map[y - 1][x] != '[') &&
-                    (map[y - 1][x] != ']')&&
-                    (map[y - 1][x] != '=') && 
-                    (map[y - 1][x] != (char)43) &&
-                    (map[y - 1][x] != (char)33))
+                if (map[y - 2][x] != '#')// &&
+                    /*(map[y - 2][x] != '[') &&
+                    (map[y - 2][x] != ']')&&
+                    (map[y - 2][x] != '=') && 
+                    (map[y - 2][x] != (char)43) &&
+                    (map[y - 2][x] != (char)33))*/
 
                     BArr[i].m_cLocation.Y--;
             }
             break;
             //Left
-        case 2:
+        /*case 2:
             if (BArr[i].m_cLocation.X > 0)
             {
-                if ((map[y][x + 1] != '#') &&
-                    (map[y - 1][x] != '[') &&
-                    (map[y - 1][x] != ']') &&
-                    (map[y - 1][x] != '=') &&
-                    (map[y - 1][x] != (char)43) &&
-                    (map[y - 1][x] != (char)33))
+                if ((map[y][x + 2] != '#') &&
+                    (map[y][x + 2] != '[') &&
+                    (map[y][x + 2] != ']') &&
+                    (map[y][x + 2] != '=') &&
+                    (map[y][x + 2] != (char)43) &&
+                    (map[y][x + 2] != (char)33))
 
                     BArr[i].m_cLocation.X++;
             }
-            break;
+            break;*/
             //Down
         case 3:
             if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-                if ((map[y + 1][x] != '#') &&
-                    (map[y - 1][x] != '[') &&
-                    (map[y - 1][x] != ']') &&
-                    (map[y - 1][x] != '=') &&
-                    (map[y - 1][x] != (char)43) &&
-                    (map[y - 1][x] != (char)33))
+                if (map[y + 2][x] != '#')// &&
+                    /*(map[y + 2][x] != '[') &&
+                    (map[y + 2][x] != ']') &&
+                    (map[y + 2][x] != '=') &&
+                    (map[y + 2][x] != (char)43) &&
+                    (map[y + 2][x] != (char)33))*/
 
                     BArr[i].m_cLocation.Y++;
             }
             break;
             //Right
-        case 4:
+        /*case 4:
             if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
-                if ((map[y][x - 1] != '#') &&
-                    (map[y - 1][x] != '[') &&
-                    (map[y - 1][x] != ']') &&
-                    (map[y - 1][x] != '=') &&
-                    (map[y - 1][x] != (char)43) &&
-                    (map[y - 1][x] != (char)33))
+                if ((map[y][x - 2] != '#') &&
+                    (map[y][x - 2] != '[') &&
+                    (map[y][x - 2] != ']') &&
+                    (map[y][x - 2] != '=') &&
+                    (map[y][x - 2] != (char)43) &&
+                    (map[y][x - 2] != (char)33))
                     BArr[i].m_cLocation.X--;
             }
-            break;
+            break;*/
         }
     }
     bossSearchPlayer(bossParticles);
