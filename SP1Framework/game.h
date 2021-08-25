@@ -97,7 +97,7 @@ void loadStartmap();
 void renderStartmap();
 void shootInput();
 void shoot();
-void bulletInteraction(SGameChar EArr[10]);
+void bulletInteraction();
 void renderBullets();
 
 void renderCharacter();     // renders the character into the buffer

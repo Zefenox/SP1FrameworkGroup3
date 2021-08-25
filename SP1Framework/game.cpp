@@ -99,11 +99,11 @@ void init(void)
     p2.m_cLocation.X = 40;
     p2.m_cLocation.Y = 50;
     p3.m_cLocation.X = 100;
-    p3.m_cLocation.Y = 80;
-    p4.m_cLocation.X = 30;
+    p3.m_cLocation.Y = 50;
+    p4.m_cLocation.X = 50;
     p4.m_cLocation.Y = 25;
     p5.m_cLocation.X = 150;
-    p5.m_cLocation.Y = 80;
+    p5.m_cLocation.Y = 45;
     setStalkerCoords(stalkers);
     bossBodyCoord(bossParticles, 180, 15);
  
@@ -491,7 +491,7 @@ void updateGame()       // gameplay logic
     phantomMovement5();
     //bossMovement(bossParticles);
     playerInteractions();
-    bulletInteraction(stalkers);
+    bulletInteraction();
     // interactions
     player->PlayerUpdate(); // checks for updates to player status
 
@@ -801,48 +801,37 @@ void bossDeath()
 
 void phantomMovement()
 {
-        int diagdir = (rand() % 4) + 1;
+        int dir = (rand() % 4) + 1;
         int x, y;
         x = p1.m_cLocation.X;
         y = p1.m_cLocation.Y;
-        switch (diagdir)
+        switch (dir)
         {
         case 1:
-            if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-                && (p1.m_cLocation.Y > 0))
+            if (p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
-                if((map[y - 1][x + 1] != '#') &&
-                    (map[y - 1][x + 1] != '='))
-                    p1.m_cLocation.X++;
-                    p1.m_cLocation.Y--;
+                if(map[y][x - 1] != '#')
+                    p1.m_cLocation.X--;
             }
             break;
         case 2:
-            if ((p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-                && (p1.m_cLocation.X > 0))
+            if (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-                if ((map[y + 1][x - 1] != '#') &&
-                    (map[y + 1][x - 1] != '='))
-                    p1.m_cLocation.X--;
+                if (map[y + 1][x] != '#')
                     p1.m_cLocation.Y++;
             }
             break;
         case 3:
-            if ((p1.m_cLocation.Y > 0) && (p1.m_cLocation.X > 0))
+            if (p1.m_cLocation.Y > 0)
             {
-                if ((map[y - 1][x - 1] != '#') &&
-                    (map[y - 1][x - 1] != '='))
+                if(map[y - 1][x] != '#')
                     p1.m_cLocation.Y--;
-                    p1.m_cLocation.X--;
             }
             break;
         case 4:
-            if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-                && (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+            if (p1.m_cLocation.X > 0)
             {
-                if ((map[y + 1][x + 1] != '#') &&
-                    (map[y + 1][x + 1] != '='))
-                    p1.m_cLocation.Y++;
+                if (map[y][x + 1] != '#')
                     p1.m_cLocation.X++;
             }
             break;
@@ -857,48 +846,37 @@ void phantomMovement()
 
 void phantomMovement2()
 {
-    int diagdir = (rand() % 4) + 1;
+    int dir = (rand() % 4) + 1;
     int x, y;
     x = p2.m_cLocation.X;
     y = p2.m_cLocation.Y;
-    switch (diagdir)
+    switch (dir)
     {
     case 4:
-        if ((p2.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p2.m_cLocation.Y > 0))
+        if (p2.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-            if ((map[y - 1][x + 1] != '#') &&
-                (map[y - 1][x + 1] != '='))
-                p2.m_cLocation.X++;
-                p2.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p2.m_cLocation.X--;
         }
         break;
     case 3:
-        if ((p2.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p2.m_cLocation.X > 0))
+        if (p2.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            if ((map[y + 1][x - 1] != '#') &&
-                (map[y + 1][x - 1] != '='))
-                p2.m_cLocation.X--;
+            if (map[y + 1][x] != '#')
                 p2.m_cLocation.Y++;
         }
         break;
     case 2:
-        if ((p2.m_cLocation.Y > 0) && (p2.m_cLocation.X > 0))
+        if (p2.m_cLocation.Y > 0)
         {
-            if ((map[y - 1][x - 1] != '#') &&
-                (map[y - 1][x +-1] != '='))
+            if (map[y - 1][x] != '#')
                 p2.m_cLocation.Y--;
-                p2.m_cLocation.X--;
         }
         break;
     case 1:
-        if ((p2.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p2.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p2.m_cLocation.X > 0)
         {
-            if ((map[y + 1][x + 1] != '#') &&
-                (map[y + 1][x + 1] != '='))
-                p2.m_cLocation.Y++;
+            if (map[y][x + 1] != '#')
                 p2.m_cLocation.X++;
         }
         break;
@@ -913,49 +891,38 @@ void phantomMovement2()
 
 void phantomMovement3()
 {
-    int diagdir = (rand() % 4) + 1;
+    int dir = (rand() % 4) + 1;
     int x, y;
     x = p3.m_cLocation.X;
     y = p3.m_cLocation.Y;
     
-    switch (diagdir)
+    switch (dir)
     {
     case 2:
-        if ((p3.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p3.m_cLocation.Y > 0))
+        if (p3.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-            if ((map[y - 1][x + 1] != '#') &&
-                (map[y - 1][x + 1] != '='))
-                p3.m_cLocation.X++;
-                p3.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p3.m_cLocation.X--;
         }
         break;
     case 3:
-        if ((p3.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p3.m_cLocation.X > 0))
+        if (p3.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            if ((map[y + 1][x - 1] != '#') &&
-                (map[y + 1][x - 1] != '='))
-                p3.m_cLocation.X--;
+            if (map[y + 1][x] != '#')
                 p3.m_cLocation.Y++;
         }
         break;
     case 4:
-        if ((p3.m_cLocation.Y > 0) && (p3.m_cLocation.X > 0))
+        if (p3.m_cLocation.Y > 0)
         {
-            if ((map[y - 1][x - 1] != '#') &&
-                (map[y - 1][x - 1] != '='))
+            if (map[y - 1][x] != '#')
                 p3.m_cLocation.Y--;
-                p3.m_cLocation.X--;
         }
         break;
     case 1:
-        if ((p3.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p3.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p3.m_cLocation.X > 0)
         {
-            if ((map[y + 1][x + 1] != '#') &&
-                (map[y + 1][x + 1] != '='))
-                p3.m_cLocation.Y++;
+            if (map[y][x + 1] != '#')
                 p3.m_cLocation.X++;
         }
         break;
@@ -970,48 +937,37 @@ void phantomMovement3()
 
 void phantomMovement4()
 {
-    int diagdir = (rand() % 4) + 1;
+    int dir = (rand() % 4) + 1;
     int x, y;
     x = p4.m_cLocation.X;
     y = p4.m_cLocation.Y;
-    switch (diagdir)
+    switch (dir)
     {
     case 2:
-        if ((p4.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p4.m_cLocation.Y > 0))
+        if (p4.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-            if ((map[y - 1][x + 1] != '#') &&
-                (map[y - 1][x + 1] != '='))
-                p4.m_cLocation.X++;
-                p4.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p4.m_cLocation.X--;
         }
         break;
     case 3:
-        if ((p4.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p4.m_cLocation.X > 0))
+        if (p4.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            if ((map[y + 1][x - 1] != '#') &&
-                (map[y + 1][x - 1] != '='))
-                p4.m_cLocation.X--;
+            if (map[y + 1][x] != '#')
                 p4.m_cLocation.Y++;
         }
         break;
     case 1:
-        if ((p4.m_cLocation.Y > 0) && (p4.m_cLocation.X > 0))
+        if (p4.m_cLocation.Y > 0)
         {
-            if ((map[y - 1][x - 1] != '#') &&
-                (map[y - 1][x - 1] != '='))
+            if (map[y - 1][x] != '#')
                 p4.m_cLocation.Y--;
-                p4.m_cLocation.X--;
         }
         break;
     case 4:
-        if ((p4.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p4.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p4.m_cLocation.X > 0)
         {
-            if ((map[y + 1][x + 1] != '#') &&
-                (map[y + 1][x + 1] != '='))
-                p4.m_cLocation.Y++;
+            if (map[y][x + 1] != '#')
                 p4.m_cLocation.X++;
         }
         break;
@@ -1027,48 +983,37 @@ void phantomMovement4()
 
 void phantomMovement5()
 {
-    int diagdir = (rand() % 4) + 1;
+    int dir = (rand() % 4) + 1;
     int x, y;
     x = p5.m_cLocation.X;
     y = p5.m_cLocation.Y;
-    switch (diagdir)
+    switch (dir)
     {
     case 3:
-        if ((p5.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p5.m_cLocation.Y > 0))
+        if (p5.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-            if ((map[y - 1][x + 1] != '#') &&
-                (map[y - 1][x + 1] != '='))
-                p5.m_cLocation.X++;
-                p5.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p5.m_cLocation.X--;
         }
         break;
     case 4:
-        if ((p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p5.m_cLocation.X > 0))
+        if (p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            if ((map[y + 1][x - 1] != '#') &&
-                (map[y + 1][x - 1] != '='))
-                p5.m_cLocation.X--;
+            if (map[y + 1][x] != '#')
                 p5.m_cLocation.Y++;
         }
         break;
     case 1:
-        if ((p5.m_cLocation.Y > 0) && (p5.m_cLocation.X > 0))
+        if (p5.m_cLocation.Y > 0)
         {
-            if ((map[y - 1][x - 1] != '#') &&
-                (map[y - 1][x - 1] != '='))
+            if (map[y - 1][x] != '#')
                 p5.m_cLocation.Y--;
-                p5.m_cLocation.X--;
         }
         break;
     case 2:
-        if ((p5.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p5.m_cLocation.X > 0)
         {
-            if ((map[y + 1][x + 1] != '#') &&
-                (map[y + 1][x + 1] != '='))
-                p5.m_cLocation.Y++;
+            if (map[y][x + 1] != '#')
                 p5.m_cLocation.X++;
         }
         break;
@@ -1264,7 +1209,8 @@ void checkerY1(int i, int n) // y--
             (map[y + n][x] != ')') &&
             (map[y + n][x] != '(') &&
             (map[y + n][x] != '*') &&
-            (map[y + n][x] != '`'))
+            (map[y + n][x] != '`') &&
+            (map[y + n][x] != 'S'))
             {
                 stalkers[i].m_cLocation.Y+=n;
             }
@@ -1282,7 +1228,8 @@ void checkerY2(int i, int n) // y++
             (map[y + n][x] != ')') &&
             (map[y + n][x] != '(') &&
             (map[y + n][x] != '*') &&
-            (map[y + n][x] != '`'))
+            (map[y + n][x] != '`') &&
+            (map[y + n][x] != 'S'))
         {
             stalkers[i].m_cLocation.Y+=n;
         }
@@ -1300,7 +1247,8 @@ void checkerX1(int i, int n) // x--
             (map[y][x + n] != ')') &&
             (map[y][x + n] != '(') &&
             (map[y][x + n] != '*') &&
-            (map[y][x + n] != '`'))
+            (map[y][x + n] != '`') &&
+            (map[y][x + n] != 'S'))
         {
             stalkers[i].m_cLocation.X += n;
         }
@@ -1319,7 +1267,8 @@ void checkerX2(int i, int n)// x++
             (map[y][x + n] != ')') &&
             (map[y][x + n] != '(') &&
             (map[y][x + n] != '*') &&
-            (map[y][x + n] != '`'))
+            (map[y][x + n] != '`') &&
+            (map[y][x + n] != 'S'))
         {
             stalkers[i].m_cLocation.X += n;
         }
@@ -1977,7 +1926,7 @@ void shoot()
     }
 }
 
-void bulletInteraction(SGameChar EArr[10])
+void bulletInteraction()
 {
     for (int i = 0; i < 100; i++)
     {
@@ -1996,7 +1945,7 @@ void bulletInteraction(SGameChar EArr[10])
                 bulletArray[i] = nullptr;
             }
             // detect enemies
-            for (int l = 0; l < 10; l++)
+            for (int l = 0; l < 12; l++)
             {
                 if ((stalkers[l].m_cLocation.X == x) && (stalkers[l].m_cLocation.Y == y))
                 {
