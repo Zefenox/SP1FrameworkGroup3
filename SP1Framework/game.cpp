@@ -20,6 +20,10 @@
 #define VK_KEY_D    0x44
 #define VK_KEY_Q    0x51
 #define VK_KEY_L    0x4C
+#define VK_KEY_T    0x54
+#define VK_KEY_Y    0x59
+#define VK_KEY_U    0x55
+
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
@@ -104,14 +108,15 @@ void gameInit()
     g_Console.clearBuffer();
     player->setSpawnPoint(11, 11); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
-    player->setLives(3);
-    player->setMaxHealth(100);
-    for (int i = 0; i < 5; i++)
-        player->setInventory(i, nullptr); // clear inventory
-    player->setActive(true); // set him to be active
 
     if (!map1Clear)
     {
+        player->setLives(3);
+        player->setHealth(100);
+        player->setMaxHealth(100);
+        for (int i = 0; i < 5; i++)
+            player->setInventory(i, nullptr); // clear inventory
+        player->setActive(true); // set him to be active
         // initialises chests
         // for floor 1
         chest[0] = new Chest; // initialise chest
@@ -300,8 +305,11 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case 0x33: key = K_3; break;
     case 0x34: key = K_4; break;
     case 0x35: key = K_5; break;
-    case 0x4C: key = K_L; break;
+    case VK_KEY_L: key = K_L; break;
 
+    case VK_KEY_T: key = K_T; break; // cheats
+    case VK_KEY_Y: key = K_Y; break;
+    case VK_KEY_U: key = K_U; break;
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -475,6 +483,7 @@ void updateStart()
 void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
+    cheatInput();        // checks for cheat commands
     inventoryInput();
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
@@ -493,7 +502,6 @@ void updateGame()       // gameplay logic
 
     if (!player->getActive()) // if player is dead
         g_eGameState = S_LOSS;
-
 }
 
 
@@ -579,6 +587,22 @@ void moveCharacter()
         }
     }
 
+}
+
+void cheatInput()
+{
+    if (g_skKeyEvent[K_T].keyReleased)
+        player->setPosition(g_mouseEvent.mousePosition);
+    if (g_skKeyEvent[K_Y].keyDown)
+        player->setHealth(player->getHealth() - 10);
+    if (g_skKeyEvent[K_U].keyReleased)
+    {
+        if (player->getMaxHealth() == 9999)
+            player->setMaxHealth(100);
+        else
+            player->setMaxHealth(9999);
+        player->setHealth(player->getMaxHealth());
+    }
 }
 
 void inventoryInput()
@@ -752,18 +776,18 @@ void bossMovement(SGameChar BArr[9])
         case 1:
             if (BArr[i].m_cLocation.Y > 0)
             {
-                if (map[y - 2][x] != '#')// &&
-                    /*(map[y - 2][x] != '[') &&
+                if ((map[y - 2][x] != '#') &&
+                    (map[y - 2][x] != '[') &&
                     (map[y - 2][x] != ']')&&
                     (map[y - 2][x] != '=') && 
                     (map[y - 2][x] != (char)43) &&
-                    (map[y - 2][x] != (char)33))*/
+                    (map[y - 2][x] != (char)33))
 
                     BArr[i].m_cLocation.Y--;
             }
             break;
             //Left
-        /*case 2:
+        case 2:
             if (BArr[i].m_cLocation.X > 0)
             {
                 if ((map[y][x + 2] != '#') &&
@@ -775,23 +799,23 @@ void bossMovement(SGameChar BArr[9])
 
                     BArr[i].m_cLocation.X++;
             }
-            break;*/
+            break;
             //Down
         case 3:
             if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-                if (map[y + 2][x] != '#')// &&
-                    /*(map[y + 2][x] != '[') &&
+                if ((map[y + 2][x] != '#') &&
+                    (map[y + 2][x] != '[') &&
                     (map[y + 2][x] != ']') &&
                     (map[y + 2][x] != '=') &&
                     (map[y + 2][x] != (char)43) &&
-                    (map[y + 2][x] != (char)33))*/
+                    (map[y + 2][x] != (char)33))
 
                     BArr[i].m_cLocation.Y++;
             }
             break;
             //Right
-        /*case 4:
+        case 4:
             if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
                 if ((map[y][x - 2] != '#') &&
@@ -802,7 +826,7 @@ void bossMovement(SGameChar BArr[9])
                     (map[y][x - 2] != (char)33))
                     BArr[i].m_cLocation.X--;
             }
-            break;*/
+            break;
         }
     }
     bossSearchPlayer(bossParticles);
@@ -1807,6 +1831,7 @@ void lossInput()
         g_bQuitGame = true;
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        map1Clear = false;
         gameInit();
         g_eGameState = S_GAME;
     }
@@ -2396,10 +2421,19 @@ void renderGUI() // render game user inferface
     std::string inventoryList = "Inventory: ";
     std::string tempStr;
 
-    g_Console.writeToBuffer(1, 1, objective, 0x0C, objective.length());
-    g_Console.writeToBuffer(1, 2, lifeBar, 0x0C, lifeBar.length());
-    g_Console.writeToBuffer(1, 3, healthBar, 0x0C, healthBar.length());
-    g_Console.writeToBuffer(1, 6, inventoryList, 0x0C, inventoryList.length());
+    WORD healthColour = 0x0f;
+
+    if (player->getHealth() <= 75)
+        healthColour = 14;
+    if (player->getHealth() <= 50)
+        healthColour = 12;
+    if (player->getHealth() <= 25)
+        healthColour = 4;
+    // yellow = 14, light red = 12, red = 4
+    g_Console.writeToBuffer(1, 1, objective, 0x0f, objective.length());
+    g_Console.writeToBuffer(1, 2, lifeBar, 0x0f, lifeBar.length());
+    g_Console.writeToBuffer(1, 3, healthBar, healthColour, healthBar.length());
+    g_Console.writeToBuffer(1, 6, inventoryList, 0x0f, inventoryList.length());
 
     for (int i = 0; i < 5; i++) // print inventory contents
     {
@@ -2408,9 +2442,10 @@ void renderGUI() // render game user inferface
         else
             tempStr = std::to_string(i + 1) + ".";
 
-        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0C, tempStr.length());
+        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0f, tempStr.length());
     }
 }
+
 
 void playerInteractions()
 {
