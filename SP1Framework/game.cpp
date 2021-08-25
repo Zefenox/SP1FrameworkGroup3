@@ -653,9 +653,10 @@ void inventoryInput()
 void shootInput()
 {
     if (g_skKeyEvent[K_L].keyReleased)
-    {
         shoot();
-    }
+
+    if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        shoot();
 }
 
 
