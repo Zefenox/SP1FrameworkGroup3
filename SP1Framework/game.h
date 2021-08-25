@@ -63,6 +63,7 @@ struct SGameChar
 {
     COORD m_cLocation;
     bool  m_bActive;
+    int   hp;
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc
@@ -112,7 +113,7 @@ void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
 void bossMovement(SGameChar BArr[9]); // Boss movement
-void bossAttackSeq(); // Boss attack
+bool bossAttackSeq(); // Boss attack
 char bossSearchPlayer(SGameChar BArr[9]);
 char bossProj();
 void bossDeath();
@@ -144,8 +145,7 @@ void stalkerChasePlayer();    // enemy chase player function once searched
 void stalkerReachPlayer(); // enemy corners player
 // Enemy spawn functions
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
-void renderBoss(SGameChar BArr[9]);
-//void renderBossParticles(SGameChar BArr[9]);
+void renderBoss();
 char renderProj();
 char renderProj2();
 char renderProj3();
