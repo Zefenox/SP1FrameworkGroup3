@@ -125,7 +125,7 @@ void init(void)
 void gameInit()
 {
     g_Console.clearBuffer();
-    player->setSpawnPoint(4,16); // set spawn point
+    player->setSpawnPoint(11,11); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
     player->setLives(3);
     player->setMaxHealth(100);
@@ -2105,6 +2105,10 @@ void renderMap()
             else if (map[y][x] == '&') //Checkpoint, sets player spawn pos
             {
                 g_Console.writeToBuffer(x, y, (char)237, 0x8B);
+            }
+            else if (map[y][x] == '"') //Checkpoint, sets player spawn pos
+            {
+                g_Console.writeToBuffer(x, y, (char)240, 0x8B);
             }
             else //empty space
             {
