@@ -175,7 +175,7 @@ void gameInit()
         p4.m_cLocation.Y = 25;
         p5.m_cLocation.X = 200;
         p5.m_cLocation.Y = 60;
-        bossBodyCoord(bossParticles, 180, 15);
+       // bossBodyCoord(bossParticles, 180, 15);
     }
 
     if (map1Clear)
