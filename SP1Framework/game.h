@@ -137,20 +137,20 @@ void checkerX1(int i, int n);
 void checkerY1(int i, int n);
 void checkerX2(int i, int n);
 void checkerY2(int i, int n);
-void stalkerMovement(SGameChar EArr[10]); // Stalker movement, collision detection
-char stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
+void stalkerMovement(SGameChar EArr[12]); // Stalker movement, collision detection
+char stalkerSearchPlayer();   // enemy lookout for player to stalk
 void stalkerChasePlayer();    // enemy chase player function once searched
-void stalkerReachPlayer(SGameChar EArr[10]); // enemy corners player in a group
+void stalkerReachPlayer(); // enemy corners player
 // Enemy spawn functions
-void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
+void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
 void renderBoss(SGameChar BArr[9]);
-void renderBossParticles(SGameChar BArr[9]);
+//void renderBossParticles(SGameChar BArr[9]);
 char renderProj();
 char renderProj2();
 char renderProj3();
 char renderProj4();
 char renderProj5();
-void setStalkerCoords(SGameChar EArr[10]); // random generates enemies with different x and y values
+void setStalkerCoords(SGameChar EArr[12]); // random generates enemies with different x and y values
 void bossBodyCoord(SGameChar BArr[9], int x, int y); //generates boss body coords that are side - by - side.
 
 // keyboard and mouse input event managers
