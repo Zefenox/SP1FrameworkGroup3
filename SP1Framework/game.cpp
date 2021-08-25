@@ -2703,42 +2703,54 @@ void renderBossBullet()
 {
         if (bpro.m_bActive == true)
         {
+            int y = bpro.m_cLocation.Y;
+            int x = bpro.m_cLocation.X;
             g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
             if (player->getX() < bpro.m_cLocation.X)
             {
-                bpro.m_cLocation.X--;
+                if(map[y][x - 1] != '#')
+                    bpro.m_cLocation.X--;
             }
             else if (player->getX() > bpro.m_cLocation.X)
             {
-                bpro.m_cLocation.X++;
+                if (map[y][x + 1] != '#')
+                    bpro.m_cLocation.X++;
             }
             else if (player->getY() < bpro.m_cLocation.Y)
             {
-                bpro.m_cLocation.Y--;
+                if (map[y - 1][x] != '#')
+                    bpro.m_cLocation.Y--;
             }
             else if (player->getY() > bpro.m_cLocation.Y)
             {
-                bpro.m_cLocation.Y++;
+                if (map[y - 1][x] != '#')
+                    bpro.m_cLocation.Y++;
             }
         }
         if (bpro2.m_bActive == true)
         {
+            int y = bpro2.m_cLocation.Y;
+            int x = bpro2.m_cLocation.X;
             g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
             if (player->getX() < bpro2.m_cLocation.X)
             {
-                bpro2.m_cLocation.X--;
+                if (map[y][x - 1] != '#')
+                    bpro2.m_cLocation.X--;
             }
             else if (player->getX() > bpro2.m_cLocation.X)
             {
-                bpro2.m_cLocation.X++;
+                if (map[y][x + 1] != '#')
+                    bpro2.m_cLocation.X++;
             }
             else if (player->getY() < bpro2.m_cLocation.Y)
             {
-                bpro2.m_cLocation.Y--;
+                if (map[y - 1][x] != '#')
+                    bpro2.m_cLocation.Y--;
             }
             else if (player->getY() > bpro2.m_cLocation.Y)
             {
-                bpro2.m_cLocation.Y++;
+                if (map[y + 1][x] != '#')
+                    bpro2.m_cLocation.Y++;
             }
         }
 }
