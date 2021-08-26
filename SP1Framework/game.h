@@ -107,15 +107,17 @@ void renderLoss(); // renders the loss screen
 void renderVictory(); // renders the victory screen
 void renderMap(); // renders the map to the buffer first
 
-void loadmap();
-void loadStartmap();
-void loadLosescreen();
+void loadmap(); // store map                   //luke{
+void loadStartmap(); //store startscreen
+void loadLosescreen(); //store lose screen
 void renderStartmap();
+void loadWin();
+void renderWin();
 
-void shootInput();
-void shoot();
-void bulletInteraction();
-void renderBullets();
+void shootInput(); // check input to shoot
+void shoot(); //create bullet
+void bulletInteraction(); 
+void renderBullets();                                 //}
 
 void renderCharacter();     // renders the character into the buffer
 void renderHelp();          // coded by: Sze Ting {

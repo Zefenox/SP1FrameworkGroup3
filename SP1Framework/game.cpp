@@ -76,6 +76,7 @@ Bullet* bulletArray[100] = { nullptr };
 // lv 1 Clear bool
 bool map1Clear = false;
 
+//timer variable
 int dis = 0;
 double cap = 1.0;
 
@@ -617,6 +618,7 @@ void updateVictory()
 //            This is the update function for the splash screen
 // Input    : g_dElapsedTime
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void updateSplashScreen()    // waits for time to pass in splash screen
 {
@@ -733,6 +735,7 @@ void updateLoss()
 //            This is the function for moving the player
 // Input    : player->getX(); player->getY(); g_skKeyEvent[K_W].keyDown
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void moveCharacter()
 {
@@ -886,6 +889,7 @@ void inventoryInput()
 //            This is the function for calling out shoot function
 // Input    : g_skKeyEvent[K_L]; g_mouseEvent;
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void shootInput()
 {
@@ -1058,6 +1062,7 @@ void clearScreen()
 // Purpose  : function is to render the game title 
 // Input    : void
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void renderTitle(int x, int y) // function to render title
 {
@@ -1174,6 +1179,7 @@ void renderSplashScreen()  // renders the splash screen
 // Purpose  : function is to render the intro text
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void renderIntroText(int x, int y)
 {
@@ -1280,6 +1286,7 @@ void renderLoss()
 //--------------------------------------------------------------
 void renderVictory()
 {
+    loadWin();
     COORD size = g_Console.getConsoleSize();
 
     //if (g_dElapsedTime < 4)
@@ -1287,13 +1294,7 @@ void renderVictory()
     g_Console.clearBuffer();
     if (dis < 51)
         dis++;
-    for (int i = 0; i < size.Y; i++)
-    {
-        for (int x = 0; x < size.X; x++)
-        {
-            g_Console.writeToBuffer(x, i, " ", 0x00);
-        }
-    }
+    renderWin();
     renderEndText(50, 65 - dis);
     endtimer++;
 }
@@ -1302,6 +1303,7 @@ void renderVictory()
 // Purpose  : function is to check through the starting map
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void loadStartmap()
 {
@@ -1406,10 +1408,50 @@ void renderStartmap()
     }
 }
 
+void loadWin()
+{
+    std::ifstream Winscreen("Win.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(Winscreen, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+}
+
+void renderWin()
+{
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '#')
+            {
+                g_Console.writeToBuffer(x, y,' ', 0x88);
+            }
+            else if (map[y][x] == '*')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x77);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+        }
+    }
+}
+
 //--------------------------------------------------------------
 // Purpose  : function is to render the player attack projectiles
 // Input    : void
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void renderBullets()
 {
@@ -1429,6 +1471,7 @@ void renderBullets()
 // Purpose  : function is to check for which map to render first
 // Input    : void
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void loadmap()
 {
@@ -3386,6 +3429,7 @@ void stalkerReachPlayer()
 // Purpose  : function is to let the player attack
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void shoot()
 {
@@ -3403,6 +3447,7 @@ void shoot()
 // Purpose  : function is to set the bullet interaction
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void bulletInteraction()
 {
