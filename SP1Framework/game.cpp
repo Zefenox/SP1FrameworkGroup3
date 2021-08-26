@@ -2029,6 +2029,7 @@ void renderHelp()
 // Purpose  : function is to render the enemies
 // Input    : void
 // Output   : void
+// Done by Sherryan
 //-------------------------------------------------------------
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 {
@@ -2083,6 +2084,7 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 // Purpose  : function is to render the boss
 // Input    : void
 // Output   : void
+// Done by Sherryan
 //--------------------------------------------------------------
 void renderBoss()
 {
@@ -2123,7 +2125,7 @@ void renderBoss()
     }
 
 }
-
+//All enemy functions done by Sherryan
 //--------------------------------------------------------------
 // Purpose  : function is to render the enemy attacks
 // Input    : void

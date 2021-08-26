@@ -134,7 +134,7 @@ void renderFramerate();     // renders debug information, frame rate, elapsed ti
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderInputEvents();   // renders the status of input events
 
-//Enemy functions:
+//Enemy functions: Coded by Sherryan
 void bossMovement(SGameChar BArr[9]); // Boss movement
 void bossInitAtk(int x, int y);
 char bossSearchPlayer(SGameChar BArr[9]);
@@ -150,7 +150,7 @@ char phantomSearchPlayer2();
 char phantomSearchPlayer3();
 char phantomSearchPlayer4();
 char phantomSearchPlayer5();
-void phantomFireProj();         //Phantom fires a proj randomly
+void phantomFireProj();     
 void phantomFireProj2();
 void phantomFireProj3();
 void phantomFireProj4();
