@@ -1,4 +1,4 @@
-#include "Consumable.h"
+#include "Consumable.h" // coded by: Sze Ting
 
 Consumable::Consumable()
 {

@@ -111,7 +111,7 @@ void init(void)
 
 void gameInit()
 {
-    g_Console.clearBuffer();
+    g_Console.clearBuffer();                                                                       // coded by: Sze Ting {
     player->setSpawnPoint(11, 11); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
 
@@ -138,7 +138,7 @@ void gameInit()
         chest[5] = new Chest;
         chest[5]->setPosition(197, 46);
         chest[6] = new Chest;
-        chest[6]->setPosition(203, 46);
+        chest[6]->setPosition(203, 46);                                                            //                     }
 
         // Enemy initial state, X higher = x--, Y lower = y--
         p1.m_bActive = true;
@@ -165,7 +165,7 @@ void gameInit()
          bossBodyCoord(bossParticles, 181, 20);*/
     }
 
-    if (map1Clear)
+    if (map1Clear)                                                                                // coded by: Sze Ting {
     {
         // for floor 2
         chest[0] = new Chest; // initialise chest
@@ -187,7 +187,7 @@ void gameInit()
         chest[8] = new Chest;
         chest[8]->setPosition(102, 46);
         chest[9] = new Chest;
-        chest[9]->setPosition(98, 54);
+        chest[9]->setPosition(98, 54);                                                             // }
 
         // Initialise boss bullets
         bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
@@ -262,7 +262,7 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
-    case S_STARTSCREEN: startKBHandler(keyboardEvent);
+    case S_STARTSCREEN: startKBHandler(keyboardEvent);                                           // coded by: Sze Ting
         break;
     case S_HELP: helpKBHandler(keyboardEvent);
         break;
@@ -299,7 +299,7 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
-    case S_STARTSCREEN: startMouseHandler(mouseEvent);
+    case S_STARTSCREEN: startMouseHandler(mouseEvent);                                         // coded by: Sze Ting
         break;
     case S_HELP: helpMouseHandler(mouseEvent);
         break;
@@ -346,7 +346,7 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case VK_KEY_Y: key = K_Y; break;
     case VK_KEY_U: key = K_U; break;
 
-    case VK_KEY_H: key = K_H; break; // he;[
+    case VK_KEY_H: key = K_H; break; // help
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -668,7 +668,7 @@ void updateStart()
 // Input    : g_skKeyEvent[K_H]
 // Output   : void
 //--------------------------------------------------------------
-void updateHelp()
+void updateHelp() 
 {
     if (g_skKeyEvent[K_H].keyReleased)
         g_eGameState = S_GAME;
@@ -1789,7 +1789,7 @@ void renderGUI() // render game user inferface
 //--------------------------------------------------------------
 void playerInteractions()
 {
-    for (int i = 0; i < 10; i++) // player interacts with a chest
+    for (int i = 0; i < 10; i++) // player interacts with a chest // coded by: Sze Ting
 
     {
         if (chest[i] != nullptr)
@@ -1865,7 +1865,7 @@ void playerInteractions()
     }
 
     //book
-    if (map[player->getY()][player->getX()] == '"')
+    if (map[player->getY()][player->getX()] == '"') // coded by: Sze Ting
     {
         g_eGameState = S_VICTORY;
     }
@@ -1920,6 +1920,51 @@ void renderCharacter()
 //--------------------------------------------------------------
 void renderHelp()
 {
+    COORD size = g_Console.getConsoleSize();
+
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0);
+        }
+    }
+
+    std::string fire = "-=#@";
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+2, (char)146, 0x34); // player
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 2, " = player", 0x0f, 10);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 4, (char)204, 0x84); // trap
+    g_Console.writeToBuffer(size.X / 4 + 1, size.Y / 4 + 4, (char)185, 0x84);
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 4, " = trap", 0x0f, 8);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+6, (char)233, 0x8E); // chest
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 6, " = chest", 0x0f, 9);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+8, (char)177, 0x8C); // lava
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 8, " = lava", 0x0f, 8);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+10, (char)215, 0x86); // dungeon gate
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 10, " = dungeon gate", 0x0f, 16);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 12, (char)243, 0x8b); // teleporter
+    g_Console.writeToBuffer(size.X / 4 + 1, size.Y / 4 + 12, (char)234, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 2, size.Y / 4 + 12, (char)242, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 12, " = teleporter", 0x0f, 14);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 14, fire, 0x84, fire.length()); // fire
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 14, " = fire", 0x0f, 8);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 16, (char)237, 0x8b); // checkpoint
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 16, " = checkpoint", 0x0f, 14);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 18, (char)243, 0x8b);  //book
+    g_Console.writeToBuffer(size.X / 4 + 1, size.Y / 4 + 18, (char)240, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 2, size.Y / 4 + 18, (char)242, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 18, " = book", 0x0f, 8);
+
+
 }
 
 //--------------------------------------------------------------

@@ -1,4 +1,4 @@
-#include "Chest.h"
+#include "Chest.h" // coded by: Sze Ting
 
 Chest::Chest()
 {

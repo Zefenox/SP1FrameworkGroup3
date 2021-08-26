@@ -1,3 +1,4 @@
+// coded by: Sze Ting
 #pragma once
 #include "game.h"
 #include <string>
