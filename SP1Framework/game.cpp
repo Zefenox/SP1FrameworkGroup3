@@ -25,7 +25,7 @@
 #define VK_KEY_U    0x55
 #define VK_KEY_H    0x48
 
-
+int bossProjCount;
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 SKeyEvent g_skKeyEvent[K_COUNT];
@@ -61,6 +61,8 @@ int projnum = 60;
 SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9;
 SGameChar bossParticles[9] = { b1,b2,b3,b4,b5,b6,b7,b8,b9 };
 SGameChar bpro, bpro2, bossHp;
+int pos[1500];
+int holder = 0; 
 
 Player* player = new Player; // player initialisation
 Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }; // chests initialisation
@@ -93,7 +95,7 @@ void init(void)
 {
     // assigning seed
     srand((unsigned int)time(NULL));
-
+    
 
     // Set precision for floating point output
     g_dElapsedTime = 0.0;
@@ -141,7 +143,7 @@ void gameInit()
         chest[6] = new Chest;
         chest[6]->setPosition(203, 46);                                                            //                     }
 
-        // Enemy initial state, X higher = x--, Y lower = y--
+        //Set Enemy initial state and positions
         p1.m_bActive = true;
         p2.m_bActive = true;
         p3.m_bActive = true;
@@ -157,13 +159,7 @@ void gameInit()
         p4.m_cLocation.Y = 25;
         p5.m_cLocation.X = 170;
         p5.m_cLocation.Y = 30;
-        /* bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
-         bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
-         bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-         bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
-         bpro.m_bActive = false;
-         bpro2.m_bActive = false;
-         bossBodyCoord(bossParticles, 181, 20);*/
+        setStalkerCoords(stalkers);
     }
 
     if (map1Clear)                                                                                // coded by: Sze Ting {
@@ -191,17 +187,27 @@ void gameInit()
         chest[9]->setPosition(98, 54);                                                             // }
 
         // Initialise boss bullets
-        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
-        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
-        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
-        bossHp.hp = 240;
+        bossProjCount = 0;
         bpro.m_bActive = true;
         bpro2.m_bActive = true;
+        // Initialise boss Health
+        bossHp.hp = 240;
         // Initialise boss spawn
-        bossBodyCoord(bossParticles, 30, 51);
+        bossBodyCoord(bossParticles, 215, 40);
+        // Reinitialise Stalker spawn points
+        setStalkerCoords(stalkers);
+        // Reinitialise Phantom spawn points
+        p1.m_cLocation.X = 180;
+        p1.m_cLocation.Y = 30;
+        p2.m_cLocation.X = 40;
+        p2.m_cLocation.Y = 10;
+        p3.m_cLocation.X = 80;
+        p3.m_cLocation.Y = 10;
+        p4.m_cLocation.X = 100;
+        p4.m_cLocation.Y = 50; 
+        p5.m_cLocation.X = 170;
+        p5.m_cLocation.Y = 40; 
     }
-
 }
 
 //--------------------------------------------------------------
@@ -691,7 +697,7 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
     shootInput();
-    stalkerMovement(stalkers);
+    stalkerMovement(stalkers); // Movements of enemies
     phantomMovement();
     phantomMovement2();
     phantomMovement3();
@@ -1251,8 +1257,8 @@ void renderGame()
     renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
     if (map1Clear == true)  // renders boss in 2nd map
     {
+        //renderEnemies(stalkers, snum, sColor);
         renderBoss();
-        renderBossBullet();
     }
 }
 
@@ -1316,7 +1322,6 @@ void loadStartmap()
         for (unsigned i = 0; i < line.length(); ++i)
         {
             map[y][i] = line.at(i);
-
         }
         y++;
     }
@@ -1642,7 +1647,7 @@ void renderStartOptions()
 
     WORD STARTcolour = 0x0F;
     WORD QUITcolour = 0x0F;
-
+    
     std::string START = "> PRESS SPACE TO START <";
     std::string QUIT = "> PRESS ESC TO QUIT <";
 
@@ -2024,6 +2029,7 @@ void renderHelp()
 // Purpose  : function is to render the enemies
 // Input    : void
 // Output   : void
+// Done by Sherryan
 //-------------------------------------------------------------
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 {
@@ -2066,73 +2072,19 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
     if (pro5.m_bActive == true)
         g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
 
-}
+    if (bpro.m_bActive == true)
+        g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the boss attacks
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
-void renderBossBullet()
-{
-//    if (bpro.m_bActive == true)
-//    {
-//        int y = bpro.m_cLocation.Y;
-//        int x = bpro.m_cLocation.X;
-//        g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
-//        if (player->getX() < bpro.m_cLocation.X)
-//        {
-//            if (map[y][x - 1] != '#')
-//                bpro.m_cLocation.X--;
-//        }
-//        else if (player->getX() > bpro.m_cLocation.X)
-//        {
-//            if (map[y][x + 1] != '#')
-//                bpro.m_cLocation.X++;
-//        }
-//        else if (player->getY() < bpro.m_cLocation.Y)
-//        {
-//            if (map[y - 1][x] != '#')
-//                bpro.m_cLocation.Y--;
-//        }
-//        else if (player->getY() > bpro.m_cLocation.Y)
-//        {
-//            if (map[y - 1][x] != '#')
-//                bpro.m_cLocation.Y++;
-//        }
-//    }
-//    if (bpro2.m_bActive == true)
-//    {
-//        int y = bpro2.m_cLocation.Y;
-//        int x = bpro2.m_cLocation.X;
-//        g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
-//        if (player->getX() < bpro2.m_cLocation.X)
-//        {
-//            if (map[y][x - 1] != '#')
-//                bpro2.m_cLocation.X--;
-//        }
-//        else if (player->getX() > bpro2.m_cLocation.X)
-//        {
-//            if (map[y][x + 1] != '#')
-//                bpro2.m_cLocation.X++;
-//        }
-//        else if (player->getY() < bpro2.m_cLocation.Y)
-//        {
-//            if (map[y - 1][x] != '#')
-//                bpro2.m_cLocation.Y--;
-//        }
-//        else if (player->getY() > bpro2.m_cLocation.Y)
-//        {
-//            if (map[y + 1][x] != '#')
-//                bpro2.m_cLocation.Y++;
-//        }
-//    }
+    if (bpro2.m_bActive == true)
+        g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
+
 }
 
 //--------------------------------------------------------------
 // Purpose  : function is to render the boss
 // Input    : void
 // Output   : void
+// Done by Sherryan
 //--------------------------------------------------------------
 void renderBoss()
 {
@@ -2143,9 +2095,11 @@ void renderBoss()
         if (bossParticles[i].m_bActive == true)
             if (i == 0 || i == 2 || i == 6 || i == 8)
             {
+                // sets the colours for the 4 corners of boss to red
                 g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossCorner);
                 switch (i)
                 {
+                    // switch case to change corner colours once boss hp decreases to a certain amount
                 case 0:
                     if (bossHp.hp <= 180)
                         g_Console.writeToBuffer(bossParticles[0].m_cLocation, (char)43, bossColor);
@@ -2165,13 +2119,13 @@ void renderBoss()
                 }
             }
             else
-            {
+            {   // all remaining parts are coloured purple
                 g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossColor);
             }
     }
 
 }
-
+//All enemy functions done by Sherryan
 //--------------------------------------------------------------
 // Purpose  : function is to render the enemy attacks
 // Input    : void
@@ -2213,7 +2167,7 @@ char renderProj3()
         pro3.m_cLocation.X = p3.m_cLocation.X;
         pro3.m_cLocation.Y = p3.m_cLocation.Y - 1;
         return 't';
-        break; // right
+        break; // top side
     }
 }
 
@@ -2226,7 +2180,7 @@ char renderProj4()
         pro4.m_cLocation.X = p4.m_cLocation.X;
         pro4.m_cLocation.Y = p4.m_cLocation.Y - 1;
         return 't';
-        break; // right
+        break; // top side
     }
 }
 
@@ -2239,7 +2193,7 @@ char renderProj5()
         pro5.m_cLocation.X = p5.m_cLocation.X;
         pro5.m_cLocation.Y = p5.m_cLocation.Y - 1;
         return 't';
-        break; // right
+        break; // top side
     }
 }
 
@@ -2374,7 +2328,7 @@ void setStalkerCoords(SGameChar EArr[12])
                 break;
             case 2:
                 X = 50;
-                Y = 5;
+                Y = 40;
                 break;
             case 3:
                 X = 30;
@@ -2405,7 +2359,7 @@ void setStalkerCoords(SGameChar EArr[12])
                 Y = 15;
                 break;
             case 10:
-                X = 180;
+                X = 130;
                 Y = 35;
                 break;
             case 11:
@@ -2421,7 +2375,7 @@ void setStalkerCoords(SGameChar EArr[12])
         }
     }
 }
-
+// makes up the 3x3 boss cube and is able to set position to any part of map
 void bossBodyCoord(SGameChar BArr[9], int x, int y)
 {
     int count = 0;
@@ -2455,97 +2409,66 @@ void bossBodyCoord(SGameChar BArr[9], int x, int y)
     }
 }
 
-void bossMovement(SGameChar BArr[9])
+// to initialise boss bullet position
+void bossInitAtk(int x, int y)
 {
-    bool fire = false;
-    int x, y;
-    for (int i = 0; i < 9; i++)
-    {
-        x = BArr[i].m_cLocation.X;
-        y = BArr[i].m_cLocation.Y;
-
-        if ((int)g_dElapsedTime % 2 == 0)
-        {
-            if (BArr[i].m_cLocation.X > 0)
-            {
-                if (map[y][x + 1] != '#')
-                    BArr[i].m_cLocation.X++;
-            }
-        }
-        else
-        {
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            {
-
-                if (map[y][x - 1] != '#')
-                    BArr[i].m_cLocation.X--;
-            }
-        }
-    }
-    bossSearchPlayer(bossParticles);
-    bossAttackSeq();
-    if (bossProj() == 't')
-        renderBossBullet();
-
-    bossDeath();
+    bpro.m_cLocation.X = x;
+    bpro.m_cLocation.Y = y;
 }
 
+void bossMovement(SGameChar BArr[9])
+{
+    // if boss found player, and has not fired a bullet, initialises bullet to boss position
+    // and fires a homing missile till it hits the player
+    bossSearchPlayer(bossParticles);
+    if ((bossSearchPlayer(bossParticles) == 'y') && (bossProjCount == 0))
+    {
+        bossInitAtk(bpro.m_cLocation.X = bossParticles[1].m_cLocation.X, bpro.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 1);
+    }
+    if (player->getX() > bpro.m_cLocation.X)
+    {
+        bpro.m_cLocation.X++;
+    }
+    else if (player->getX() < bpro.m_cLocation.X)
+    {
+        bpro.m_cLocation.X--;
+    }
+    else if (player->getY() < bpro.m_cLocation.Y)
+    {
+        bpro.m_cLocation.Y--;
+    }
+    else if (player->getY() > bpro.m_cLocation.Y)
+    {
+        bpro.m_cLocation.Y++;
+    }
+}
+
+// function to see if player is in range of sight
 char bossSearchPlayer(SGameChar BArr[9])
 {
     int X, Y;
-    int final = 0;
     for (int i = 0; i < 9; i++)
     {
-        // same lanes
-        if ((player->getX() + 10 == BArr[i].m_cLocation.X) ||
-            (player->getY() + 10 == BArr[i].m_cLocation.Y))
+        X = player->getX() - BArr[i].m_cLocation.Y;
+        Y = player->getY() - BArr[i].m_cLocation.X;
+        if (X < 0)
+        {
+            X *= -1;
+        }
+        if (Y < 0)
+        {
+            Y *= -1;
+        }
+        if (X < 20 && Y < 10)
         {
             return 'y';
-        }
-        else
-        {
-            X = player->getX() - BArr[i].m_cLocation.Y;
-            Y = player->getY() - BArr[i].m_cLocation.X;
-            if (X < 0)
-            {
-                X *= -1;
-            }
-            if (Y < 0)
-            {
-                Y *= -1;
-            }
-            final += X += Y;
-            if (final <= 10)
-            {
-                return 'y';
-            }
         }
 
         return 'n';
     }
 }
 
-bool bossAttackSeq()
-{
-    if (bossSearchPlayer(bossParticles) == 'y')
-    {
-        bossProj();
-        return true;
-    }
-    return false;
-}
-
-char bossProj()
-{
-    switch (bossSearchPlayer(bossParticles))
-    {
-    case 'y':
-        bpro.m_bActive = true;
-        bpro2.m_bActive = true;
-        return 't';
-    }
-}
-
+// checks if boss is dead
 void bossDeath()
 {
     if (bossHp.hp < 0)
@@ -2554,13 +2477,12 @@ void bossDeath()
             // disable all boss related entities
             bossParticles[i].m_bActive = false;
             bpro.m_bActive = false;
-            bpro2.m_bActive = false;
         }
-
 }
 
 void phantomMovement()
 {
+    // random movement
     int dir = (rand() % 4) + 1;
     int x, y;
     x = p1.m_cLocation.X;
@@ -2570,6 +2492,7 @@ void phantomMovement()
     case 1:
         if (p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
+            // check for collision
             if (map[y][x - 1] != '#')
                 p1.m_cLocation.X--;
         }
@@ -2596,6 +2519,8 @@ void phantomMovement()
         }
         break;
     }
+    // if player in sight, fire projectile and render
+    // projectile in returned side of projectile
     phantomSearchPlayer();
     phantomFireProj();
     if (renderProj() != 's')
@@ -2787,6 +2712,7 @@ void phantomMovement5()
     }
 }
 
+// checks if player is in sight of phantom
 char phantomSearchPlayer()
 {
     int dist = 30;
@@ -2843,7 +2769,7 @@ char phantomSearchPlayer3()
     }
     else
     {
-        return 'n';
+        return 'n'; // if not in sight
     }
 }
 
@@ -2887,6 +2813,7 @@ char phantomSearchPlayer5()
     }
 }
 
+// Renders projectile through initialising position if player in sight
 void phantomFireProj()
 {
     if (phantomSearchPlayer() != 'n')
@@ -2927,9 +2854,16 @@ void phantomFireProj5()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to check the enemy projectile collisions
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
+
 void projReachPlayer()
 {
-
+    // player Hp - 5 if hit by phantom bullet
+    // phantom bullet resets
     if ((player->getX() == pro1.m_cLocation.X) && (player->getY() == pro1.m_cLocation.Y))
     {
         player->setHealth(player->getHealth() - 5);
@@ -2957,28 +2891,25 @@ void projReachPlayer()
     }
     else if ((player->getX() == bpro.m_cLocation.X) && (player->getY() == bpro.m_cLocation.Y))
     {
-        player->setHealth(player->getHealth() - 10);
-        bpro.m_bActive = false;
-        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X;
-        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
-
-    }
-    else if ((player->getX() == bpro2.m_cLocation.X) && (player->getY() == bpro2.m_cLocation.Y))
-    {
-        player->setHealth(player->getHealth() - 10);
-        bpro2.m_bActive = false;
-        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y;
-
+        // player Hp - 10 if hit by boss bullet
+        if (bpro.m_bActive == true)
+        {
+            player->setHealth(player->getHealth() - 10);
+        }
+        // reset boss bullet count for next fire
+        bossProjCount--;
+        // reintialise bullet pos
+        bossInitAtk(bpro.m_cLocation.X = bossParticles[1].m_cLocation.X, bpro.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 1);
     }
 }
 
+// checkers for stalker movements, check all directions for collisions
 void checkerY1(int i, int n) // y--
 {
     int x = stalkers[i].m_cLocation.X;
     int y = stalkers[i].m_cLocation.Y;
     if (player->getY() < stalkers[i].m_cLocation.Y)
-        if ((map[y + n][x] != '#') &&
+        if ((map[y + n][x] != '#') && // check for all collisions
             (map[y + n][x] != '=') &&
             (map[y + n][x] != '[') &&
             (map[y + n][x] != ']') &&
@@ -2986,7 +2917,7 @@ void checkerY1(int i, int n) // y--
             (map[y + n][x] != '(') &&
             (map[y + n][x] != '*') &&
             (map[y + n][x] != '`') &&
-            (map[y + n][x] != 'S'))
+            (map[y + n][x] != 'S')) // collision between other enemies
         {
             stalkers[i].m_cLocation.Y += n;
         }
@@ -3051,6 +2982,7 @@ void checkerX2(int i, int n)// x++
 
 void stalkerMovement(SGameChar EArr[12])
 {
+    // randomise movement
     int dir = (rand() % 4) + 1;
     int x, y;
 
@@ -3066,7 +2998,7 @@ void stalkerMovement(SGameChar EArr[12])
             case 2:
                 if ((EArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1) &&
                     (map[y + 1][x] != '#') &&
-                    (map[y + 1][x] != '=') &&
+                    (map[y + 1][x] != '=') && // check collisions
                     (map[y + 1][x] != '[') &&
                     (map[y + 1][x] != ']') &&
                     (map[y + 1][x] != ')') &&
@@ -3133,7 +3065,7 @@ void stalkerMovement(SGameChar EArr[12])
                 break;
             }
         }
-        else
+        else // odd enemies movement
         {
             switch (dir)
             {
@@ -3210,6 +3142,7 @@ void stalkerMovement(SGameChar EArr[12])
                 break;
             }
         }
+        // check if player in sight then chase 
         stalkerSearchPlayer();
         stalkerChasePlayer();
     }
@@ -3219,6 +3152,7 @@ char stalkerSearchPlayer()
 {
     int x_final, y_final;
     int maxNumOfSteps = 0;
+    // assume 5x5 grid radius except for same lane:
     // check if the player and enemy are in the same lane
     for (int i = 0; i < 12; i++)
     {
@@ -3226,8 +3160,8 @@ char stalkerSearchPlayer()
             (player->getX() == stalkers[i].m_cLocation.X))
             if (player->getX() - stalkers[i].m_cLocation.X <= 2)
             {
-                switch (i)
-                {
+                switch (i)  // switch case check for individual enemy
+                {           
                 case 0:
                     return 'a';
                     break;
@@ -3279,11 +3213,13 @@ char stalkerSearchPlayer()
                 {
                     y_final *= -1;
                 }
-                // add together
+                // add together, if within the 5x5 grid, 
+                // this calculation always garauntees a result 4 and less 
+                // if player and stalker in same 5x5 grid
                 maxNumOfSteps += x_final += y_final;
                 if (maxNumOfSteps <= 4)
                 {
-                    switch (i)
+                    switch (i) // switch case to check for individual enemy
                     {
                     case 0:
                         return 'a';
@@ -3332,6 +3268,8 @@ char stalkerSearchPlayer()
 
 void stalkerChasePlayer()
 {
+    // if player in sight, check for individual stalkers and their collisions
+    // in every x and y directions in the map
     if (stalkerSearchPlayer() != 'n')
         switch (stalkerSearchPlayer())
         {
@@ -3412,6 +3350,7 @@ void stalkerChasePlayer()
         }
 }
 
+// if stalker hits player, sticks to player and causes damage consistently
 void stalkerReachPlayer()
 {
     for (int i = 0; i < 12; i++)
@@ -3478,60 +3417,20 @@ void bulletInteraction()
                     return;
                 }
             }
-            // detect boss
+            // detect boss, if corners hit, bossHp decreases
             for (int j = 0; j < 9; j++)
             {
                 if (j == 0 || j == 2 || j == 6 || j == 8)
                 {
                     if ((bossParticles[j].m_cLocation.X == x) && (bossParticles[j].m_cLocation.Y == y))
                     {
-                        bossHp.hp -= 10;
+                        bossHp.hp -= 30;
                         delete bulletArray[i];
                         bulletArray[i] = nullptr;
                         return;
                     }
                 }
             }
-            // detect parry for boss bullets
-            if ((x == bpro.m_cLocation.X) && (y == bpro.m_cLocation.Y))
-            {
-                for (int n = 0; n < 9; n++)
-                {
-                    if (bpro.m_cLocation.X < bossParticles[n].m_cLocation.X)
-                    {
-                        bpro.m_cLocation.X++;
-                        if ((bpro.m_cLocation.X == bossParticles[3].m_cLocation.X) &&
-                            (bpro.m_cLocation.Y == bossParticles[3].m_cLocation.Y))
-                        {
-                            bossHp.hp -= 5;
-                            bpro.m_bActive = false;
-                        }
-                    }
-                }
-                delete bulletArray[i];
-                bulletArray[i] = nullptr;
-                return;
-            }
-            else if ((x == bpro2.m_cLocation.X) && (y == bpro2.m_cLocation.Y))
-            {
-                for (int n = 0; n < 9; n++)
-                {
-                    if (bpro2.m_cLocation.X < bossParticles[n].m_cLocation.X)
-                    {
-                        bpro2.m_cLocation.X++;
-                        if ((bpro2.m_cLocation.X == bossParticles[3].m_cLocation.X) &&
-                            (bpro2.m_cLocation.Y == bossParticles[3].m_cLocation.Y))
-                        {
-                            bossHp.hp -= 5;
-                            bpro2.m_bActive = false;
-                        }
-                    }
-                }
-                delete bulletArray[i];
-                bulletArray[i] = nullptr;
-                return;
-            }
-
         }
     }
 }
