@@ -37,6 +37,7 @@ enum EKEYS
     K_T,
     K_Y,
     K_U,
+    K_H,
     K_1,
     K_2, 
     K_3,
@@ -56,6 +57,7 @@ enum EGAMESTATES
 {
     S_SPLASHSCREEN,
     S_STARTSCREEN,
+    S_HELP,
     S_GAME,
     S_PAUSESCREEN,
     S_LOSS,
@@ -79,9 +81,11 @@ void shutdown    ( void );      // do clean up, free memory
 
 void updateSplashScreen();    // waits for time to pass in splash screen
 void updateStart();         // updates start menu
+void updateHelp();
 void updateGame();          // gameplay logic
 void updatePause();
 void updateLoss();
+void updateVictory();
 void cheatInput();
 void inventoryInput();
 void startInput();
@@ -101,7 +105,6 @@ void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
 void renderLoss(); // renders the loss screen
 void renderVictory(); // renders the victory screen
-void updateVictory();
 void renderMap(); // renders the map to the buffer first
 
 void loadmap();
@@ -115,6 +118,7 @@ void bulletInteraction();
 void renderBullets();
 
 void renderCharacter();     // renders the character into the buffer
+void renderHelp();
 void renderStartOptions();
 void renderPauseBase();
 void renderPauseOptions();
@@ -174,6 +178,9 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);      // define this fun
 
 void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for start screen
 void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
+void helpKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for start screen
+void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyboard events for gameplay 
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mouse events for gameplay 

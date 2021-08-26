@@ -23,6 +23,7 @@
 #define VK_KEY_T    0x54
 #define VK_KEY_Y    0x59
 #define VK_KEY_U    0x55
+#define VK_KEY_H    0x48
 
 
 double  g_dElapsedTime;
@@ -95,32 +96,6 @@ void init(void)
 
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
-    // sets the initial state for the game
-    g_eGameState = S_SPLASHSCREEN;
-
-    // Enemy initial state
-    bpro.m_bActive = true;
-    bossHp.hp = 240;
-    p1.m_bActive = true;
-    p2.m_bActive = true;
-    p3.m_bActive = true;
-    p4.m_bActive = true;
-    p5.m_bActive = true;
-    p1.m_cLocation.X = 150;
-    p1.m_cLocation.Y = 30;
-    p2.m_cLocation.X = 40;
-    p2.m_cLocation.Y = 50;
-    p3.m_cLocation.X = 100;
-    p3.m_cLocation.Y = 50;
-    p4.m_cLocation.X = 50;
-    p4.m_cLocation.Y = 25;
-    p5.m_cLocation.X = 150;
-    p5.m_cLocation.Y = 45;
-    setStalkerCoords(stalkers);
-    bossBodyCoord(bossParticles, 30, 8);
- 
-    g_dElapsedTime = 0.0;
-
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
@@ -288,6 +263,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_STARTSCREEN: startKBHandler(keyboardEvent);
         break;
+    case S_HELP: helpKBHandler(keyboardEvent);
+        break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
     case S_PAUSESCREEN: pauseKBHandler(keyboardEvent); // handle pause screen keyboard event
@@ -322,6 +299,8 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
     case S_STARTSCREEN: startMouseHandler(mouseEvent);
+        break;
+    case S_HELP: helpMouseHandler(mouseEvent);
         break;
     case S_GAME: gameplayMouseHandler(mouseEvent); // handle gameplay mouse event
         break;
@@ -365,6 +344,8 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case VK_KEY_T: key = K_T; break; // cheats
     case VK_KEY_Y: key = K_Y; break;
     case VK_KEY_U: key = K_U; break;
+
+    case VK_KEY_H: key = K_H; break; // he;[
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -385,6 +366,23 @@ void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     {
     case VK_SPACE: key = K_SPACE; break;
     case VK_ESCAPE: key = K_ESCAPE; break;
+    }
+
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
+}
+
+
+void helpKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    // here, we map the key to our enums
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    case VK_KEY_H: key = K_H; break;
     }
 
     if (key != K_COUNT)
@@ -474,6 +472,16 @@ void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
+void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -530,6 +538,8 @@ void update(double dt)
         break;
     case S_STARTSCREEN: updateStart();
         break;
+    case S_HELP: updateHelp();
+        break;
     case S_GAME: updateGame(); // gameplay logic when we are in the game
         break;
     case S_PAUSESCREEN: updatePause();
@@ -543,6 +553,8 @@ void update(double dt)
 
 void updateVictory()
 {
+    map1Clear = false;
+    gameInit();
     if (endtimer > 150)
     {
         g_eGameState = S_STARTSCREEN;
@@ -588,6 +600,12 @@ void updateSplashScreen()    // waits for time to pass in splash screen
 void updateStart()
 {
     startInput();
+}
+
+void updateHelp()
+{
+    if (g_skKeyEvent[K_H].keyReleased)
+        g_eGameState = S_GAME;
 }
 
 void updateGame()       // gameplay logic
@@ -1929,6 +1947,9 @@ void processUserInput()
             return;
         }
     }
+
+    if (g_skKeyEvent[K_H].keyReleased)
+        g_eGameState = S_HELP;
 }
 
 //--------------------------------------------------------------
@@ -1947,6 +1968,8 @@ void render()
     case S_SPLASHSCREEN: renderSplashScreen();
         break;
     case S_STARTSCREEN: renderStart();
+        break;
+    case S_HELP: renderHelp();
         break;
     case S_GAME: renderGame();
         break;
@@ -2661,7 +2684,7 @@ void renderGUI() // render game user inferface
         g_Console.writeToBuffer(70 + i, 1, ' ', healthBarColor);
     }
 
-    g_Console.writeToBuffer(1, 6, inventoryList, 0x0f, inventoryList.length());
+    g_Console.writeToBuffer(1, 4, inventoryList, 0x0f, inventoryList.length());
 
     for (int i = 0; i < 5; i++) // print inventory contents
     {
@@ -2670,7 +2693,7 @@ void renderGUI() // render game user inferface
         else
             tempStr = std::to_string(i + 1) + ".";
 
-        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0f, tempStr.length());
+        g_Console.writeToBuffer(1, 5 + i, tempStr, 0x0f, tempStr.length());
     }
 }
 
@@ -2789,6 +2812,10 @@ void renderCharacter()
 {
     // Draw the location of the character // was 1 for char
     g_Console.writeToBuffer(player->getPosition(), (char)146, player->getCharColour());
+}
+
+void renderHelp()
+{
 }
 
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
