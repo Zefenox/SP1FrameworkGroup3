@@ -93,23 +93,29 @@ void pauseInput();
 void lossInput();                                                          
 void moveCharacter();       // moves the character, collision detection, physics,                }
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
-void playerInteractions();
+void playerInteractions();                                                 //Coded by: Myron, Tze Ting, Luke, Sherryan
 void renderInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
-void renderIntroText(int x, int y);
+void renderIntroText(int x, int y);                                       //Coded by: Myron
 void renderEndText(int x, int y);
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
 void renderLoss(); // renders the loss screen
-void renderVictory(); // renders the victory screen
+void renderVictory(); // renders the victory screen                       //Coded by: Myron
 void renderMap(); // renders the map to the buffer first
 
+<<<<<<< HEAD
 void loadmap(); // store map                   //luke{
 void loadStartmap(); //store startscreen
 void loadLosescreen(); //store lose screen
+=======
+void loadmap();                                                           //Coded by: Myron
+void loadStartmap();                                                      
+void loadLosescreen();                                                    //Coded by: Myron    
+>>>>>>> 0af782d4de71488922aded93d005f54044e3ff44
 void renderStartmap();
 void loadWin();
 void renderWin();
