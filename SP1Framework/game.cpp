@@ -2042,7 +2042,6 @@ void renderGame()
     renderCharacter();  // renders the character into the buffer
     renderBullets();
     renderInteractions();
-
     renderGUI();        // renders game user interface
 
     renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
@@ -2097,6 +2096,25 @@ void loadLosescreen()
         }
         y++;
     }
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '#') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)219, 0x80);
+            }
+            else if (map[y][x] == '=') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)178, 0x80);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
+        }
+    }
+
 }
 
 void renderStartmap()
@@ -2473,14 +2491,14 @@ void renderPauseOptions()
 
 void renderLossOptions()
 {
-    for (int y = 0; y < 65; y++) // renders bg
+    /*for (int y = 0; y < 65; y++) // renders bg
     {
         for (int x = 0; x < 300; x++)
         {
             g_Console.writeToBuffer(x, y, ' ', 0);
         }
-    }
-
+    }*/
+    loadLosescreen();
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
     c.X = c.X / 10;
@@ -2488,9 +2506,9 @@ void renderLossOptions()
     WORD RETRYcolour = 0x0f;
     WORD QUITcolour = 0x0f;
 
-    COORD cLOST = { c.X, c.Y + 22 };
-    COORD cRETRY = { c.X, c.Y + 25 };
-    COORD cQUIT = { c.X, c.Y + 28 };
+    COORD cLOST = { c.X + 80, c.Y + 48 };
+    COORD cRETRY = { c.X + 80, c.Y + 51 };
+    COORD cQUIT = { c.X + 80, c.Y + 54 };
 
     std::string LOST = "YOU LOST :(";
     std::string RETRY = "> PRESS SPACE TO RETRY <";
