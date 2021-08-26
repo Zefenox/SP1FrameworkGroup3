@@ -238,6 +238,10 @@ void shutdown(void)
     colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 
     g_Console.clearBuffer();
+
+    delete player;
+    for (int i = 0; i < 10; i++)
+        delete chest[i];
 }
 
 //--------------------------------------------------------------
@@ -288,6 +292,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_LOSS: lossKBHandler(keyboardEvent); // handle loss screen keyboard event
         break;
+    case S_VICTORY: victoryKBHandler(keyboardEvent); // handle victory screen keyboard event
+        break;
     }
 }
 
@@ -320,6 +326,8 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     case S_PAUSESCREEN: pauseMouseHandler(mouseEvent); // handle pause screen mouse event
         break;
     case S_LOSS: lossMouseHandler(mouseEvent); // handle pause screen mouse event
+        break;
+    case S_VICTORY: victoryMouseHandler(mouseEvent); // handle victory screen mouse event
         break;
     }
 }
@@ -420,6 +428,20 @@ void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     }
 }
 
+void victoryKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    }
+
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
+}
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the game state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -461,6 +483,16 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 }
 
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
+void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
     {
@@ -1907,6 +1939,8 @@ void render()
         break;
     case S_LOSS: renderLoss();
         break;
+    case S_VICTORY: renderVictory();
+        break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
     //renderInputEvents();    // renders status of input events
@@ -2062,6 +2096,11 @@ void renderPauseScreen()
 void renderLoss()
 {
     renderLossOptions();
+}
+
+void renderVictory()
+{
+    renderEndText();
 }
 
 void loadStartmap()
@@ -2609,6 +2648,7 @@ void playerInteractions()
                     if (player->getInventory(j) == nullptr)
                     {
                         int randNum = (rand() % 4) + 1; // randomise consumable gift
+                        delete chest[i];
                         chest[i] = nullptr;
                         switch (randNum)
                         {
@@ -2669,6 +2709,12 @@ void playerInteractions()
         map1Clear = true;
         g_Console.clearBuffer();
         gameInit();
+    }
+
+    //book
+    if (map[player->getY()][player->getX()] == '"')
+    {
+        g_eGameState = S_VICTORY;
     }
 }
 

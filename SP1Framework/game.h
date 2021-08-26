@@ -59,6 +59,7 @@ enum EGAMESTATES
     S_GAME,
     S_PAUSESCREEN,
     S_LOSS,
+    S_VICTORY,
     S_COUNT
 };
 
@@ -98,7 +99,8 @@ void renderEndText();
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
-void renderLoss();
+void renderLoss(); // renders the loss screen
+void renderVictory(); // renders the victory screen
 void renderMap(); // renders the map to the buffer first
 
 void loadmap();
@@ -178,6 +180,9 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mous
 void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 
-void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for loss
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
+void victoryKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for victory
+void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H
