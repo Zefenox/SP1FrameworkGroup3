@@ -37,6 +37,7 @@ enum EKEYS
     K_T,
     K_Y,
     K_U,
+    K_H,
     K_1,
     K_2, 
     K_3,
@@ -56,9 +57,11 @@ enum EGAMESTATES
 {
     S_SPLASHSCREEN,
     S_STARTSCREEN,
+    S_HELP,
     S_GAME,
     S_PAUSESCREEN,
     S_LOSS,
+    S_VICTORY,
     S_COUNT
 };
 
@@ -76,11 +79,13 @@ void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
-void splashScreenWait();    // waits for time to pass in splash screen
+void updateSplashScreen();    // waits for time to pass in splash screen
 void updateStart();         // updates start menu
+void updateHelp();
 void updateGame();          // gameplay logic
 void updatePause();
 void updateLoss();
+void updateVictory();
 void cheatInput();
 void inventoryInput();
 void startInput();
@@ -93,10 +98,13 @@ void renderInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
+void renderIntroText(int x, int y);
+void renderEndText(int x, int y);
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
-void renderLoss();
+void renderLoss(); // renders the loss screen
+void renderVictory(); // renders the victory screen
 void renderMap(); // renders the map to the buffer first
 
 void loadmap();
@@ -110,6 +118,7 @@ void bulletInteraction();
 void renderBullets();
 
 void renderCharacter();     // renders the character into the buffer
+void renderHelp();
 void renderStartOptions();
 void renderPauseBase();
 void renderPauseOptions();
@@ -120,7 +129,7 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
-bool bossMovement(SGameChar BArr[9]); // Boss movement
+void bossMovement(SGameChar BArr[9]); // Boss movement
 bool bossAttackSeq(); // Boss attack
 char bossSearchPlayer(SGameChar BArr[9]);
 char bossProj();
@@ -170,12 +179,18 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);      // define this fun
 void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for start screen
 void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 
+void helpKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for start screen
+void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyboard events for gameplay 
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mouse events for gameplay 
 
 void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 
-void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for loss
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
+void victoryKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for victory
+void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H
