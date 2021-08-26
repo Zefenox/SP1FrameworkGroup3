@@ -97,7 +97,7 @@ void init(void)
     g_eGameState = S_SPLASHSCREEN;
 
     // Enemy initial state
-    bpro.m_bActive = true;
+   /* bpro.m_bActive = true;
     bossHp.hp = 240;
     p1.m_bActive = true;
     p2.m_bActive = true;
@@ -114,8 +114,7 @@ void init(void)
     p4.m_cLocation.Y = 25;
     p5.m_cLocation.X = 150;
     p5.m_cLocation.Y = 45;
-    setStalkerCoords(stalkers);
-    bossBodyCoord(bossParticles, 30, 8);
+    setStalkerCoords(stalkers);*/
  
     g_dElapsedTime = 0.0;
 
@@ -179,13 +178,9 @@ void gameInit()
         p4.m_cLocation.Y = 25;
         p5.m_cLocation.X = 170;
         p5.m_cLocation.Y = 30;
-       /* bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
-        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
-        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
         bpro.m_bActive = false;
         bpro2.m_bActive = false;
-        bossBodyCoord(bossParticles, 181, 20);*/
+        setStalkerCoords(stalkers);
     }
 
     if (map1Clear)
@@ -212,15 +207,29 @@ void gameInit()
         chest[9] = new Chest;
         chest[9]->setPosition(98, 54);
 
+
+        p1.m_bActive = true;
+        p2.m_bActive = true;
+        p3.m_bActive = true;
+        p4.m_bActive = true;
+        p5.m_bActive = true;
+        p1.m_cLocation.X = 150;
+        p1.m_cLocation.Y = 30;
+        p2.m_cLocation.X = 40;
+        p2.m_cLocation.Y = 30;
+        p3.m_cLocation.X = 100;
+        p3.m_cLocation.Y = 40;
+        p4.m_cLocation.X = 100;
+        p4.m_cLocation.Y = 20;
+        p5.m_cLocation.X = 170;
+        p5.m_cLocation.Y = 30;
+
         // Initialise boss bullets
-        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
-        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
-        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
-        bpro.m_bActive = false;
-        bpro2.m_bActive = false;
-        // Initialise boss spawn
-        bossBodyCoord(bossParticles, 150, 20);
+        bossHp.hp = 240;
+        bpro.m_bActive = true;
+        bpro2.m_bActive = true;
+        // Initialise boss spawn X higher = x-- = leftwards, Y lower = y-- = upwards
+        bossBodyCoord(bossParticles, 30, 12);
     }
     
 }
@@ -545,16 +554,19 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
     shootInput();
-    stalkerMovement(stalkers);
+   // stalkerMovement(stalkers);
     phantomMovement();
     phantomMovement2();
     phantomMovement3();
     phantomMovement4();
     phantomMovement5();
-    bossMovement(bossParticles);
+    if (map1Clear)
+    {
+        bossMovement(bossParticles);
+    }
     playerInteractions();
     bulletInteraction();
-    // interactions
+    
     player->PlayerUpdate(); // checks for updates to player status
 
     if (!player->getActive()) // if player is dead
@@ -820,38 +832,39 @@ void bossBodyCoord(SGameChar BArr[9], int x, int y)
     }
 }
 
-void bossMovement(SGameChar BArr[9])
+bool bossMovement(SGameChar BArr[9])
 {
-    bool fire = false;
-    int x, y;
-    for (int i = 0; i < 9; i++)
-    {
-        x = BArr[i].m_cLocation.X;
-        y = BArr[i].m_cLocation.Y;
+    //int x, y;
+    //for (int i = 0; i < 9; i++)
+    //{
+    //    x = BArr[i].m_cLocation.X;
+    //    y = BArr[i].m_cLocation.Y;
 
-        if ((int)g_dElapsedTime % 2 == 0)
-        {
-            if (BArr[i].m_cLocation.Y > 0)
-                {
-                    if (map[y - 2][x] != '#')
-                        BArr[i].m_cLocation.Y--;
-                }
-        }
-        else
-        {
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            {
-               
-                if (map[y + 2][x] != '#')
-                        BArr[i].m_cLocation.Y++;
-            }
-        }
-    }
+    //    //if ((int)g_dElapsedTime % 2 == 0)
+    //    {
+    //        if (BArr[i].m_cLocation.Y > 0)
+    //            {
+    //                if (map[y - 2][x] != '#')
+    //                    BArr[i].m_cLocation.Y--;
+    //            }
+    //    }
+    //   // else
+    //    {
+    //        if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+    //        {
+    //           
+    //            if (map[y + 2][x] != '#')
+    //                    BArr[i].m_cLocation.Y++;
+    //        }
+    //    }
+    //}
+    return true;
     bossSearchPlayer(bossParticles);
-    bossAttackSeq();
-    if (bossProj() == 't')
-        renderBossBullet();
-       
+    bossAttackSeq();   
+    if (bossProj() != 's')
+    {
+        bpro.m_cLocation.X--;
+    }
     bossDeath();
 }
 
@@ -862,8 +875,9 @@ char bossSearchPlayer(SGameChar BArr[9])
     for (int i = 0; i < 9; i++)
     {
         // same lanes
-        if ((player->getX() + 10 == BArr[i].m_cLocation.X) ||
-            (player->getY() + 10 == BArr[i].m_cLocation.Y))
+        if(bossMovement(bossParticles) == true)
+        if ((player->getX() + 30 <= BArr[i].m_cLocation.X) ||
+            (player->getY() + 30 <= BArr[i].m_cLocation.Y))
             {
                 return 'y';
             }
@@ -897,7 +911,6 @@ bool bossAttackSeq()
         bossProj();
         return true;
     }
-    return false;
 }
 
 char bossProj()
@@ -907,19 +920,27 @@ char bossProj()
     case 'y':
        bpro.m_bActive = true;
        bpro2.m_bActive = true;
+       bpro.m_cLocation.X = bossParticles[4].m_cLocation.X -1;
+       bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
         return 't';
+        break;
     }
 }
 
 void bossDeath()
 {
-    if(bossHp.hp < 0)
+    if(bossHp.hp <= 0)
         for (int i = 0; i < 9; i++)
         {
             // disable all boss related entities
             bossParticles[i].m_bActive = false;
             bpro.m_bActive = false;
             bpro2.m_bActive = false;
+            bpro.m_cLocation.X = 0;
+            bpro.m_cLocation.Y = 0;
+            bpro2.m_cLocation.X = 0;
+            bpro2.m_cLocation.Y = 0;
+
         }
     
 }
@@ -1324,16 +1345,41 @@ void projReachPlayer()
     {
         player->setHealth(player->getHealth() - 10);
         bpro.m_bActive = false;
-        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X;
-        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+        for (int i = 0; i < 9; i++)
+        {
+            if (bossParticles[i].m_bActive == true)
+            {
+                  bpro.m_cLocation.X = bossParticles[4].m_cLocation.X;
+                  bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+            }
+            else
+            {
+                bpro.m_cLocation.X = 0;
+                bpro.m_cLocation.Y = 0;
+            }
+                
+        }
+        
 
     }
    else if ((player->getX() == bpro2.m_cLocation.X) && (player->getY() == bpro2.m_cLocation.Y))
     {
         player->setHealth(player->getHealth() - 10);
         bpro2.m_bActive = false;
-        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y;
+        for (int i = 0; i < 9; i++)
+        {
+            if (bossParticles[i].m_bActive == true)
+            {
+                bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
+                bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y;
+            }
+            else
+            {
+                bpro2.m_cLocation.X = 0;
+                bpro2.m_cLocation.Y = 0;
+            }
+                
+        }
 
     }
 }
@@ -1979,9 +2025,6 @@ void renderToScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
-
-    
-
     //render's BG
     COORD size = g_Console.getConsoleSize();
     
@@ -2027,15 +2070,17 @@ void renderGame()
     renderCharacter();  // renders the character into the buffer
     renderBullets();
     renderInteractions();
+    //map1Clear = true;
 
     renderGUI();        // renders game user interface
 
     renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
-    if (map1Clear == true)  // renders boss in 2nd map
-    {
+    if(map1Clear)
         renderBoss();
-        renderBossBullet();
-    }
+        
+    /*for(int i = 0; i < 9; i++)
+        if(bossParticles[i].m_bActive == true)*/
+         //renderBossBullet();
 }
 
 void renderPauseScreen()
@@ -2061,7 +2106,6 @@ void loadStartmap()
         for (unsigned i = 0; i < line.length(); ++i)
         {
             map[y][i] = line.at(i);
-
         }
         y++;
     }
@@ -2163,59 +2207,40 @@ void bulletInteraction()
                     return;
                 }
             }
-            // detect boss
-            for (int j = 0; j < 9; j++)
+            //// detect parry for boss bullets
+            //if ((x == bpro.m_cLocation.X) && (y == bpro.m_cLocation.Y))
+            //{
+            //    bpro.m_cLocation.X+=87;
+            //    for (int n = 0; n < 9; n++)
+            //    {
+            //            
+            //            if ((bpro.m_cLocation.X == bossParticles[n].m_cLocation.X) &&
+            //                (bpro.m_cLocation.Y == bossParticles[n].m_cLocation.Y))
+            //            {
+            //                bossHp.hp -= 1000;
+            //                bpro.m_bActive = false;
+            //            }
+            //        
+            //    }
+            //    delete bulletArray[i];
+            //    bulletArray[i] = nullptr;
+            //    return;
+            //}
+            for (int n = 0; n < 9; n++)
             {
-                if (j == 0 || j == 2 || j == 6 || j == 8)
+                if (n == 0 || n == 2 || n == 6 || n == 8)
                 {
-                    if ((bossParticles[j].m_cLocation.X == x) && (bossParticles[j].m_cLocation.Y == y))
+                    if ((x == bossParticles[n].m_cLocation.X) && (y == bossParticles[n].m_cLocation.Y))
                     {
-                        bossHp.hp -= 10;
+                        bossHp.hp -= 20;
                         delete bulletArray[i];
                         bulletArray[i] = nullptr;
                         return;
+
                     }
                 }
-            }
-            // detect parry for boss bullets
-            if ((x == bpro.m_cLocation.X) && (y == bpro.m_cLocation.Y))
-            {
-                for (int n = 0; n < 9; n++)
-                {
-                    if (bpro.m_cLocation.X < bossParticles[n].m_cLocation.X)
-                    {
-                        bpro.m_cLocation.X++;
-                        if ((bpro.m_cLocation.X == bossParticles[3].m_cLocation.X) &&
-                            (bpro.m_cLocation.Y == bossParticles[3].m_cLocation.Y))
-                        {
-                            bossHp.hp -= 5;
-                            bpro.m_bActive = false;
-                        }
-                    }
-                }
-                delete bulletArray[i];
-                bulletArray[i] = nullptr;
-                return;
-            }
-            else if((x == bpro2.m_cLocation.X) && (y == bpro2.m_cLocation.Y))
-            {
-                for (int n = 0; n < 9; n++)
-                {
-                    if (bpro2.m_cLocation.X < bossParticles[n].m_cLocation.X)
-                    {
-                        bpro2.m_cLocation.X++;
-                        if ((bpro2.m_cLocation.X == bossParticles[3].m_cLocation.X) &&
-                            (bpro2.m_cLocation.Y == bossParticles[3].m_cLocation.Y))
-                        {
-                            bossHp.hp -= 5;
-                            bpro2.m_bActive = false;
-                        }
-                    }
-                }
-                delete bulletArray[i];
-                bulletArray[i] = nullptr;
-                return;
-            }
+            }  
+                
 
         }
     }
@@ -2549,7 +2574,6 @@ void renderGUI() // render game user inferface
     }
 }
 
-
 void playerInteractions()
 {
     for (int i = 0; i < 10; i++) // player interacts with a chest
@@ -2696,21 +2720,26 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 
     if (pro5.m_bActive == true)
         g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
-
+    //renderBossBullet();
+    if (bpro.m_bActive == true)
+    {
+        g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
+    }
 }
 
 void renderBossBullet()
 {
+   /* if (bossAttackSeq() == true)
         if (bpro.m_bActive == true)
         {
-            int y = bpro.m_cLocation.Y;
             int x = bpro.m_cLocation.X;
-            g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
+            int y = bpro.m_cLocation.Y;
             if (player->getX() < bpro.m_cLocation.X)
             {
-                if(map[y][x - 1] != '#')
+                if (map[y][x - 1] != '#')
                     bpro.m_cLocation.X--;
             }
+            
             else if (player->getX() > bpro.m_cLocation.X)
             {
                 if (map[y][x + 1] != '#')
@@ -2723,18 +2752,18 @@ void renderBossBullet()
             }
             else if (player->getY() > bpro.m_cLocation.Y)
             {
-                if (map[y - 1][x] != '#')
+                if (map[y + 1][x] != '#')
                     bpro.m_cLocation.Y++;
             }
         }
         if (bpro2.m_bActive == true)
         {
-            int y = bpro2.m_cLocation.Y;
             int x = bpro2.m_cLocation.X;
+            int y = bpro2.m_cLocation.Y;
             g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
             if (player->getX() < bpro2.m_cLocation.X)
             {
-                if (map[y][x - 1] != '#')
+                if(map[y][x - 1] != '#')
                     bpro2.m_cLocation.X--;
             }
             else if (player->getX() > bpro2.m_cLocation.X)
@@ -2753,6 +2782,13 @@ void renderBossBullet()
                     bpro2.m_cLocation.Y++;
             }
         }
+        if(bpro.m_bActive == false || bpro2.m_bActive == false)
+        {
+            bpro.m_cLocation.X = 0;
+            bpro.m_cLocation.Y = 0;
+            bpro2.m_cLocation.X = 0;
+            bpro2.m_cLocation.Y = 0;
+     }*/
 }
 
 void renderBoss()
@@ -2782,6 +2818,7 @@ void renderBoss()
                 case 8:
                     if(bossHp.hp <= 0)
                     g_Console.writeToBuffer(bossParticles[8].m_cLocation, (char)43, bossColor);
+                    bossDeath();
                     break;
                 }
             }   
@@ -2790,7 +2827,7 @@ void renderBoss()
                 g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossColor);
             }
      }
-    
+
 }
 
 char renderProj()

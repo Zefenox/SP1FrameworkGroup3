@@ -120,12 +120,12 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
-void bossMovement(SGameChar BArr[9]); // Boss movement
+bool bossMovement(SGameChar BArr[9]); // Boss movement
 bool bossAttackSeq(); // Boss attack
 char bossSearchPlayer(SGameChar BArr[9]);
 char bossProj();
 void bossDeath();
-//phantom movements (Hardcoded for now)
+//phantom movements
 void phantomMovement();
 void phantomMovement2();
 void phantomMovement3();
