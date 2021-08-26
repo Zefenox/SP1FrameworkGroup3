@@ -48,7 +48,7 @@ int snum = 83;
 
 WORD pcolor = 0x5E;
 int pnum = 43;
-SGameChar stalkers[12] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10, s11, s12};
+SGameChar stalkers[12] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10, s11, s12 };
 
 //phantoms
 SGameChar   p1, p2, p3, p4, p5;
@@ -95,12 +95,12 @@ void init(void)
 
 
     // Set precision for floating point output
-    g_dElapsedTime = 0.0;    
+    g_dElapsedTime = 0.0;
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
     gameInit();
-    
+
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 12, L"Consolas");
 
@@ -156,13 +156,13 @@ void gameInit()
         p4.m_cLocation.Y = 25;
         p5.m_cLocation.X = 170;
         p5.m_cLocation.Y = 30;
-       /* bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
-        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
-        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
-        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
-        bpro.m_bActive = false;
-        bpro2.m_bActive = false;
-        bossBodyCoord(bossParticles, 181, 20);*/
+        /* bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
+         bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+         bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
+         bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
+         bpro.m_bActive = false;
+         bpro2.m_bActive = false;
+         bossBodyCoord(bossParticles, 181, 20);*/
     }
 
     if (map1Clear)
@@ -194,12 +194,13 @@ void gameInit()
         bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
         bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
         bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
-        bpro.m_bActive = false;
-        bpro2.m_bActive = false;
+        bossHp.hp = 240;
+        bpro.m_bActive = true;
+        bpro2.m_bActive = true;
         // Initialise boss spawn
-        bossBodyCoord(bossParticles, 150, 20);
+        bossBodyCoord(bossParticles, 30, 51);
     }
-    
+
 }
 
 //--------------------------------------------------------------
@@ -460,7 +461,6 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
-
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the start state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -470,6 +470,7 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
+
 void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -479,7 +480,6 @@ void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
-
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the guide page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -489,6 +489,7 @@ void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
+
 void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -498,7 +499,6 @@ void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
-
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the pause page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -508,6 +508,7 @@ void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
+
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -517,7 +518,6 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
-
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the lose page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -527,6 +527,7 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
+
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -536,7 +537,6 @@ void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
-
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the win page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -546,6 +546,7 @@ void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
+
 void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -594,13 +595,21 @@ void update(double dt)
         break;
     }
 }
-
 //--------------------------------------------------------------
 // Purpose  : Update function
 //            This is the update function when the player wins
-// Input    : map1Clear, endtimer
+//            double dt - This is the amount of time in seconds since the previous call was made
+//
+//            Game logic should be done here.
+//            Such as collision checks, determining the position of your game characters, status updates, etc
+//            If there are any calls to write to the console here, then you are doing it wrong.
+//
+//            If your game has multiple states, you should determine the current state, and call the relevant function here.
+//
+// Input    : dt = deltatime
 // Output   : void
 //--------------------------------------------------------------
+
 void updateVictory()
 {
     map1Clear = false;
@@ -612,12 +621,6 @@ void updateVictory()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : Update function
-//            This is the update function for the splash screen
-// Input    : g_dElapsedTime
-// Output   : void
-//--------------------------------------------------------------
 void updateSplashScreen()    // waits for time to pass in splash screen
 {
     /*
@@ -630,19 +633,19 @@ void updateSplashScreen()    // waits for time to pass in splash screen
         {
             renderSplashScreen();
         }
-        
+
 
     }
     */
-     // wait for 3 seconds to switch to start screen, else do nothing
-        
+    // wait for 3 seconds to switch to start screen, else do nothing
 
-    /*processUserInput();*/
-    /*getInput();*/
-    /*if (g_skKeyEvent[K_SPACE].keyReleased)
-    {
-        g_eGameState = S_GAME;
-    }*/
+
+   /*processUserInput();*/
+   /*getInput();*/
+   /*if (g_skKeyEvent[K_SPACE].keyReleased)
+   {
+       g_eGameState = S_GAME;
+   }*/
 
     if (g_dElapsedTime > 10.0)
     {
@@ -651,36 +654,17 @@ void updateSplashScreen()    // waits for time to pass in splash screen
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : Update function
-//            This is the update function when the game starts
-// Input    : NA
-// Output   : void
-//--------------------------------------------------------------
 void updateStart()
 {
     startInput();
 }
 
-//--------------------------------------------------------------
-// Purpose  : Update function
-//            This is the update function for the help screen
-// Input    : g_skKeyEvent[K_H]
-// Output   : void
-//--------------------------------------------------------------
 void updateHelp()
 {
     if (g_skKeyEvent[K_H].keyReleased)
         g_eGameState = S_GAME;
 }
 
-//--------------------------------------------------------------
-// Purpose  : Update function
-//            This is the update function for the game flow
-//            The flow of the game is set here
-// Input    : player->getActive
-// Output   : void
-//--------------------------------------------------------------
 void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
@@ -705,35 +689,17 @@ void updateGame()       // gameplay logic
         g_eGameState = S_LOSS;
 }
 
-//--------------------------------------------------------------
-// Purpose  : Update function
-//            This is the update function for the pause screen
-// Input    : NA
-// Output   : void
-//--------------------------------------------------------------
 void updatePause()
 {
     processUserInput();
     pauseInput();
 }
 
-//--------------------------------------------------------------
-// Purpose  : Update function
-//            This is the update function for the Lose screen
-// Input    : NA
-// Output   : void
-//--------------------------------------------------------------
 void updateLoss()
 {
     lossInput();
 }
 
-//--------------------------------------------------------------
-// Purpose  : move/set position function
-//            This is the function for moving the player
-// Input    : player->getX(); player->getY(); g_skKeyEvent[K_W].keyDown
-// Output   : void
-//--------------------------------------------------------------
 void moveCharacter()
 {
     // Updating the location of the character based on the key release
@@ -746,12 +712,12 @@ void moveCharacter()
 
     if (g_skKeyEvent[K_W].keyDown && player->getY() > 0)
     {
-        if ((map[y - 1][x] != '#') && 
-            (map[y - 1][x] != '=') && 
-            (map[y - 1][x] != '[') && 
-            (map[y - 1][x] != ']') && 
-            (map[y - 1][x] != ')') && 
-            (map[y - 1][x] != '(') && 
+        if ((map[y - 1][x] != '#') &&
+            (map[y - 1][x] != '=') &&
+            (map[y - 1][x] != '[') &&
+            (map[y - 1][x] != ']') &&
+            (map[y - 1][x] != ')') &&
+            (map[y - 1][x] != '(') &&
             (map[y - 1][x] != '*'))
         {
             //Beep(1440, 30);
@@ -759,60 +725,55 @@ void moveCharacter()
             player->setDirection('U');
         }
     }
-    if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
+
+if (g_skKeyEvent[K_A].keyDown && player->getX() > 0)
+{
+    if ((map[y][x - 1] != '#') &&
+        (map[y][x - 1] != '=') &&
+        (map[y][x - 1] != '[') &&
+        (map[y][x - 1] != ']') &&
+        (map[y][x - 1] != ')') &&
+        (map[y][x - 1] != '(') &&
+        (map[y][x - 1] != '*'))
     {
-        if ((map[y][x - 1] != '#') &&
-            (map[y][x - 1] != '=') &&
-            (map[y][x - 1] != '[') &&
-            (map[y][x - 1] != ']') &&
-            (map[y][x - 1] != ')') &&
-            (map[y][x - 1] != '(') &&
-            (map[y][x - 1] != '*'))
-        {
-            //Beep(1440, 30);
-            player->setPosition(player->getX() - 1, player->getY());
-            player->setDirection('L');
-        }
+        //Beep(1440, 30);
+        player->setPosition(player->getX() - 1, player->getY());
+        player->setDirection('L');
     }
-    if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
+}
+if (g_skKeyEvent[K_S].keyDown && player->getY() < g_Console.getConsoleSize().Y - 1)
+{
+    if ((map[y + 1][x] != '#') &&
+        (map[y + 1][x] != '=') &&
+        (map[y + 1][x] != '[') &&
+        (map[y + 1][x] != ']') &&
+        (map[y + 1][x] != ')') &&
+        (map[y + 1][x] != '(') &&
+        (map[y + 1][x] != '*'))
     {
-        if ((map[y + 1][x] != '#') &&
-            (map[y + 1][x] != '=') &&
-            (map[y + 1][x] != '[') &&
-            (map[y + 1][x] != ']') &&
-            (map[y + 1][x] != ')') &&
-            (map[y + 1][x] != '(') &&
-            (map[y + 1][x] != '*'))
-        {
-            //Beep(1440, 30);
-            player->setPosition(player->getX(), player->getY() + 1);
-            player->setDirection('D');
-        }
+        //Beep(1440, 30);
+        player->setPosition(player->getX(), player->getY() + 1);
+        player->setDirection('D');
     }
-    if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
+}
+if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X - 1)
+{
+    if ((map[y][x + 1] != '#') &&
+        (map[y][x + 1] != '=') &&
+        (map[y][x + 1] != '[') &&
+        (map[y][x + 1] != ']') &&
+        (map[y][x + 1] != ')') &&
+        (map[y][x + 1] != '(') &&
+        (map[y][x + 1] != '*'))
     {
-        if ((map[y][x + 1] != '#') &&
-            (map[y][x + 1] != '=') &&
-            (map[y][x + 1] != '[') &&
-            (map[y][x + 1] != ']') &&
-            (map[y][x + 1] != ')') &&
-            (map[y][x + 1] != '(') &&
-            (map[y][x + 1] != '*'))
-        {
-            //Beep(1440, 30);
-            player->setPosition(player->getX() + 1, player->getY());
-            player->setDirection('R');
-        }
+        //Beep(1440, 30);
+        player->setPosition(player->getX() + 1, player->getY());
+        player->setDirection('R');
     }
+}
 
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for setting up cheats
-// Input    : g_skKeyEvent[K_T]; g_skKeyEvent[K_Y]; g_skKeyEvent[K_U];
-// Output   : void
-//--------------------------------------------------------------
 void cheatInput()
 {
     if (g_skKeyEvent[K_T].keyReleased)
@@ -829,12 +790,6 @@ void cheatInput()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for using consumables
-// Input    : g_skKeyEvent[K_1]; player->getInventory()
-// Output   : void
-//--------------------------------------------------------------
 void inventoryInput()
 {
     if (g_skKeyEvent[K_1].keyDown)
@@ -880,12 +835,6 @@ void inventoryInput()
 
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for calling out shoot function
-// Input    : g_skKeyEvent[K_L]; g_mouseEvent;
-// Output   : void
-//--------------------------------------------------------------
 void shootInput()
 {
     if (g_skKeyEvent[K_L].keyReleased)
@@ -895,12 +844,6 @@ void shootInput()
         shoot();
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for start screen inputs
-// Input    : g_mouseEvent; g_skKeyEvent[K_SPACE];
-// Output   : void
-//--------------------------------------------------------------
 void startInput()
 {
     // (100 - 123, 28)
@@ -923,12 +866,6 @@ void startInput()
 
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for pause screen inputs
-// Input    : g_mouseEvent; g_skKeyEvent[K_Q];
-// Output   : void
-//--------------------------------------------------------------
 void pauseInput()
 {
     // (100 - 124, 27)
@@ -948,12 +885,6 @@ void pauseInput()
         g_bQuitGame = true;
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for losing screen inputs
-// Input    : g_mouseEvent; g_skKeyEvent[K_Q];g_skKeyEvent[K_SPACE]
-// Output   : void
-//--------------------------------------------------------------
 void lossInput()
 {
     // (30 - 53, 28)
@@ -982,12 +913,6 @@ void lossInput()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : set function
-//            This is the function for processing user inputs
-// Input    : g_eGameState; g_skKeyEvent[K_H];g_skKeyEvent[K_SPACE]
-// Output   : void
-//--------------------------------------------------------------
 void processUserInput()
 {
     // quits the game if player hits the escape key
@@ -1042,23 +967,13 @@ void render()
     renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to clear the console buffer 
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void clearScreen()
 {
     // Clears the buffer with this colour attribute
     g_Console.clearBuffer(0x1F);
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the game title 
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
-void renderTitle(int x,int y) // function to render title
+void renderTitle(int x, int y) // function to render title
 {
     const WORD colors[] = {
         0x0F, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
@@ -1116,121 +1031,91 @@ void renderTitle(int x,int y) // function to render title
     c.Y += 1;
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to write buffer to console
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderToScreen()
 {
     // Writes the buffer to the console, hence you will see what you have written
     g_Console.flushBufferToConsole();
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the splash screen
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderSplashScreen()  // renders the splash screen
 {
     //render's BG
     COORD size = g_Console.getConsoleSize();
-    
+
     //if (g_dElapsedTime < 4)
     //{
-        g_Console.clearBuffer();
-        if (dis < 61)
-            dis++;
-        for (int i = 0; i < size.Y; i++)
-        {
-            for (int x = 0; x < size.X; x++)
-            {
-                g_Console.writeToBuffer(x, i, " ", 0x80);
-            }
-        }
-        renderTitle(100, 65 - dis);
-        renderIntroText(300 + dis, 30);
-        //renderIntroText(100, -dis);
-    //}
-    //else 
-    /*
+    g_Console.clearBuffer();
+    if (dis < 61)
+        dis++;
+    for (int i = 0; i < size.Y; i++)
     {
-        for (int i = 0; i < size.Y; i++)
+        for (int x = 0; x < size.X; x++)
         {
-            for (int x = 0; x < size.X; x++)
-            {
-                g_Console.writeToBuffer(x, i, " ", 0x80);
-            }
+            g_Console.writeToBuffer(x, i, " ", 0x80);
         }
-        renderTitle(100, 20);
     }
-    */
-    
+    renderTitle(100, 65 - dis);
+    renderIntroText(300 + dis, 30);
+    //renderIntroText(100, -dis);
+//}
+//else 
+/*
+{
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0x80);
+        }
+    }
+    renderTitle(100, 20);
+}
+*/
+
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the intro text
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderIntroText(int x, int y)
 {
-    g_Console.writeToBuffer(x+5, y+1, "You feel the stagnant wind flow over your body as you open your eyes, lying down on the stone floor. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+2, "As you get up, you try to recall the moments that happened before you lost consciousness. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+3, "Enduring the headache as you think hard, a memory appeared before your mind. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+4, "Though a fragment of what you’re not yet able to remember,", 0x0F);
-    g_Console.writeToBuffer(x+5, y+5, "it is something that nudged you into the goal that you have set for yourself: to escape the Dungeon.", 0x0F);
-    g_Console.writeToBuffer(x+5 + 30, y+7, "What Dungeon?", 0x0F);
-    g_Console.writeToBuffer(x+5, y+9, "Then it became apparent the place where you woke up in was the same place that you have remembered trying to get out of, ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+10, "a cold and wet labyrinth with dimly lit torches illuminating its hallways. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+11, "There is a weathered steel door right in front of you that was decorated with intricate patterns and a symbol of a nondescript man walking through a doorway,", 0x0F);
-    g_Console.writeToBuffer(x+5, y+12, "and it was only a stone’s throw away from where you standing. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+10, "Seeing this door as an obvious way out, you walk over to the door and tug onto its handle, but the door refuses to open. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+11, "Then you press your hands against it, and the same result occurs. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+12, "After a moment of trial and error getting through the stubborn door, it refuses to budge. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+13, "Frustrated, you decide to turn around and tread carefully in the opposite direction,", 0x0F);
-    g_Console.writeToBuffer(x+5, y+13, "curious of what this so-called Dungeon has to offer but hoping for another way out of here.", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 1, "You feel the stagnant wind flow over your body as you open your eyes, lying down on the stone floor. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 2, "As you get up, you try to recall the moments that happened before you lost consciousness. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 3, "Enduring the headache as you think hard, a memory appeared before your mind. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 4, "Though a fragment of what you’re not yet able to remember,", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 5, "it is something that nudged you into the goal that you have set for yourself: to escape the Dungeon.", 0x0F);
+    g_Console.writeToBuffer(x + 5 + 30, y + 7, "What Dungeon?", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 9, "Then it became apparent the place where you woke up in was the same place that you have remembered trying to get out of, ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 10, "a cold and wet labyrinth with dimly lit torches illuminating its hallways. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 11, "There is a weathered steel door right in front of you that was decorated with intricate patterns and a symbol of a nondescript man walking through a doorway,", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 12, "and it was only a stone’s throw away from where you standing. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 10, "Seeing this door as an obvious way out, you walk over to the door and tug onto its handle, but the door refuses to open. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 11, "Then you press your hands against it, and the same result occurs. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 12, "After a moment of trial and error getting through the stubborn door, it refuses to budge. ", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 13, "Frustrated, you decide to turn around and tread carefully in the opposite direction,", 0x0F);
+    g_Console.writeToBuffer(x + 5, y + 13, "curious of what this so-called Dungeon has to offer but hoping for another way out of here.", 0x0F);
 
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the ending text
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
-void renderEndText(int x,int y)
+void renderEndText(int x, int y)
 {
 
-    g_Console.writeToBuffer(x, y, "Sweating from both the heat of the underground and the last battle against a body of bodies,",0x0F);
-    g_Console.writeToBuffer(x, y+1, "you stroll into the deepest unknown and press on forward through the darkness before coming across an old desk with a lone lamp. ",0x0F);
-    g_Console.writeToBuffer(x,y +2,"The light cast by the lamp brings your attention to the worn but intact book resting on the table surface.", 0x0F);
-    g_Console.writeToBuffer(x + 50,y+3,"On its cover read, “My Diary”.", 0x0F);
-    g_Console.writeToBuffer(x,y+4,"Intrigued by the content which lies within the book, you walk over to the desk and turn the book to its first page:", 0x0F);
-    g_Console.writeToBuffer(x,y+5,"“Dear diary, my best friend ف̵̌̈́ф̶̈́̃#̸̧͂φ̸̓̄$̴̝͐و̴͋̏א̵͙̽ and I have been close friends for a few years, but I can’t believe he forgot my birthday!", 0x0F);
-    g_Console.writeToBuffer(x,y+6,"So to prank him back, I decided to build an elaborate dungeon filled with traps and monsters and all that to scare the pants out of him and teach him a lesson!", 0x0F);
-    g_Console.writeToBuffer(x,y+7,"Once I’m done building this dungeon, I’ll visit П̶̤̒о̶̖̃л̸͓̈ and then invite П̵̹̇о̵͋̋л̶͙̈́ to this place. And then...”", 0x0F);
-    
+    g_Console.writeToBuffer(x, y, "Sweating from both the heat of the underground and the last battle against a body of bodies,", 0x0F);
+    g_Console.writeToBuffer(x, y + 1, "you stroll into the deepest unknown and press on forward through the darkness before coming across an old desk with a lone lamp. ", 0x0F);
+    g_Console.writeToBuffer(x, y + 2, "The light cast by the lamp brings your attention to the worn but intact book resting on the table surface.", 0x0F);
+    g_Console.writeToBuffer(x + 50, y + 3, "On its cover read, “My Diary”.", 0x0F);
+    g_Console.writeToBuffer(x, y + 4, "Intrigued by the content which lies within the book, you walk over to the desk and turn the book to its first page:", 0x0F);
+    g_Console.writeToBuffer(x, y + 5, "“Dear diary, my best friend ف̵̌̈́ф̶̈́̃#̸̧͂φ̸̓̄$̴̝͐و̴͋̏א̵͙̽ and I have been close friends for a few years, but I can’t believe he forgot my birthday!", 0x0F);
+    g_Console.writeToBuffer(x, y + 6, "So to prank him back, I decided to build an elaborate dungeon filled with traps and monsters and all that to scare the pants out of him and teach him a lesson!", 0x0F);
+    g_Console.writeToBuffer(x, y + 7, "Once I’m done building this dungeon, I’ll visit П̶̤̒о̶̖̃л̸͓̈ and then invite П̵̹̇о̵͋̋л̶͙̈́ to this place. And then...”", 0x0F);
+
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the starting text
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderStart()
 {
     loadStartmap();
     renderStartmap();
-    renderTitle(30,10);
+    renderTitle(30, 10);
     renderStartOptions();
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the game contents
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderGame()
 {
     loadmap();
@@ -1248,11 +1133,6 @@ void renderGame()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the pause menu
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderPauseScreen()
 {
     renderGame();
@@ -1260,21 +1140,11 @@ void renderPauseScreen()
     renderPauseOptions();
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the losing screen options
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderLoss()
 {
     renderLossOptions();
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the winning screen
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderVictory()
 {
     COORD size = g_Console.getConsoleSize();
@@ -1291,15 +1161,10 @@ void renderVictory()
             g_Console.writeToBuffer(x, i, " ", 0x00);
         }
     }
-    renderEndText(50,65 - dis);
+    renderEndText(50, 65 - dis);
     endtimer++;
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to check through the starting map
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void loadStartmap()
 {
     std::ifstream startscreen("Startscreen.txt");
@@ -1317,12 +1182,6 @@ void loadStartmap()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the losing screen
-// 
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void loadLosescreen()
 {
     std::ifstream losescreen("LoseScreen.txt");
@@ -1359,11 +1218,6 @@ void loadLosescreen()
 
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the starting map
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderStartmap()
 {
     for (int y = 0; y < 65; y++)
@@ -1402,11 +1256,6 @@ void renderStartmap()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the player attack projectiles
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderBullets()
 {
     for (int i = 0; i < 100; i++)
@@ -1421,11 +1270,6 @@ void renderBullets()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to check for which map to render first
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void loadmap()
 {
     if (map1Clear != true)
@@ -1462,11 +1306,6 @@ void loadmap()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the map according to the symbols
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderMap()
 {
     //render Map
@@ -1574,11 +1413,6 @@ void renderMap()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the options in starting screen
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderStartOptions()
 {
     COORD c = g_Console.getConsoleSize();
@@ -1609,11 +1443,6 @@ void renderStartOptions()
     g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the base of the pause screen
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderPauseBase()
 {
     COORD c = g_Console.getConsoleSize();
@@ -1630,11 +1459,6 @@ void renderPauseBase()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the pause screen options
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderPauseOptions()
 {
     COORD c = g_Console.getConsoleSize();
@@ -1666,11 +1490,6 @@ void renderPauseOptions()
     g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the lose screen options
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderLossOptions()
 {
     /*for (int y = 0; y < 65; y++) // renders bg
@@ -1713,11 +1532,6 @@ void renderLossOptions()
     g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the graphical user interface
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderGUI() // render game user inferface
 {
     std::string currentObjective = "Escape the Dungeon";
@@ -1751,19 +1565,19 @@ void renderGUI() // render game user inferface
         healthColour = 12;
         healthBarColor = 0xCC;
     }
-        
+
     if (player->getHealth() <= 25)
     {
         healthColour = 4;
         healthBarColor = 0x44;
     }
-        
+
     // yellow = 14, light red = 12, red = 4
     g_Console.writeToBuffer(1, 1, objective, 0x0f, objective.length());
     g_Console.writeToBuffer(1, 2, lifeBar, 0x0f, lifeBar.length());
     g_Console.writeToBuffer(50, 1, healthBar, healthColour, healthBar.length());
     // health bar
-    for (int i = 0;i < player->getHealth(); i++)
+    for (int i = 0; i < player->getHealth(); i++)
     {
         g_Console.writeToBuffer(70 + i, 1, ' ', healthBarColor);
     }
@@ -1781,11 +1595,6 @@ void renderGUI() // render game user inferface
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to check for player interactions
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void playerInteractions()
 {
     for (int i = 0; i < 10; i++) // player interacts with a chest
@@ -1804,26 +1613,26 @@ void playerInteractions()
                         chest[i] = nullptr;
                         switch (randNum)
                         {
-                            case 1:
-                            {
-                                player->setInventory(j, new HealthPotion);
-                                break;
-                            }
-                            case 2:
-                            {
-                                player->setInventory(j, new ExtraLife);
-                                break;
-                            }
-                            case 3:
-                            {
-                                player->setInventory(j, new OddPotion);
-                                break;
-                            }
-                            case 4:
-                            {
-                                player->setInventory(j, new Cheese);
-                                break;
-                            }
+                        case 1:
+                        {
+                            player->setInventory(j, new HealthPotion);
+                            break;
+                        }
+                        case 2:
+                        {
+                            player->setInventory(j, new ExtraLife);
+                            break;
+                        }
+                        case 3:
+                        {
+                            player->setInventory(j, new OddPotion);
+                            break;
+                        }
+                        case 4:
+                        {
+                            player->setInventory(j, new Cheese);
+                            break;
+                        }
                         }
                         break; // no need for further check
                     }
@@ -1831,7 +1640,7 @@ void playerInteractions()
             }
         }
     }
-    
+
     //trap interaction
     if (map[player->getY()][player->getX()] == '!')
     {
@@ -1839,8 +1648,8 @@ void playerInteractions()
     }
 
     if ((map[player->getY()][player->getX()] == '0') ||
-        (map[player->getY()][player->getX()] == '1') || 
-        (map[player->getY()][player->getX()] == '2') || 
+        (map[player->getY()][player->getX()] == '1') ||
+        (map[player->getY()][player->getX()] == '2') ||
         (map[player->getY()][player->getX()] == '3'))
     {
         player->setHealth(player->getHealth() - 5);
@@ -1870,11 +1679,6 @@ void playerInteractions()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the map after interaction
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderInteractions()
 {
     // trap interaction
@@ -1901,42 +1705,27 @@ void renderInteractions()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the player
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderCharacter()
 {
     // Draw the location of the character // was 1 for char
     g_Console.writeToBuffer(player->getPosition(), (char)146, player->getCharColour());
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the help screen
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderHelp()
 {
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the enemies
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 {
-    
+
     for (int i = 0; i < 12; i++)
     {
-       if (EArr[i].m_bActive == true)
+        if (EArr[i].m_bActive == true)
         {
-                g_Console.writeToBuffer(EArr[i].m_cLocation, (char)charnum, Colour);
+            g_Console.writeToBuffer(EArr[i].m_cLocation, (char)charnum, Colour);
         }
     }
-        
+
     if (p1.m_bActive == true)
         g_Console.writeToBuffer(p1.m_cLocation, (char)pnum, pcolor);
 
@@ -1958,10 +1747,10 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
     if (pro2.m_bActive == true)
         g_Console.writeToBuffer(pro2.m_cLocation, (char)projnum, projColor);
 
-    if(pro3.m_bActive == true)
+    if (pro3.m_bActive == true)
         g_Console.writeToBuffer(pro3.m_cLocation, (char)projnum, projColor);
 
-    if(pro4.m_bActive == true)
+    if (pro4.m_bActive == true)
         g_Console.writeToBuffer(pro4.m_cLocation, (char)projnum, projColor);
 
     if (pro5.m_bActive == true)
@@ -1969,79 +1758,69 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the boss attacks
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderBossBullet()
 {
-        if (bpro.m_bActive == true)
-        {
-            int y = bpro.m_cLocation.Y;
-            int x = bpro.m_cLocation.X;
-            g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
-            if (player->getX() < bpro.m_cLocation.X)
-            {
-                if(map[y][x - 1] != '#')
-                    bpro.m_cLocation.X--;
-            }
-            else if (player->getX() > bpro.m_cLocation.X)
-            {
-                if (map[y][x + 1] != '#')
-                    bpro.m_cLocation.X++;
-            }
-            else if (player->getY() < bpro.m_cLocation.Y)
-            {
-                if (map[y - 1][x] != '#')
-                    bpro.m_cLocation.Y--;
-            }
-            else if (player->getY() > bpro.m_cLocation.Y)
-            {
-                if (map[y - 1][x] != '#')
-                    bpro.m_cLocation.Y++;
-            }
-        }
-        if (bpro2.m_bActive == true)
-        {
-            int y = bpro2.m_cLocation.Y;
-            int x = bpro2.m_cLocation.X;
-            g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
-            if (player->getX() < bpro2.m_cLocation.X)
-            {
-                if (map[y][x - 1] != '#')
-                    bpro2.m_cLocation.X--;
-            }
-            else if (player->getX() > bpro2.m_cLocation.X)
-            {
-                if (map[y][x + 1] != '#')
-                    bpro2.m_cLocation.X++;
-            }
-            else if (player->getY() < bpro2.m_cLocation.Y)
-            {
-                if (map[y - 1][x] != '#')
-                    bpro2.m_cLocation.Y--;
-            }
-            else if (player->getY() > bpro2.m_cLocation.Y)
-            {
-                if (map[y + 1][x] != '#')
-                    bpro2.m_cLocation.Y++;
-            }
-        }
+//    if (bpro.m_bActive == true)
+//    {
+//        int y = bpro.m_cLocation.Y;
+//        int x = bpro.m_cLocation.X;
+//        g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
+//        if (player->getX() < bpro.m_cLocation.X)
+//        {
+//            if (map[y][x - 1] != '#')
+//                bpro.m_cLocation.X--;
+//        }
+//        else if (player->getX() > bpro.m_cLocation.X)
+//        {
+//            if (map[y][x + 1] != '#')
+//                bpro.m_cLocation.X++;
+//        }
+//        else if (player->getY() < bpro.m_cLocation.Y)
+//        {
+//            if (map[y - 1][x] != '#')
+//                bpro.m_cLocation.Y--;
+//        }
+//        else if (player->getY() > bpro.m_cLocation.Y)
+//        {
+//            if (map[y - 1][x] != '#')
+//                bpro.m_cLocation.Y++;
+//        }
+//    }
+//    if (bpro2.m_bActive == true)
+//    {
+//        int y = bpro2.m_cLocation.Y;
+//        int x = bpro2.m_cLocation.X;
+//        g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
+//        if (player->getX() < bpro2.m_cLocation.X)
+//        {
+//            if (map[y][x - 1] != '#')
+//                bpro2.m_cLocation.X--;
+//        }
+//        else if (player->getX() > bpro2.m_cLocation.X)
+//        {
+//            if (map[y][x + 1] != '#')
+//                bpro2.m_cLocation.X++;
+//        }
+//        else if (player->getY() < bpro2.m_cLocation.Y)
+//        {
+//            if (map[y - 1][x] != '#')
+//                bpro2.m_cLocation.Y--;
+//        }
+//        else if (player->getY() > bpro2.m_cLocation.Y)
+//        {
+//            if (map[y + 1][x] != '#')
+//                bpro2.m_cLocation.Y++;
+//        }
+//    }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the boss
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderBoss()
 {
     WORD bossColor = 0x5E;
     WORD bossCorner = 0x4D;
     for (int i = 0; i < 9; i++)
     {
-        if(bossParticles[i].m_bActive == true)
+        if (bossParticles[i].m_bActive == true)
             if (i == 0 || i == 2 || i == 6 || i == 8)
             {
                 g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossCorner);
@@ -2056,28 +1835,23 @@ void renderBoss()
                         g_Console.writeToBuffer(bossParticles[2].m_cLocation, (char)43, bossColor);
                     break;
                 case 6:
-                    if(bossHp.hp <= 60)
-                    g_Console.writeToBuffer(bossParticles[6].m_cLocation, (char)43, bossColor);
+                    if (bossHp.hp <= 60)
+                        g_Console.writeToBuffer(bossParticles[6].m_cLocation, (char)43, bossColor);
                     break;
                 case 8:
-                    if(bossHp.hp <= 0)
-                    g_Console.writeToBuffer(bossParticles[8].m_cLocation, (char)43, bossColor);
+                    if (bossHp.hp <= 0)
+                        g_Console.writeToBuffer(bossParticles[8].m_cLocation, (char)43, bossColor);
                     break;
                 }
-            }   
+            }
             else
             {
                 g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossColor);
             }
-     }
-    
+    }
+
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the enemy attacks
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 char renderProj()
 {
     // spawn proj in the matched direction
@@ -2144,11 +1918,6 @@ char renderProj5()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to render the frame rate
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void renderFramerate()
 {
     COORD c;
@@ -2174,7 +1943,7 @@ void renderInputEvents()
     // keyboard events
     // W, A ,S, D text show position
     //COORD startPos = {50, 2};
-    
+
     COORD startPos = { 210, 2 };
 
     std::ostringstream ss;
@@ -2245,15 +2014,9 @@ void renderInputEvents()
     default:
         break;
     }
-    
+
 }
 
-
-//--------------------------------------------------------------
-// Purpose  : function is to initalize the enemies and behaviours
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void setStalkerCoords(SGameChar EArr[12])
 {
 
@@ -2315,11 +2078,11 @@ void setStalkerCoords(SGameChar EArr[12])
                 Y = 35;
                 break;
             }
-                EArr[i].m_cLocation.X = X;
-                EArr[i].m_cLocation.Y = Y;
-                EArr[i].m_bActive = true;
-                break;
-            
+            EArr[i].m_cLocation.X = X;
+            EArr[i].m_cLocation.Y = Y;
+            EArr[i].m_bActive = true;
+            break;
+
         }
     }
 }
@@ -2335,7 +2098,7 @@ void bossBodyCoord(SGameChar BArr[9], int x, int y)
         count++;
         if (i > 0)
         {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-1;
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count - 1;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y;
         }
         if (i > 2)
@@ -2368,19 +2131,19 @@ void bossMovement(SGameChar BArr[9])
 
         if ((int)g_dElapsedTime % 2 == 0)
         {
-            if (BArr[i].m_cLocation.Y > 0)
-                {
-                    if (map[y - 2][x] != '#')
-                        BArr[i].m_cLocation.Y--;
-                }
+            if (BArr[i].m_cLocation.X > 0)
+            {
+                if (map[y][x + 1] != '#')
+                    BArr[i].m_cLocation.X++;
+            }
         }
         else
         {
             if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-               
-                if (map[y + 2][x] != '#')
-                        BArr[i].m_cLocation.Y++;
+
+                if (map[y][x - 1] != '#')
+                    BArr[i].m_cLocation.X--;
             }
         }
     }
@@ -2388,7 +2151,7 @@ void bossMovement(SGameChar BArr[9])
     bossAttackSeq();
     if (bossProj() == 't')
         renderBossBullet();
-       
+
     bossDeath();
 }
 
@@ -2401,27 +2164,27 @@ char bossSearchPlayer(SGameChar BArr[9])
         // same lanes
         if ((player->getX() + 10 == BArr[i].m_cLocation.X) ||
             (player->getY() + 10 == BArr[i].m_cLocation.Y))
+        {
+            return 'y';
+        }
+        else
+        {
+            X = player->getX() - BArr[i].m_cLocation.Y;
+            Y = player->getY() - BArr[i].m_cLocation.X;
+            if (X < 0)
+            {
+                X *= -1;
+            }
+            if (Y < 0)
+            {
+                Y *= -1;
+            }
+            final += X += Y;
+            if (final <= 10)
             {
                 return 'y';
             }
-            else
-            {
-                X = player->getX() - BArr[i].m_cLocation.Y;
-                Y = player->getY() - BArr[i].m_cLocation.X;
-                if (X < 0)
-                {
-                    X *= -1;
-                }
-                if (Y < 0)
-                {
-                    Y *= -1;
-                }
-                final += X += Y;
-                if (final <= 10)
-                {
-                    return 'y';
-                }
-            }
+        }
 
         return 'n';
     }
@@ -2442,15 +2205,15 @@ char bossProj()
     switch (bossSearchPlayer(bossParticles))
     {
     case 'y':
-       bpro.m_bActive = true;
-       bpro2.m_bActive = true;
+        bpro.m_bActive = true;
+        bpro2.m_bActive = true;
         return 't';
     }
 }
 
 void bossDeath()
 {
-    if(bossHp.hp < 0)
+    if (bossHp.hp < 0)
         for (int i = 0; i < 9; i++)
         {
             // disable all boss related entities
@@ -2458,46 +2221,46 @@ void bossDeath()
             bpro.m_bActive = false;
             bpro2.m_bActive = false;
         }
-    
+
 }
 
 void phantomMovement()
 {
-        int dir = (rand() % 4) + 1;
-        int x, y;
-        x = p1.m_cLocation.X;
-        y = p1.m_cLocation.Y;
-        switch (dir)
+    int dir = (rand() % 4) + 1;
+    int x, y;
+    x = p1.m_cLocation.X;
+    y = p1.m_cLocation.Y;
+    switch (dir)
+    {
+    case 1:
+        if (p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-        case 1:
-            if (p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            {
-                if(map[y][x - 1] != '#')
-                    p1.m_cLocation.X--;
-            }
-            break;
-        case 2:
-            if (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            {
-                if (map[y + 1][x] != '#')
-                    p1.m_cLocation.Y++;
-            }
-            break;
-        case 3:
-            if (p1.m_cLocation.Y > 0)
-            {
-                if(map[y - 1][x] != '#')
-                    p1.m_cLocation.Y--;
-            }
-            break;
-        case 4:
-            if (p1.m_cLocation.X > 0)
-            {
-                if (map[y][x + 1] != '#')
-                    p1.m_cLocation.X++;
-            }
-            break;
+            if (map[y][x - 1] != '#')
+                p1.m_cLocation.X--;
         }
+        break;
+    case 2:
+        if (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+        {
+            if (map[y + 1][x] != '#')
+                p1.m_cLocation.Y++;
+        }
+        break;
+    case 3:
+        if (p1.m_cLocation.Y > 0)
+        {
+            if (map[y - 1][x] != '#')
+                p1.m_cLocation.Y--;
+        }
+        break;
+    case 4:
+        if (p1.m_cLocation.X > 0)
+        {
+            if (map[y][x + 1] != '#')
+                p1.m_cLocation.X++;
+        }
+        break;
+    }
     phantomSearchPlayer();
     phantomFireProj();
     if (renderProj() != 's')
@@ -2557,7 +2320,7 @@ void phantomMovement3()
     int x, y;
     x = p3.m_cLocation.X;
     y = p3.m_cLocation.Y;
-    
+
     switch (dir)
     {
     case 2:
@@ -2793,7 +2556,7 @@ void phantomFireProj()
 {
     if (phantomSearchPlayer() != 'n')
     {
-        renderProj(); 
+        renderProj();
     }
 }
 
@@ -2831,12 +2594,12 @@ void phantomFireProj5()
 
 void projReachPlayer()
 {
-   
+
     if ((player->getX() == pro1.m_cLocation.X) && (player->getY() == pro1.m_cLocation.Y))
     {
         player->setHealth(player->getHealth() - 5);
         pro1.m_bActive = false;
-    } 
+    }
     else if ((player->getX() == pro2.m_cLocation.X) && (player->getY() == pro2.m_cLocation.Y))
     {
         player->setHealth(player->getHealth() - 5);
@@ -2857,7 +2620,7 @@ void projReachPlayer()
         player->setHealth(player->getHealth() - 5);
         pro5.m_bActive = false;
     }
-   else if ((player->getX() == bpro.m_cLocation.X) && (player->getY() == bpro.m_cLocation.Y))
+    else if ((player->getX() == bpro.m_cLocation.X) && (player->getY() == bpro.m_cLocation.Y))
     {
         player->setHealth(player->getHealth() - 10);
         bpro.m_bActive = false;
@@ -2865,7 +2628,7 @@ void projReachPlayer()
         bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
 
     }
-   else if ((player->getX() == bpro2.m_cLocation.X) && (player->getY() == bpro2.m_cLocation.Y))
+    else if ((player->getX() == bpro2.m_cLocation.X) && (player->getY() == bpro2.m_cLocation.Y))
     {
         player->setHealth(player->getHealth() - 10);
         bpro2.m_bActive = false;
@@ -2880,25 +2643,6 @@ void checkerY1(int i, int n) // y--
     int x = stalkers[i].m_cLocation.X;
     int y = stalkers[i].m_cLocation.Y;
     if (player->getY() < stalkers[i].m_cLocation.Y)
-        if((map[y + n][x] != '#') &&
-            (map[y + n][x] != '=') &&
-            (map[y + n][x] != '[') &&
-            (map[y + n][x] != ']') &&
-            (map[y + n][x] != ')') &&
-            (map[y + n][x] != '(') &&
-            (map[y + n][x] != '*') &&
-            (map[y + n][x] != '`') &&
-            (map[y + n][x] != 'S'))
-            {
-                stalkers[i].m_cLocation.Y+=n;
-            }
-}
-
-void checkerY2(int i, int n) // y++
-{
-    int x = stalkers[i].m_cLocation.X;
-    int y = stalkers[i].m_cLocation.Y;
-    if(player->getY() > stalkers[i].m_cLocation.Y)
         if ((map[y + n][x] != '#') &&
             (map[y + n][x] != '=') &&
             (map[y + n][x] != '[') &&
@@ -2909,7 +2653,26 @@ void checkerY2(int i, int n) // y++
             (map[y + n][x] != '`') &&
             (map[y + n][x] != 'S'))
         {
-            stalkers[i].m_cLocation.Y+=n;
+            stalkers[i].m_cLocation.Y += n;
+        }
+}
+
+void checkerY2(int i, int n) // y++
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getY() > stalkers[i].m_cLocation.Y)
+        if ((map[y + n][x] != '#') &&
+            (map[y + n][x] != '=') &&
+            (map[y + n][x] != '[') &&
+            (map[y + n][x] != ']') &&
+            (map[y + n][x] != ')') &&
+            (map[y + n][x] != '(') &&
+            (map[y + n][x] != '*') &&
+            (map[y + n][x] != '`') &&
+            (map[y + n][x] != 'S'))
+        {
+            stalkers[i].m_cLocation.Y += n;
         }
 }
 
@@ -2977,7 +2740,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y + 1][x] != '`') &&
                     (map[y + 1][x] != 'S'))
                 {
-                    
+
                     EArr[i].m_cLocation.Y++;
                 }
                 break;
@@ -2994,7 +2757,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y][x - 1] != '`') &&
                     (map[y][x - 1] != 'S'))
                 {
-                    
+
                     EArr[i].m_cLocation.X--;
                 }
                 break;
@@ -3011,7 +2774,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y - 1][x] != '`') &&
                     (map[y - 1][x] != 'S'))
                 {
-                   
+
                     EArr[i].m_cLocation.Y--;
                 }
                 break;
@@ -3028,7 +2791,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y][x + 1] != '`') &&
                     (map[y][x + 1] != 'S'))
                 {
-                   
+
                     EArr[i].m_cLocation.X++;
                 }
 
@@ -3052,7 +2815,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y - 1][x] != '`') &&
                     (map[y - 1][x] != 'S'))
                 {
-                    
+
                     EArr[i].m_cLocation.Y--;
                 }
 
@@ -3070,7 +2833,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y][x - 1] != '`') &&
                     (map[y][x - 1] != 'S'))
                 {
-                    
+
                     EArr[i].m_cLocation.X--;
                 }
 
@@ -3088,7 +2851,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y + 1][x] != '`') &&
                     (map[y + 1][x] != 'S'))
                 {
-                    
+
                     EArr[i].m_cLocation.Y++;
                 }
 
@@ -3106,7 +2869,7 @@ void stalkerMovement(SGameChar EArr[12])
                     (map[y][x + 1] != '`') &&
                     (map[y][x + 1] != 'S'))
                 {
-                    
+
                     EArr[i].m_cLocation.X++;
                 }
                 break;
@@ -3126,64 +2889,7 @@ char stalkerSearchPlayer()
     {
         if ((player->getY() == stalkers[i].m_cLocation.Y) ||
             (player->getX() == stalkers[i].m_cLocation.X))
-            if(player->getX() - stalkers[i].m_cLocation.X <= 2)
-        {
-            switch (i)
-            {
-            case 0:
-                return 'a';
-                break;
-            case 1:
-                return 'b';
-                break;
-            case 2:
-                return 'c';
-                break;
-            case 3:
-                return 'd';
-                break;
-            case 4:
-                return 'e';
-                break;
-            case 5:
-                return 'f';
-                break;
-            case 6:
-                return 'g';
-                break;
-            case 7:
-                return 'h';
-                break;
-            case 8:
-                return 'i';
-            case 9:
-                return 'j';
-                break;
-            case 10:
-                return 'k';
-                break;
-            case 11:
-                return 'l';
-                break;
-            }
-        }
-        // check for other possibilities
-        else
-        {
-            x_final = player->getX() - stalkers[i].m_cLocation.X;
-            y_final = player->getY() - stalkers[i].m_cLocation.Y;
-            // remove negative val
-            if (x_final < 0)
-            {
-                x_final *= -1;
-            }
-            if (y_final < 0)
-            {
-                y_final *= -1;
-            }
-            // add together
-            maxNumOfSteps += x_final += y_final;
-            if (maxNumOfSteps <= 4)
+            if (player->getX() - stalkers[i].m_cLocation.X <= 2)
             {
                 switch (i)
                 {
@@ -3213,7 +2919,6 @@ char stalkerSearchPlayer()
                     break;
                 case 8:
                     return 'i';
-                    break;
                 case 9:
                     return 'j';
                     break;
@@ -3225,16 +2930,74 @@ char stalkerSearchPlayer()
                     break;
                 }
             }
-        }
+        // check for other possibilities
+            else
+            {
+                x_final = player->getX() - stalkers[i].m_cLocation.X;
+                y_final = player->getY() - stalkers[i].m_cLocation.Y;
+                // remove negative val
+                if (x_final < 0)
+                {
+                    x_final *= -1;
+                }
+                if (y_final < 0)
+                {
+                    y_final *= -1;
+                }
+                // add together
+                maxNumOfSteps += x_final += y_final;
+                if (maxNumOfSteps <= 4)
+                {
+                    switch (i)
+                    {
+                    case 0:
+                        return 'a';
+                        break;
+                    case 1:
+                        return 'b';
+                        break;
+                    case 2:
+                        return 'c';
+                        break;
+                    case 3:
+                        return 'd';
+                        break;
+                    case 4:
+                        return 'e';
+                        break;
+                    case 5:
+                        return 'f';
+                        break;
+                    case 6:
+                        return 'g';
+                        break;
+                    case 7:
+                        return 'h';
+                        break;
+                    case 8:
+                        return 'i';
+                        break;
+                    case 9:
+                        return 'j';
+                        break;
+                    case 10:
+                        return 'k';
+                        break;
+                    case 11:
+                        return 'l';
+                        break;
+                    }
+                }
+            }
     }
     return 'n';
     // if both conditions not met, 
     // player not in range of enemy
 }
 
-void stalkerChasePlayer() 
+void stalkerChasePlayer()
 {
-    if(stalkerSearchPlayer() != 'n')
+    if (stalkerSearchPlayer() != 'n')
         switch (stalkerSearchPlayer())
         {
         case 'a':
@@ -3242,7 +3005,7 @@ void stalkerChasePlayer()
             checkerX2(0, 1);
             checkerY1(0, -1);
             checkerY2(0, 1);
-            break;  
+            break;
         case 'b':
             checkerX1(1, -1);
             checkerX2(1, 1);
@@ -3278,7 +3041,7 @@ void stalkerChasePlayer()
             checkerX2(6, 1);
             checkerY1(6, -1);
             checkerY2(6, 1);
-                break;
+            break;
         case 'h':
             checkerX1(7, -1);
             checkerX2(7, 1);
@@ -3311,7 +3074,7 @@ void stalkerChasePlayer()
             checkerY2(11, 1);
             break;
 
-   }
+        }
 }
 
 void stalkerReachPlayer()
@@ -3320,18 +3083,13 @@ void stalkerReachPlayer()
     {
         if ((player->getX() == stalkers[i].m_cLocation.X) && (player->getY() == stalkers[i].m_cLocation.Y))
         {
-            if(stalkers[i].m_bActive == true)
+            if (stalkers[i].m_bActive == true)
                 player->setHealth(player->getHealth() - 1);
-                stalkers[i].m_cLocation.X = player->getX() + 1;
+            stalkers[i].m_cLocation.X = player->getX() + 1;
         }
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to let the player attack
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void shoot()
 {
     for (int i = 0; i < 100; i++)
@@ -3344,11 +3102,6 @@ void shoot()
     }
 }
 
-//--------------------------------------------------------------
-// Purpose  : function is to set the bullet interaction
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
 void bulletInteraction()
 {
     for (int i = 0; i < 100; i++)
@@ -3360,8 +3113,8 @@ void bulletInteraction()
             x = bulletArray[i]->getX();
             y = bulletArray[i]->getY();
 
-            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 || 
-                bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 || 
+            if (bulletArray[i]->X <= 0 || bulletArray[i]->X >= 300 ||
+                bulletArray[i]->Y <= 0 || bulletArray[i]->Y >= 65 ||
                 map[bulletArray[i]->Y][bulletArray[i]->X] == '#')
             {
                 delete bulletArray[i];
@@ -3412,7 +3165,7 @@ void bulletInteraction()
                 bulletArray[i] = nullptr;
                 return;
             }
-            else if((x == bpro2.m_cLocation.X) && (y == bpro2.m_cLocation.Y))
+            else if ((x == bpro2.m_cLocation.X) && (y == bpro2.m_cLocation.Y))
             {
                 for (int n = 0; n < 9; n++)
                 {
@@ -3435,4 +3188,5 @@ void bulletInteraction()
         }
     }
 }
+
 

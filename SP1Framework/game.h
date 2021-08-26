@@ -134,7 +134,7 @@ bool bossAttackSeq(); // Boss attack
 char bossSearchPlayer(SGameChar BArr[9]);
 char bossProj();
 void bossDeath();
-//phantom movements (Hardcoded for now)
+//phantom movements
 void phantomMovement();
 void phantomMovement2();
 void phantomMovement3();
