@@ -130,9 +130,8 @@ void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
 void bossMovement(SGameChar BArr[9]); // Boss movement
-bool bossAttackSeq(); // Boss attack
+void bossInitAtk(int x, int y);
 char bossSearchPlayer(SGameChar BArr[9]);
-char bossProj();
 void bossDeath();
 //phantom movements
 void phantomMovement();
@@ -162,7 +161,6 @@ void stalkerChasePlayer();    // enemy chase player function once searched
 void stalkerReachPlayer(); // enemy corners player
 // Enemy spawn functions
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
-void renderBossBullet();
 void renderBoss();
 char renderProj();
 char renderProj2();
