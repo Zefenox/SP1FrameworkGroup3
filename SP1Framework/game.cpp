@@ -463,7 +463,6 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
-
 void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -550,8 +549,6 @@ void updateVictory()
     }
 }
 
-
-
 void updateSplashScreen()    // waits for time to pass in splash screen
 {
     /*
@@ -613,7 +610,6 @@ void updateGame()       // gameplay logic
     if (!player->getActive()) // if player is dead
         g_eGameState = S_LOSS;
 }
-
 
 void updatePause()
 {
@@ -768,7 +764,6 @@ void shootInput()
     if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
         shoot();
 }
-
 
 void setStalkerCoords(SGameChar EArr[12])
 {
@@ -1447,7 +1442,6 @@ void checkerX1(int i, int n) // x--
             stalkers[i].m_cLocation.X += n;
         }
 }
-
 
 void checkerX2(int i, int n)// x++
 {
@@ -2507,7 +2501,6 @@ void renderMap()
     }
 }
 
-
 void renderStartOptions()
 {
     COORD c = g_Console.getConsoleSize();
@@ -2689,7 +2682,6 @@ void renderGUI() // render game user inferface
         g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0f, tempStr.length());
     }
 }
-
 
 void playerInteractions()
 {
