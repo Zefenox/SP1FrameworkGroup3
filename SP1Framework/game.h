@@ -94,7 +94,7 @@ void renderInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
-void renderIntroText();
+void renderIntroText(int x, int y);
 void renderEndText(int x, int y);
 void renderStart();
 void renderGame();          // renders the game stuff
