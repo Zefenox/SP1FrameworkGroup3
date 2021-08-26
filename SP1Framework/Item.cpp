@@ -1,4 +1,4 @@
-#include "Item.h"
+#include "Item.h" // coded by: Sze Ting
 
 Item::Item()
 {

@@ -78,6 +78,7 @@ Bullet* bulletArray[100] = { nullptr };
 // lv 1 Clear bool
 bool map1Clear = false;
 
+//timer variable
 int dis = 0;
 double cap = 1.0;
 
@@ -113,7 +114,7 @@ void init(void)
 
 void gameInit()
 {
-    g_Console.clearBuffer();
+    g_Console.clearBuffer();                                                                       // coded by: Sze Ting {
     player->setSpawnPoint(11, 11); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
 
@@ -140,7 +141,7 @@ void gameInit()
         chest[5] = new Chest;
         chest[5]->setPosition(197, 46);
         chest[6] = new Chest;
-        chest[6]->setPosition(203, 46);
+        chest[6]->setPosition(203, 46);                                                            //                     }
 
         //Set Enemy initial state and positions
         p1.m_bActive = true;
@@ -161,7 +162,7 @@ void gameInit()
         setStalkerCoords(stalkers);
     }
 
-    if (map1Clear)
+    if (map1Clear)                                                                                // coded by: Sze Ting {
     {
         // for floor 2
         chest[0] = new Chest; // initialise chest
@@ -183,7 +184,7 @@ void gameInit()
         chest[8] = new Chest;
         chest[8]->setPosition(102, 46);
         chest[9] = new Chest;
-        chest[9]->setPosition(98, 54);
+        chest[9]->setPosition(98, 54);                                                             // }
 
         // Initialise boss bullets
         bossProjCount = 0;
@@ -268,7 +269,7 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
-    case S_STARTSCREEN: startKBHandler(keyboardEvent);
+    case S_STARTSCREEN: startKBHandler(keyboardEvent);                                           // coded by: Sze Ting
         break;
     case S_HELP: helpKBHandler(keyboardEvent);
         break;
@@ -305,7 +306,7 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     {
     case S_SPLASHSCREEN: // don't handle anything for the splash screen
         break;
-    case S_STARTSCREEN: startMouseHandler(mouseEvent);
+    case S_STARTSCREEN: startMouseHandler(mouseEvent);                                         // coded by: Sze Ting
         break;
     case S_HELP: helpMouseHandler(mouseEvent);
         break;
@@ -352,7 +353,7 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case VK_KEY_Y: key = K_Y; break;
     case VK_KEY_U: key = K_U; break;
 
-    case VK_KEY_H: key = K_H; break; // he;[
+    case VK_KEY_H: key = K_H; break; // help
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -623,6 +624,7 @@ void updateVictory()
 //            This is the update function for the splash screen
 // Input    : g_dElapsedTime
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void updateSplashScreen()    // waits for time to pass in splash screen
 {
@@ -674,7 +676,7 @@ void updateStart()
 // Input    : g_skKeyEvent[K_H]
 // Output   : void
 //--------------------------------------------------------------
-void updateHelp()
+void updateHelp() 
 {
     if (g_skKeyEvent[K_H].keyReleased)
         g_eGameState = S_GAME;
@@ -739,6 +741,7 @@ void updateLoss()
 //            This is the function for moving the player
 // Input    : player->getX(); player->getY(); g_skKeyEvent[K_W].keyDown
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void moveCharacter()
 {
@@ -892,6 +895,7 @@ void inventoryInput()
 //            This is the function for calling out shoot function
 // Input    : g_skKeyEvent[K_L]; g_mouseEvent;
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void shootInput()
 {
@@ -1064,6 +1068,7 @@ void clearScreen()
 // Purpose  : function is to render the game title 
 // Input    : void
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void renderTitle(int x, int y) // function to render title
 {
@@ -1180,6 +1185,7 @@ void renderSplashScreen()  // renders the splash screen
 // Purpose  : function is to render the intro text
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void renderIntroText(int x, int y)
 {
@@ -1205,6 +1211,7 @@ void renderIntroText(int x, int y)
 // Purpose  : function is to render the ending text
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderEndText(int x, int y)
 {
@@ -1268,7 +1275,7 @@ void renderPauseScreen()
 }
 
 //--------------------------------------------------------------
-// Purpose  : function is to render the losing screen options
+// Purpose  : function is to call the funct rendering losing screen options
 // Input    : void
 // Output   : void
 //--------------------------------------------------------------
@@ -1281,9 +1288,11 @@ void renderLoss()
 // Purpose  : function is to render the winning screen
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderVictory()
 {
+    loadWin();
     COORD size = g_Console.getConsoleSize();
 
     //if (g_dElapsedTime < 4)
@@ -1291,13 +1300,7 @@ void renderVictory()
     g_Console.clearBuffer();
     if (dis < 51)
         dis++;
-    for (int i = 0; i < size.Y; i++)
-    {
-        for (int x = 0; x < size.X; x++)
-        {
-            g_Console.writeToBuffer(x, i, " ", 0x00);
-        }
-    }
+    renderWin();
     renderEndText(50, 65 - dis);
     endtimer++;
 }
@@ -1306,6 +1309,7 @@ void renderVictory()
 // Purpose  : function is to check through the starting map
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void loadStartmap()
 {
@@ -1328,6 +1332,7 @@ void loadStartmap()
 // 
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void loadLosescreen()
 {
@@ -1408,10 +1413,50 @@ void renderStartmap()
     }
 }
 
+void loadWin()
+{
+    std::ifstream Winscreen("Win.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(Winscreen, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+}
+
+void renderWin()
+{
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '#')
+            {
+                g_Console.writeToBuffer(x, y,' ', 0x88);
+            }
+            else if (map[y][x] == '*')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x77);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+        }
+    }
+}
+
 //--------------------------------------------------------------
 // Purpose  : function is to render the player attack projectiles
 // Input    : void
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void renderBullets()
 {
@@ -1431,12 +1476,17 @@ void renderBullets()
 // Purpose  : function is to check for which map to render first
 // Input    : void
 // Output   : void
+// done by luke
 //--------------------------------------------------------------
 void loadmap()
 {
+    //check whether the map has been cleared to decide whether to load the next map
     if (map1Clear != true)
     {
+        //Input stream class to operate on files.
+        //Objects of this class maintain a filebuf object as their internal stream buffer, which performs input / output operations on the file they are associated with
         std::ifstream Lv1("MapLv1.txt");
+        //make a string var to hold the chars
         std::string line;
         // Init and store Map
         int y = 0;
@@ -1472,10 +1522,11 @@ void loadmap()
 // Purpose  : function is to render the map according to the symbols
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderMap()
 {
-    //render Map
+    //render Map according to the chars inside the text file
     for (int y = 0; y < 65; y++)
     {
         for (int x = 0; x < 300; x++)
@@ -1791,10 +1842,11 @@ void renderGUI() // render game user inferface
 // Purpose  : function is to check for player interactions
 // Input    : void
 // Output   : void
+// Tze Ting, Luke, Myron
 //--------------------------------------------------------------
 void playerInteractions()
 {
-    for (int i = 0; i < 10; i++) // player interacts with a chest
+    for (int i = 0; i < 10; i++) // player interacts with a chest // coded by: Sze Ting
 
     {
         if (chest[i] != nullptr)
@@ -1870,7 +1922,7 @@ void playerInteractions()
     }
 
     //book
-    if (map[player->getY()][player->getX()] == '"')
+    if (map[player->getY()][player->getX()] == '"') // coded by: Sze Ting
     {
         g_eGameState = S_VICTORY;
     }
@@ -1880,6 +1932,7 @@ void playerInteractions()
 // Purpose  : function is to render the map after interaction
 // Input    : void
 // Output   : void
+// Luke
 //--------------------------------------------------------------
 void renderInteractions()
 {
@@ -1925,6 +1978,51 @@ void renderCharacter()
 //--------------------------------------------------------------
 void renderHelp()
 {
+    COORD size = g_Console.getConsoleSize();
+
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0);
+        }
+    }
+
+    std::string fire = "-=#@";
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+2, (char)146, 0x34); // player
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 2, " = player", 0x0f, 10);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 4, (char)204, 0x84); // trap
+    g_Console.writeToBuffer(size.X / 4 + 1, size.Y / 4 + 4, (char)185, 0x84);
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 4, " = trap", 0x0f, 8);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+6, (char)233, 0x8E); // chest
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 6, " = chest", 0x0f, 9);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+8, (char)177, 0x8C); // lava
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 8, " = lava", 0x0f, 8);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4+10, (char)215, 0x86); // dungeon gate
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 10, " = dungeon gate", 0x0f, 16);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 12, (char)243, 0x8b); // teleporter
+    g_Console.writeToBuffer(size.X / 4 + 1, size.Y / 4 + 12, (char)234, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 2, size.Y / 4 + 12, (char)242, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 12, " = teleporter", 0x0f, 14);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 14, fire, 0x84, fire.length()); // fire
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 14, " = fire", 0x0f, 8);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 16, (char)237, 0x8b); // checkpoint
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 16, " = checkpoint", 0x0f, 14);
+
+    g_Console.writeToBuffer(size.X / 4, size.Y / 4 + 18, (char)243, 0x8b);  //book
+    g_Console.writeToBuffer(size.X / 4 + 1, size.Y / 4 + 18, (char)240, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 2, size.Y / 4 + 18, (char)242, 0x8b);
+    g_Console.writeToBuffer(size.X / 4 + 5, size.Y / 4 + 18, " = book", 0x0f, 8);
+
+
 }
 
 //--------------------------------------------------------------
@@ -3268,6 +3366,7 @@ void stalkerReachPlayer()
 // Purpose  : function is to let the player attack
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void shoot()
 {
@@ -3285,6 +3384,7 @@ void shoot()
 // Purpose  : function is to set the bullet interaction
 // Input    : void
 // Output   : void
+// made by luke
 //--------------------------------------------------------------
 void bulletInteraction()
 {
