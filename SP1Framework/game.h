@@ -95,12 +95,13 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
 void renderIntroText();
-void renderEndText();
+void renderEndText(int x, int y);
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
 void renderLoss(); // renders the loss screen
 void renderVictory(); // renders the victory screen
+void updateVictory();
 void renderMap(); // renders the map to the buffer first
 
 void loadmap();

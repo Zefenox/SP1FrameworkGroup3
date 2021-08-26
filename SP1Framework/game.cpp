@@ -78,6 +78,8 @@ bool map1Clear = false;
 int dis = 0;
 double cap = 1.0;
 
+int endtimer;
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -532,10 +534,22 @@ void update(double dt)
         break;
     case S_PAUSESCREEN: updatePause();
         break;
+    case S_VICTORY: updateVictory();
+        break;
     case S_LOSS: updateLoss();
         break;
     }
 }
+
+void updateVictory()
+{
+    if (endtimer > 150)
+    {
+        g_eGameState = S_STARTSCREEN;
+        dis = 0;
+    }
+}
+
 
 
 void updateSplashScreen()    // waits for time to pass in splash screen
@@ -567,6 +581,7 @@ void updateSplashScreen()    // waits for time to pass in splash screen
     if (g_dElapsedTime > 6.0)
     {
         g_eGameState = S_STARTSCREEN;
+        dis = 0;
     }
 }
 
@@ -2057,8 +2072,18 @@ void renderIntroText()
 {
 }
 
-void renderEndText()
+void renderEndText(int x,int y)
 {
+
+    g_Console.writeToBuffer(x, y, "Sweating from both the heat of the underground and the last battle against a body of bodies,",0x0F);
+    g_Console.writeToBuffer(x, y+1, "you stroll into the deepest unknown and press on forward through the darkness before coming across an old desk with a lone lamp. ",0x0F);
+    g_Console.writeToBuffer(x,y +2,"The light cast by the lamp brings your attention to the worn but intact book resting on the table surface.", 0x0F);
+    g_Console.writeToBuffer(x + 50,y+3,"On its cover read, “My Diary”.", 0x0F);
+    g_Console.writeToBuffer(x,y+4,"Intrigued by the content which lies within the book, you walk over to the desk and turn the book to its first page:", 0x0F);
+    g_Console.writeToBuffer(x,y+5,"“Dear diary, my best friend ف̵̌̈́ф̶̈́̃#̸̧͂φ̸̓̄$̴̝͐و̴͋̏א̵͙̽ and I have been close friends for a few years, but I can’t believe he forgot my birthday!", 0x0F);
+    g_Console.writeToBuffer(x,y+6,"So to prank him back, I decided to build an elaborate dungeon filled with traps and monsters and all that to scare the pants out of him and teach him a lesson!", 0x0F);
+    g_Console.writeToBuffer(x,y+7,"Once I’m done building this dungeon, I’ll visit П̶̤̒о̶̖̃л̸͓̈ and then invite П̵̹̇о̵͋̋л̶͙̈́ to this place. And then...”", 0x0F);
+    
 }
 
 void renderStart()
@@ -2100,7 +2125,23 @@ void renderLoss()
 
 void renderVictory()
 {
-    renderEndText();
+    
+    COORD size = g_Console.getConsoleSize();
+
+    //if (g_dElapsedTime < 4)
+    //{
+    g_Console.clearBuffer();
+    if (dis < 51)
+        dis++;
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0x00);
+        }
+    }
+    renderEndText(50,65 - dis);
+    endtimer++;
 }
 
 void loadStartmap()
