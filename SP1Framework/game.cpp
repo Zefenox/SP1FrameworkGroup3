@@ -376,7 +376,6 @@ void startKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     }
 }
 
-
 void helpKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
 {
     // here, we map the key to our enums
@@ -461,6 +460,7 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the start state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -470,7 +470,6 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
-
 void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -480,6 +479,7 @@ void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the guide page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -489,7 +489,6 @@ void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
-
 void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -499,6 +498,7 @@ void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the pause page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -508,7 +508,6 @@ void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
-
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -518,6 +517,7 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the lose page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -527,7 +527,6 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
-
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -537,6 +536,7 @@ void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the win page state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -546,7 +546,6 @@ void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 // Input    : const KEY_EVENT_RECORD& keyboardEvent
 // Output   : void
 //--------------------------------------------------------------
-
 void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
     if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
@@ -595,21 +594,13 @@ void update(double dt)
         break;
     }
 }
+
 //--------------------------------------------------------------
 // Purpose  : Update function
 //            This is the update function when the player wins
-//            double dt - This is the amount of time in seconds since the previous call was made
-//
-//            Game logic should be done here.
-//            Such as collision checks, determining the position of your game characters, status updates, etc
-//            If there are any calls to write to the console here, then you are doing it wrong.
-//
-//            If your game has multiple states, you should determine the current state, and call the relevant function here.
-//
-// Input    : dt = deltatime
+// Input    : map1Clear, endtimer
 // Output   : void
-//--------------------------------------------------------------
-
+//------------------------------------------------------------
 void updateVictory()
 {
     map1Clear = false;
@@ -621,6 +612,12 @@ void updateVictory()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : Update function
+//            This is the update function for the splash screen
+// Input    : g_dElapsedTime
+// Output   : void
+//--------------------------------------------------------------
 void updateSplashScreen()    // waits for time to pass in splash screen
 {
     /*
@@ -654,17 +651,36 @@ void updateSplashScreen()    // waits for time to pass in splash screen
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : Update function
+//            This is the update function when the game starts
+// Input    : NA
+// Output   : void
+//--------------------------------------------------------------
 void updateStart()
 {
     startInput();
 }
 
+//--------------------------------------------------------------
+// Purpose  : Update function
+//            This is the update function for the help screen
+// Input    : g_skKeyEvent[K_H]
+// Output   : void
+//--------------------------------------------------------------
 void updateHelp()
 {
     if (g_skKeyEvent[K_H].keyReleased)
         g_eGameState = S_GAME;
 }
 
+//--------------------------------------------------------------
+// Purpose  : Update function
+//            This is the update function for the game flow
+//            The flow of the game is set here
+// Input    : player->getActive
+// Output   : void
+//--------------------------------------------------------------
 void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
@@ -689,17 +705,35 @@ void updateGame()       // gameplay logic
         g_eGameState = S_LOSS;
 }
 
+//--------------------------------------------------------------
+// Purpose  : Update function
+//            This is the update function for the pause screen
+// Input    : NA
+// Output   : void
+//--------------------------------------------------------------
 void updatePause()
 {
     processUserInput();
     pauseInput();
 }
 
+//--------------------------------------------------------------
+// Purpose  : Update function
+//            This is the update function for the Lose screen
+// Input    : NA
+// Output   : void
+//--------------------------------------------------------------
 void updateLoss()
 {
     lossInput();
 }
 
+//--------------------------------------------------------------
+// Purpose  : move/set position function
+//            This is the function for moving the player
+// Input    : player->getX(); player->getY(); g_skKeyEvent[K_W].keyDown
+// Output   : void
+//--------------------------------------------------------------
 void moveCharacter()
 {
     // Updating the location of the character based on the key release
@@ -774,6 +808,12 @@ if (g_skKeyEvent[K_D].keyDown && player->getX() < g_Console.getConsoleSize().X -
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for setting up cheats
+// Input    : g_skKeyEvent[K_T]; g_skKeyEvent[K_Y]; g_skKeyEvent[K_U];
+// Output   : void
+//--------------------------------------------------------------
 void cheatInput()
 {
     if (g_skKeyEvent[K_T].keyReleased)
@@ -790,6 +830,12 @@ void cheatInput()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for using consumables
+// Input    : g_skKeyEvent[K_1]; player->getInventory()
+// Output   : void
+//--------------------------------------------------------------
 void inventoryInput()
 {
     if (g_skKeyEvent[K_1].keyDown)
@@ -835,6 +881,12 @@ void inventoryInput()
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for calling out shoot function
+// Input    : g_skKeyEvent[K_L]; g_mouseEvent;
+// Output   : void
+//--------------------------------------------------------------
 void shootInput()
 {
     if (g_skKeyEvent[K_L].keyReleased)
@@ -844,6 +896,12 @@ void shootInput()
         shoot();
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for start screen inputs
+// Input    : g_mouseEvent; g_skKeyEvent[K_SPACE];
+// Output   : void
+//-------------------------------------------------------------
 void startInput()
 {
     // (100 - 123, 28)
@@ -866,6 +924,12 @@ void startInput()
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for pause screen inputs
+// Input    : g_mouseEvent; g_skKeyEvent[K_Q];
+// Output   : void
+//--------------------------------------------------------------
 void pauseInput()
 {
     // (100 - 124, 27)
@@ -885,6 +949,12 @@ void pauseInput()
         g_bQuitGame = true;
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for losing screen inputs
+// Input    : g_mouseEvent; g_skKeyEvent[K_Q];g_skKeyEvent[K_SPACE]
+// Output   : void
+//--------------------------------------------------------------
 void lossInput()
 {
     // (30 - 53, 28)
@@ -913,6 +983,12 @@ void lossInput()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : set function
+//            This is the function for processing user inputs
+// Input    : g_eGameState; g_skKeyEvent[K_H];g_skKeyEvent[K_SPACE]
+// Output   : void
+//--------------------------------------------------------------
 void processUserInput()
 {
     // quits the game if player hits the escape key
@@ -967,12 +1043,22 @@ void render()
     renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to clear the console buffer 
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void clearScreen()
 {
     // Clears the buffer with this colour attribute
     g_Console.clearBuffer(0x1F);
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the game title 
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderTitle(int x, int y) // function to render title
 {
     const WORD colors[] = {
@@ -1031,12 +1117,22 @@ void renderTitle(int x, int y) // function to render title
     c.Y += 1;
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to write buffer to console
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderToScreen()
 {
     // Writes the buffer to the console, hence you will see what you have written
     g_Console.flushBufferToConsole();
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the splash screen
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderSplashScreen()  // renders the splash screen
 {
     //render's BG
@@ -1074,6 +1170,11 @@ void renderSplashScreen()  // renders the splash screen
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the intro text
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderIntroText(int x, int y)
 {
     g_Console.writeToBuffer(x + 5, y + 1, "You feel the stagnant wind flow over your body as you open your eyes, lying down on the stone floor. ", 0x0F);
@@ -1094,6 +1195,11 @@ void renderIntroText(int x, int y)
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the ending text
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderEndText(int x, int y)
 {
 
@@ -1108,6 +1214,11 @@ void renderEndText(int x, int y)
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the starting text
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderStart()
 {
     loadStartmap();
@@ -1116,6 +1227,11 @@ void renderStart()
     renderStartOptions();
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the game contents
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderGame()
 {
     loadmap();
@@ -1133,6 +1249,11 @@ void renderGame()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the pause menu
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderPauseScreen()
 {
     renderGame();
@@ -1140,11 +1261,21 @@ void renderPauseScreen()
     renderPauseOptions();
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the losing screen options
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderLoss()
 {
     renderLossOptions();
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the winning screen
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderVictory()
 {
     COORD size = g_Console.getConsoleSize();
@@ -1165,6 +1296,11 @@ void renderVictory()
     endtimer++;
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to check through the starting map
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void loadStartmap()
 {
     std::ifstream startscreen("Startscreen.txt");
@@ -1182,6 +1318,12 @@ void loadStartmap()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the losing screen
+// 
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void loadLosescreen()
 {
     std::ifstream losescreen("LoseScreen.txt");
@@ -1218,6 +1360,11 @@ void loadLosescreen()
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the starting map
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderStartmap()
 {
     for (int y = 0; y < 65; y++)
@@ -1256,6 +1403,11 @@ void renderStartmap()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the player attack projectiles
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderBullets()
 {
     for (int i = 0; i < 100; i++)
@@ -1270,6 +1422,11 @@ void renderBullets()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to check for which map to render first
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void loadmap()
 {
     if (map1Clear != true)
@@ -1306,6 +1463,11 @@ void loadmap()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the map according to the symbols
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderMap()
 {
     //render Map
@@ -1413,6 +1575,11 @@ void renderMap()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the options in starting screen
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderStartOptions()
 {
     COORD c = g_Console.getConsoleSize();
@@ -1443,6 +1610,11 @@ void renderStartOptions()
     g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the base of the pause screen
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderPauseBase()
 {
     COORD c = g_Console.getConsoleSize();
@@ -1459,6 +1631,11 @@ void renderPauseBase()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the pause screen options
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderPauseOptions()
 {
     COORD c = g_Console.getConsoleSize();
@@ -1490,6 +1667,11 @@ void renderPauseOptions()
     g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the lose screen options
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderLossOptions()
 {
     /*for (int y = 0; y < 65; y++) // renders bg
@@ -1532,6 +1714,11 @@ void renderLossOptions()
     g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the graphical user interface
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderGUI() // render game user inferface
 {
     std::string currentObjective = "Escape the Dungeon";
@@ -1595,6 +1782,11 @@ void renderGUI() // render game user inferface
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to check for player interactions
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void playerInteractions()
 {
     for (int i = 0; i < 10; i++) // player interacts with a chest
@@ -1679,6 +1871,11 @@ void playerInteractions()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the map after interaction
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderInteractions()
 {
     // trap interaction
@@ -1705,16 +1902,31 @@ void renderInteractions()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the player
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderCharacter()
 {
     // Draw the location of the character // was 1 for char
     g_Console.writeToBuffer(player->getPosition(), (char)146, player->getCharColour());
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the help screen
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderHelp()
 {
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the enemies
+// Input    : void
+// Output   : void
+//-------------------------------------------------------------
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 {
 
@@ -1758,6 +1970,11 @@ void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the boss attacks
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderBossBullet()
 {
 //    if (bpro.m_bActive == true)
@@ -1814,6 +2031,11 @@ void renderBossBullet()
 //    }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the boss
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderBoss()
 {
     WORD bossColor = 0x5E;
@@ -1852,6 +2074,11 @@ void renderBoss()
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the enemy attacks
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 char renderProj()
 {
     // spawn proj in the matched direction
@@ -1918,6 +2145,11 @@ char renderProj5()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to render the frame rate
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void renderFramerate()
 {
     COORD c;
@@ -2017,6 +2249,11 @@ void renderInputEvents()
 
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to initalize the enemies and behaviours
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void setStalkerCoords(SGameChar EArr[12])
 {
 
@@ -3090,6 +3327,11 @@ void stalkerReachPlayer()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to let the player attack
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void shoot()
 {
     for (int i = 0; i < 100; i++)
@@ -3102,6 +3344,11 @@ void shoot()
     }
 }
 
+//--------------------------------------------------------------
+// Purpose  : function is to set the bullet interaction
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
 void bulletInteraction()
 {
     for (int i = 0; i < 100; i++)
