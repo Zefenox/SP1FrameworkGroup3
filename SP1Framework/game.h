@@ -34,6 +34,9 @@ enum EKEYS
     K_A, //K_LEFT
     K_D, //K_RIGHT
     K_Q,
+    K_T,
+    K_Y,
+    K_U,
     K_1,
     K_2, 
     K_3,
@@ -56,6 +59,7 @@ enum EGAMESTATES
     S_GAME,
     S_PAUSESCREEN,
     S_LOSS,
+    S_VICTORY,
     S_COUNT
 };
 
@@ -63,6 +67,7 @@ struct SGameChar
 {
     COORD m_cLocation;
     bool  m_bActive;
+    int   hp;
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc
@@ -72,11 +77,12 @@ void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
-void splashScreenWait();    // waits for time to pass in splash screen
+void updateSplashScreen();    // waits for time to pass in splash screen
 void updateStart();         // updates start menu
 void updateGame();          // gameplay logic
 void updatePause();
 void updateLoss();
+void cheatInput();
 void inventoryInput();
 void startInput();
 void pauseInput();
@@ -84,17 +90,24 @@ void lossInput();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void playerInteractions();
+void renderInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
+void renderIntroText();
+void renderEndText();
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen
-void renderLoss();
-void renderMap();           // renders the map to the buffer first
+void renderLoss(); // renders the loss screen
+void renderVictory(); // renders the victory screen
+void renderMap(); // renders the map to the buffer first
+
 void loadmap();
 void loadStartmap();
+void loadLosescreen();
 void renderStartmap();
+
 void shootInput();
 void shoot();
 void bulletInteraction();
@@ -112,9 +125,10 @@ void renderInputEvents();   // renders the status of input events
 
 //Enemy functions:
 void bossMovement(SGameChar BArr[9]); // Boss movement
-void bossAttackSeq();           // Boss attack
-void bossSearchPlayer();
-void bossDeath(SGameChar BArr[9]);
+bool bossAttackSeq(); // Boss attack
+char bossSearchPlayer(SGameChar BArr[9]);
+char bossProj();
+void bossDeath();
 //phantom movements (Hardcoded for now)
 void phantomMovement();
 void phantomMovement2();
@@ -133,20 +147,24 @@ void phantomFireProj4();
 void phantomFireProj5();
 void projReachPlayer();
 //stalker functions
-void stalkerMovement(SGameChar EArr[10]); // Stalker movement, collision detection
-bool stalkerSearchPlayer(SGameChar EArr[10]);   // enemy lookout for player to stalk
-void stalkerChasePlayer(SGameChar EArr[10]);    // enemy chase player function once searched
-void stalkerReachPlayer(SGameChar EArr[10]); // enemy corners player in a group
+void checkerX1(int i, int n);
+void checkerY1(int i, int n);
+void checkerX2(int i, int n);
+void checkerY2(int i, int n);
+void stalkerMovement(SGameChar EArr[12]); // Stalker movement, collision detection
+char stalkerSearchPlayer();   // enemy lookout for player to stalk
+void stalkerChasePlayer();    // enemy chase player function once searched
+void stalkerReachPlayer(); // enemy corners player
 // Enemy spawn functions
-void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
-void renderBoss(SGameChar BArr[9]);
-void renderBossParticles(SGameChar BArr[9]);
+void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour); // renders enemies into the buffer (Sherryan)
+void renderBossBullet();
+void renderBoss();
 char renderProj();
 char renderProj2();
 char renderProj3();
 char renderProj4();
 char renderProj5();
-void setStalkerCoords(SGameChar EArr[10]); // random generates enemies with different x and y values
+void setStalkerCoords(SGameChar EArr[12]); // random generates enemies with different x and y values
 void bossBodyCoord(SGameChar BArr[9], int x, int y); //generates boss body coords that are side - by - side.
 
 // keyboard and mouse input event managers
@@ -162,6 +180,9 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mous
 void pauseKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 
-void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for pausescreen
+void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for loss
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
+
+void victoryKBHandler(const KEY_EVENT_RECORD& keyboardEvent); // handles keyboard events for victory
+void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent);
 #endif // _GAME_H

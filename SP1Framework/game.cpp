@@ -20,6 +20,10 @@
 #define VK_KEY_D    0x44
 #define VK_KEY_Q    0x51
 #define VK_KEY_L    0x4C
+#define VK_KEY_T    0x54
+#define VK_KEY_Y    0x59
+#define VK_KEY_U    0x55
+
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
@@ -36,27 +40,26 @@ const WORD colors[] = {
 COORD c;
 
 // stalkers
-SGameChar   s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+SGameChar   s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12;
 WORD sColor = 0x0A;
 int snum = 83;
-int spawnRange = 19;
 // phantom
 
 WORD pcolor = 0x5E;
 int pnum = 43;
-SGameChar stalkers[10] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10};
-//phantoms (hard coded for now)
+SGameChar stalkers[12] = { s1,s2,s3,s4,s5,s6,s7,s8,s9,s10, s11, s12};
+
+//phantoms
 SGameChar   p1, p2, p3, p4, p5;
 // projectile of phantom
 SGameChar pro1, pro2, pro3, pro4, pro5;
 WORD projColor = 0x4D;
 int projnum = 60;
-
 // boss
-SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15;
-SGameChar bossParticles[15] = {b1,b2,b3,b4,b5,b6,b7,b8,b9,
-                                b10,b11,b12,b13,b14,b15};
-int bossHp;
+
+SGameChar b1, b2, b3, b4, b5, b6, b7, b8, b9;
+SGameChar bossParticles[9] = { b1,b2,b3,b4,b5,b6,b7,b8,b9 };
+SGameChar bpro, bpro2, bossHp;
 
 Player* player = new Player; // player initialisation
 Chest* chest[10] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }; // chests initialisation
@@ -72,6 +75,9 @@ Bullet* bulletArray[100] = { nullptr };
 // lv 1 Clear bool
 bool map1Clear = false;
 
+int dis = 0;
+double cap = 1.0;
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -84,12 +90,15 @@ void init(void)
     // assigning seed
     srand((unsigned int)time(NULL));
 
+
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    // Enemy initial state (for now some hard coded)
+    // Enemy initial state
+    bpro.m_bActive = true;
+    bossHp.hp = 240;
     p1.m_bActive = true;
     p2.m_bActive = true;
     p3.m_bActive = true;
@@ -100,13 +109,13 @@ void init(void)
     p2.m_cLocation.X = 40;
     p2.m_cLocation.Y = 50;
     p3.m_cLocation.X = 100;
-    p3.m_cLocation.Y = 80;
-    p4.m_cLocation.X = 30;
+    p3.m_cLocation.Y = 50;
+    p4.m_cLocation.X = 50;
     p4.m_cLocation.Y = 25;
-    p5.m_cLocation.X = 200;
-    p5.m_cLocation.Y = 60;
-    randEnemyCoord(stalkers, spawnRange);
-    bossBodyCoord(bossParticles);
+    p5.m_cLocation.X = 150;
+    p5.m_cLocation.Y = 45;
+    setStalkerCoords(stalkers);
+    bossBodyCoord(bossParticles, 30, 8);
  
     g_dElapsedTime = 0.0;
 
@@ -126,57 +135,93 @@ void init(void)
 void gameInit()
 {
     g_Console.clearBuffer();
-    player->setSpawnPoint(4,16); // set spawn point
+    player->setSpawnPoint(11, 11); // set spawn point
     player->setPosition(player->getSpawnPoint()); // spawn the player at his spawn point
-    player->setLives(3);
-    player->setMaxHealth(100);
-    player->setHealth(player->getMaxHealth());
-    player->setDirection('R');
-    player->setCharColour(0x84);
-    for (int i = 0; i < 5; i++)
-        player->setInventory(i, nullptr); // clear inventory
-    player->setActive(true); // set him to be active
 
-    // initialises chests
-    // for floor 1
-    chest[0] = new Chest; // initialise chest
-    chest[0]->setPosition(156, 36); // set its position
-    chest[1] = new Chest;
-    chest[1]->setPosition(41, 4);
-    chest[2] = new Chest;
-    chest[2]->setPosition(89, 30);
-    chest[3] = new Chest;
-    chest[3]->setPosition(141, 10);
-    chest[4] = new Chest;
-    chest[4]->setPosition(191, 46);
-    chest[5] = new Chest;
-    chest[5]->setPosition(197, 46);
-    chest[6] = new Chest;
-    chest[6]->setPosition(203, 46);
+    if (!map1Clear)
+    {
+        player->setLives(3);
+        player->setHealth(100);
+        player->setMaxHealth(100);
+        for (int i = 0; i < 5; i++)
+            player->setInventory(i, nullptr); // clear inventory
+        player->setActive(true); // set him to be active
+        // initialises chests
+        // for floor 1
+        chest[0] = new Chest; // initialise chest
+        chest[0]->setPosition(156, 36); // set its position
+        chest[1] = new Chest;
+        chest[1]->setPosition(41, 4);
+        chest[2] = new Chest;
+        chest[2]->setPosition(89, 30);
+        chest[3] = new Chest;
+        chest[3]->setPosition(141, 10);
+        chest[4] = new Chest;
+        chest[4]->setPosition(191, 46);
+        chest[5] = new Chest;
+        chest[5]->setPosition(197, 46);
+        chest[6] = new Chest;
+        chest[6]->setPosition(203, 46);
 
-    // for floor 2
-    /*
-    * chest[0] = new Chest; // initialise chest
-    chest[0]->setPosition(35, 19); // set its position
-    chest[1] = new Chest;
-    chest[1]->setPosition(122, 14);
-    chest[2] = new Chest;
-    chest[2]->setPosition(140, 24);
-    chest[3] = new Chest;
-    chest[3]->setPosition(140, 27);
-    chest[4] = new Chest;
-    chest[4]->setPosition(140, 30);
-    chest[5] = new Chest;
-    chest[5]->setPosition(140, 33);
-    chest[6] = new Chest;
-    chest[6]->setPosition(218, 11);
-    chest[7] = new Chest;
-    chest[7]->setPosition(158, 61);
-    chest[8] = new Chest;
-    chest[8]->setPosition(102, 46);
-    chest[9] = new Chest;
-    chest[9]->setPosition(98, 54);
-    */
+        // Enemy initial state, X higher = x--, Y lower = y--
+        p1.m_bActive = true;
+        p2.m_bActive = true;
+        p3.m_bActive = true;
+        p4.m_bActive = true;
+        p5.m_bActive = true;
+        p1.m_cLocation.X = 150;
+        p1.m_cLocation.Y = 30;
+        p2.m_cLocation.X = 40;
+        p2.m_cLocation.Y = 50;
+        p3.m_cLocation.X = 100;
+        p3.m_cLocation.Y = 55;
+        p4.m_cLocation.X = 100;
+        p4.m_cLocation.Y = 25;
+        p5.m_cLocation.X = 170;
+        p5.m_cLocation.Y = 30;
+       /* bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
+        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
+        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
+        bpro.m_bActive = false;
+        bpro2.m_bActive = false;
+        bossBodyCoord(bossParticles, 181, 20);*/
+    }
+
+    if (map1Clear)
+    {
+        // for floor 2
+        chest[0] = new Chest; // initialise chest
+        chest[0]->setPosition(35, 19); // set its position
+        chest[1] = new Chest;
+        chest[1]->setPosition(122, 14);
+        chest[2] = new Chest;
+        chest[2]->setPosition(140, 24);
+        chest[3] = new Chest;
+        chest[3]->setPosition(140, 27);
+        chest[4] = new Chest;
+        chest[4]->setPosition(140, 30);
+        chest[5] = new Chest;
+        chest[5]->setPosition(140, 33);
+        chest[6] = new Chest;
+        chest[6]->setPosition(218, 11);
+        chest[7] = new Chest;
+        chest[7]->setPosition(158, 61);
+        chest[8] = new Chest;
+        chest[8]->setPosition(102, 46);
+        chest[9] = new Chest;
+        chest[9]->setPosition(98, 54);
+
+        // Initialise boss bullets
+        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X - 2;
+        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
+        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y - 2;
+        bpro.m_bActive = false;
+        bpro2.m_bActive = false;
+        // Initialise boss spawn
+        bossBodyCoord(bossParticles, 150, 20);
+    }
     
 }
 
@@ -193,6 +238,10 @@ void shutdown(void)
     colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 
     g_Console.clearBuffer();
+
+    delete player;
+    for (int i = 0; i < 10; i++)
+        delete chest[i];
 }
 
 //--------------------------------------------------------------
@@ -243,6 +292,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_LOSS: lossKBHandler(keyboardEvent); // handle loss screen keyboard event
         break;
+    case S_VICTORY: victoryKBHandler(keyboardEvent); // handle victory screen keyboard event
+        break;
     }
 }
 
@@ -276,6 +327,8 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
         break;
     case S_LOSS: lossMouseHandler(mouseEvent); // handle pause screen mouse event
         break;
+    case S_VICTORY: victoryMouseHandler(mouseEvent); // handle victory screen mouse event
+        break;
     }
 }
 
@@ -305,8 +358,11 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case 0x33: key = K_3; break;
     case 0x34: key = K_4; break;
     case 0x35: key = K_5; break;
-    case 0x4C: key = K_L; break;
+    case VK_KEY_L: key = K_L; break;
 
+    case VK_KEY_T: key = K_T; break; // cheats
+    case VK_KEY_Y: key = K_Y; break;
+    case VK_KEY_U: key = K_U; break;
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -372,6 +428,20 @@ void lossKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     }
 }
 
+void victoryKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
+{
+    EKEYS key = K_COUNT;
+    switch (keyboardEvent.wVirtualKeyCode)
+    {
+    }
+
+    if (key != K_COUNT)
+    {
+        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;
+        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;
+    }
+}
+
 //--------------------------------------------------------------
 // Purpose  : This is the mouse handler in the game state. Whenever there is a mouse event in the game state, this function will be called.
 //            
@@ -422,6 +492,16 @@ void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
+void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
+{
+    if (mouseEvent.dwEventFlags & MOUSE_MOVED) // update the mouse position if there are no events
+    {
+        g_mouseEvent.mousePosition = mouseEvent.dwMousePosition;
+    }
+    g_mouseEvent.buttonState = mouseEvent.dwButtonState;
+    g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
+}
+
 //--------------------------------------------------------------
 // Purpose  : Update function
 //            This is the update function
@@ -444,7 +524,7 @@ void update(double dt)
 
     switch (g_eGameState)
     {
-    case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
+    case S_SPLASHSCREEN: updateSplashScreen(); // game logic for the splash screen
         break;
     case S_STARTSCREEN: updateStart();
         break;
@@ -458,11 +538,24 @@ void update(double dt)
 }
 
 
-void splashScreenWait()    // waits for time to pass in splash screen
+void updateSplashScreen()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to start screen, else do nothing
+    /*
+    if (g_dElapsedTime > 5.0)
+    {
         g_eGameState = S_STARTSCREEN;
+    }
+    else {
+        if (g_dElapsedTime < 2.0)
+        {
+            renderSplashScreen();
+        }
+        
 
+    }
+    */
+     // wait for 3 seconds to switch to start screen, else do nothing
+        
 
     /*processUserInput();*/
     /*getInput();*/
@@ -470,6 +563,11 @@ void splashScreenWait()    // waits for time to pass in splash screen
     {
         g_eGameState = S_GAME;
     }*/
+
+    if (g_dElapsedTime > 6.0)
+    {
+        g_eGameState = S_STARTSCREEN;
+    }
 }
 
 void updateStart()
@@ -480,6 +578,7 @@ void updateStart()
 void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
+    cheatInput();        // checks for cheat commands
     inventoryInput();
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
@@ -490,7 +589,7 @@ void updateGame()       // gameplay logic
     phantomMovement3();
     phantomMovement4();
     phantomMovement5();
-    //bossMovement(bossParticles);
+    bossMovement(bossParticles);
     playerInteractions();
     bulletInteraction();
     // interactions
@@ -498,7 +597,6 @@ void updateGame()       // gameplay logic
 
     if (!player->getActive()) // if player is dead
         g_eGameState = S_LOSS;
-
 }
 
 
@@ -586,6 +684,22 @@ void moveCharacter()
 
 }
 
+void cheatInput()
+{
+    if (g_skKeyEvent[K_T].keyReleased)
+        player->setPosition(g_mouseEvent.mousePosition);
+    if (g_skKeyEvent[K_Y].keyDown)
+        player->setHealth(player->getHealth() - 10);
+    if (g_skKeyEvent[K_U].keyReleased)
+    {
+        if (player->getMaxHealth() == 9999)
+            player->setMaxHealth(100);
+        else
+            player->setMaxHealth(9999);
+        player->setHealth(player->getMaxHealth());
+    }
+}
+
 void inventoryInput()
 {
     if (g_skKeyEvent[K_1].keyDown)
@@ -634,34 +748,19 @@ void inventoryInput()
 void shootInput()
 {
     if (g_skKeyEvent[K_L].keyReleased)
-    {
         shoot();
-    }
+
+    if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        shoot();
 }
 
-bool coordCheck(std::string arr[20], std::string cmb)
-{
-    for (int i = 0; i < 20; i++)
-    {
-        if (cmb == arr[i])
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
 
-void randEnemyCoord(SGameChar EArr[10], int rnum)
+void setStalkerCoords(SGameChar EArr[12])
 {
 
-    int x, y, X, Y;
-    std::string used[10]; // size dependent on num of enemies
-    std::string cmb;
+    int X, Y;
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
     {
         while (true)
         {
@@ -708,164 +807,195 @@ void randEnemyCoord(SGameChar EArr[10], int rnum)
                 X = 170;
                 Y = 15;
                 break;
+            case 10:
+                X = 180;
+                Y = 35;
+                break;
+            case 11:
+                X = 160;
+                Y = 35;
+                break;
             }
                 EArr[i].m_cLocation.X = X;
                 EArr[i].m_cLocation.Y = Y;
-                cmb = std::to_string(X) + std::to_string(Y);
-                used[i] += cmb;
-                x = X;
-                y = Y;
-            if ((coordCheck(used, cmb) == true) || ((map[X][Y] == '#') ||
-                (map[X][Y] == '=') || (map[X][Y] == '[') ||
-                (map[X][Y] == ']') || (map[X][Y] == ')') ||
-                (map[X][Y] == '(') || (map[X][Y] == '*') ||
-                (map[X][Y] == '-') || (map[X][Y] ==  '%') ||
-                (map[X][Y] == '`')))
-            {
-                
-
-                continue;
-            }
-            else
-            {
                 EArr[i].m_bActive = true;
                 break;
-            }
+            
         }
     }
 }
 
-void bossBodyCoord(SGameChar BArr[15])
+void bossBodyCoord(SGameChar BArr[9], int x, int y)
 {
     int count = 0;
-    int rndX  = (rand() % g_Console.getConsoleSize().X / 2) + 5;
-    int rndY  = (rand() % g_Console.getConsoleSize().Y / 2) + 5;
 
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 9; i++)
     {
-        BArr[0].m_cLocation.X = rndX;
-        BArr[0].m_cLocation.Y = rndY;
+        BArr[0].m_cLocation.X = x;
+        BArr[0].m_cLocation.Y = y;
         count++;
         if (i > 0)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-1;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y;
         }
-        if (i > 4)
+        if (i > 2)
         {
             BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
             BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
         }
+        if (i > 3)
+        {
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count - 4;
+            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 1;
+        }
         if (i > 5)
         {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-6;
-            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y;
+            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X - count + 9;
+            BArr[i].m_cLocation.Y = BArr[0].m_cLocation.Y + 2;
         }
-        if (i > 9)
-        {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X;
-            BArr[i].m_cLocation.Y = BArr[5].m_cLocation.Y + 1;
-        }
-        if (i > 10) 
-        {
-            BArr[i].m_cLocation.X = BArr[0].m_cLocation.X + count-11;
-            BArr[i].m_cLocation.Y = BArr[10].m_cLocation.Y;
-        }
+        BArr[i].m_bActive = true;
     }
 }
 
-void bossMovement(SGameChar BArr[15])
+void bossMovement(SGameChar BArr[9])
 {
-    int dir = (rand() % 4) + 1;
-    for (int i = 0; i < 15; i++)
+    bool fire = false;
+    int x, y;
+    for (int i = 0; i < 9; i++)
     {
-        switch (dir)
+        x = BArr[i].m_cLocation.X;
+        y = BArr[i].m_cLocation.Y;
+
+        if ((int)g_dElapsedTime % 2 == 0)
         {
-            //Up
-        case 1:
-            if (BArr[i].m_cLocation.Y > 0 && BArr[i].m_cLocation.Y < 5)
-            {
-                BArr[i].m_cLocation.Y--;
-            }
-            break;
-            //Left
-        case 2:
-            if (BArr[i].m_cLocation.X > 0 && BArr[i].m_cLocation.X < 5)
-            {
-                BArr[i].m_cLocation.X--;
-            }
-            break;
-            //Down
-        case 3:
-            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 20)
-            {
-                BArr[i].m_cLocation.Y++;
-            }
-            break;
-            //Right
-        case 4:
-            if (BArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 20)
-            {
-                BArr[i].m_cLocation.X++;
-
-            }
-            break;
-
-        default:
-            break;
+            if (BArr[i].m_cLocation.Y > 0)
+                {
+                    if (map[y - 2][x] != '#')
+                        BArr[i].m_cLocation.Y--;
+                }
         }
+        else
+        {
+            if (BArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+            {
+               
+                if (map[y + 2][x] != '#')
+                        BArr[i].m_cLocation.Y++;
+            }
+        }
+    }
+    bossSearchPlayer(bossParticles);
+    bossAttackSeq();
+    if (bossProj() == 't')
+        renderBossBullet();
+       
+    bossDeath();
+}
+
+char bossSearchPlayer(SGameChar BArr[9])
+{
+    int X, Y;
+    int final = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        // same lanes
+        if ((player->getX() + 10 == BArr[i].m_cLocation.X) ||
+            (player->getY() + 10 == BArr[i].m_cLocation.Y))
+            {
+                return 'y';
+            }
+            else
+            {
+                X = player->getX() - BArr[i].m_cLocation.Y;
+                Y = player->getY() - BArr[i].m_cLocation.X;
+                if (X < 0)
+                {
+                    X *= -1;
+                }
+                if (Y < 0)
+                {
+                    Y *= -1;
+                }
+                final += X += Y;
+                if (final <= 10)
+                {
+                    return 'y';
+                }
+            }
+
+        return 'n';
     }
 }
 
-void bossSearchPlayer()
+bool bossAttackSeq()
 {
-
+    if (bossSearchPlayer(bossParticles) == 'y')
+    {
+        bossProj();
+        return true;
+    }
+    return false;
 }
 
-void bossAttackSeq()
+char bossProj()
 {
-
+    switch (bossSearchPlayer(bossParticles))
+    {
+    case 'y':
+       bpro.m_bActive = true;
+       bpro2.m_bActive = true;
+        return 't';
+    }
 }
 
 void bossDeath()
 {
-
+    if(bossHp.hp < 0)
+        for (int i = 0; i < 9; i++)
+        {
+            // disable all boss related entities
+            bossParticles[i].m_bActive = false;
+            bpro.m_bActive = false;
+            bpro2.m_bActive = false;
+        }
+    
 }
 
 void phantomMovement()
 {
-        int diagdir = (rand() % 4) + 1;
-        switch (diagdir)
+        int dir = (rand() % 4) + 1;
+        int x, y;
+        x = p1.m_cLocation.X;
+        y = p1.m_cLocation.Y;
+        switch (dir)
         {
         case 1:
-            if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-                && (p1.m_cLocation.Y > 0))
+            if (p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
             {
-                p1.m_cLocation.X++;
-                p1.m_cLocation.Y--;
+                if(map[y][x - 1] != '#')
+                    p1.m_cLocation.X--;
             }
             break;
         case 2:
-            if ((p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-                && (p1.m_cLocation.X > 0))
+            if (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
             {
-                p1.m_cLocation.X--;
-                p1.m_cLocation.Y++;
+                if (map[y + 1][x] != '#')
+                    p1.m_cLocation.Y++;
             }
             break;
         case 3:
-            if ((p1.m_cLocation.Y > 0) && (p1.m_cLocation.X > 0))
+            if (p1.m_cLocation.Y > 0)
             {
-                p1.m_cLocation.Y--;
-                p1.m_cLocation.X--;
+                if(map[y - 1][x] != '#')
+                    p1.m_cLocation.Y--;
             }
             break;
         case 4:
-            if ((p1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-                && (p1.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+            if (p1.m_cLocation.X > 0)
             {
-                p1.m_cLocation.Y++;
-                p1.m_cLocation.X++;
+                if (map[y][x + 1] != '#')
+                    p1.m_cLocation.X++;
             }
             break;
         }
@@ -879,38 +1009,38 @@ void phantomMovement()
 
 void phantomMovement2()
 {
-    int diagdir = (rand() % 4) + 1;
-    switch (diagdir)
+    int dir = (rand() % 4) + 1;
+    int x, y;
+    x = p2.m_cLocation.X;
+    y = p2.m_cLocation.Y;
+    switch (dir)
     {
     case 4:
-        if ((p2.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p2.m_cLocation.Y > 0))
+        if (p2.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-            p2.m_cLocation.X++;
-            p2.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p2.m_cLocation.X--;
         }
         break;
     case 3:
-        if ((p2.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p2.m_cLocation.X > 0))
+        if (p2.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            p2.m_cLocation.X--;
-            p2.m_cLocation.Y++;
+            if (map[y + 1][x] != '#')
+                p2.m_cLocation.Y++;
         }
         break;
     case 2:
-        if ((p2.m_cLocation.Y > 0) && (p2.m_cLocation.X > 0))
+        if (p2.m_cLocation.Y > 0)
         {
-            p2.m_cLocation.Y--;
-            p2.m_cLocation.X--;
+            if (map[y - 1][x] != '#')
+                p2.m_cLocation.Y--;
         }
         break;
     case 1:
-        if ((p2.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p2.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p2.m_cLocation.X > 0)
         {
-            p2.m_cLocation.Y++;
-            p2.m_cLocation.X++;
+            if (map[y][x + 1] != '#')
+                p2.m_cLocation.X++;
         }
         break;
     }
@@ -924,38 +1054,39 @@ void phantomMovement2()
 
 void phantomMovement3()
 {
-    int diagdir = (rand() % 4) + 1;
-    switch (diagdir)
+    int dir = (rand() % 4) + 1;
+    int x, y;
+    x = p3.m_cLocation.X;
+    y = p3.m_cLocation.Y;
+    
+    switch (dir)
     {
     case 2:
-        if ((p3.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p3.m_cLocation.Y > 0))
+        if (p3.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-            p3.m_cLocation.X++;
-            p3.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p3.m_cLocation.X--;
         }
         break;
     case 3:
-        if ((p3.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p3.m_cLocation.X > 0))
+        if (p3.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            p3.m_cLocation.X--;
-            p3.m_cLocation.Y++;
+            if (map[y + 1][x] != '#')
+                p3.m_cLocation.Y++;
         }
         break;
     case 4:
-        if ((p3.m_cLocation.Y > 0) && (p3.m_cLocation.X > 0))
+        if (p3.m_cLocation.Y > 0)
         {
-            p3.m_cLocation.Y--;
-            p3.m_cLocation.X--;
+            if (map[y - 1][x] != '#')
+                p3.m_cLocation.Y--;
         }
         break;
     case 1:
-        if ((p3.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p3.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p3.m_cLocation.X > 0)
         {
-            p3.m_cLocation.Y++;
-            p3.m_cLocation.X++;
+            if (map[y][x + 1] != '#')
+                p3.m_cLocation.X++;
         }
         break;
     }
@@ -969,39 +1100,38 @@ void phantomMovement3()
 
 void phantomMovement4()
 {
-    int diagdir = (rand() % 4) + 1;
-    switch (diagdir)
+    int dir = (rand() % 4) + 1;
+    int x, y;
+    x = p4.m_cLocation.X;
+    y = p4.m_cLocation.Y;
+    switch (dir)
     {
     case 2:
-        if ((p4.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p4.m_cLocation.Y > 0))
+        if (p4.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-
-            p4.m_cLocation.X++;
-            p4.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p4.m_cLocation.X--;
         }
         break;
     case 3:
-        if ((p4.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p4.m_cLocation.X > 0))
+        if (p4.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            p4.m_cLocation.X--;
-            p4.m_cLocation.Y++;
+            if (map[y + 1][x] != '#')
+                p4.m_cLocation.Y++;
         }
         break;
     case 1:
-        if ((p4.m_cLocation.Y > 0) && (p4.m_cLocation.X > 0))
+        if (p4.m_cLocation.Y > 0)
         {
-            p4.m_cLocation.Y--;
-            p4.m_cLocation.X--;
+            if (map[y - 1][x] != '#')
+                p4.m_cLocation.Y--;
         }
         break;
     case 4:
-        if ((p4.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p4.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p4.m_cLocation.X > 0)
         {
-            p4.m_cLocation.Y++;
-            p4.m_cLocation.X++;
+            if (map[y][x + 1] != '#')
+                p4.m_cLocation.X++;
         }
         break;
     }
@@ -1016,39 +1146,38 @@ void phantomMovement4()
 
 void phantomMovement5()
 {
-    int diagdir = (rand() % 4) + 1;
-    switch (diagdir)
+    int dir = (rand() % 4) + 1;
+    int x, y;
+    x = p5.m_cLocation.X;
+    y = p5.m_cLocation.Y;
+    switch (dir)
     {
     case 3:
-        if ((p5.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p5.m_cLocation.Y > 0))
+        if (p5.m_cLocation.X < g_Console.getConsoleSize().X - 1)
         {
-
-            p5.m_cLocation.X++;
-            p5.m_cLocation.Y--;
+            if (map[y][x - 1] != '#')
+                p5.m_cLocation.X--;
         }
         break;
     case 4:
-        if ((p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-            && (p4.m_cLocation.X > 0))
+        if (p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
         {
-            p5.m_cLocation.X--;
-            p5.m_cLocation.Y++;
+            if (map[y + 1][x] != '#')
+                p5.m_cLocation.Y++;
         }
         break;
     case 1:
-        if ((p5.m_cLocation.Y > 0) && (p5.m_cLocation.X > 0))
+        if (p5.m_cLocation.Y > 0)
         {
-            p5.m_cLocation.Y--;
-            p5.m_cLocation.X--;
+            if (map[y - 1][x] != '#')
+                p5.m_cLocation.Y--;
         }
         break;
     case 2:
-        if ((p5.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-            && (p5.m_cLocation.Y < g_Console.getConsoleSize().Y - 1))
+        if (p5.m_cLocation.X > 0)
         {
-            p5.m_cLocation.Y++;
-            p5.m_cLocation.X++;
+            if (map[y][x + 1] != '#')
+                p5.m_cLocation.X++;
         }
         break;
     }
@@ -1085,7 +1214,7 @@ char phantomSearchPlayer2()
 {
     int dist = 30;
     if ((p2.m_cLocation.Y - dist <= player->getY())
-        && (player->getX() == p1.m_cLocation.X))
+        && (player->getX() == p2.m_cLocation.X))
     {
         // so bottom side will not follow
         if ((p2.m_cLocation.Y <= player->getY())
@@ -1229,15 +1358,107 @@ void projReachPlayer()
         player->setHealth(player->getHealth() - 5);
         pro5.m_bActive = false;
     }
+   else if ((player->getX() == bpro.m_cLocation.X) && (player->getY() == bpro.m_cLocation.Y))
+    {
+        player->setHealth(player->getHealth() - 10);
+        bpro.m_bActive = false;
+        bpro.m_cLocation.X = bossParticles[4].m_cLocation.X;
+        bpro.m_cLocation.Y = bossParticles[4].m_cLocation.Y;
+
+    }
+   else if ((player->getX() == bpro2.m_cLocation.X) && (player->getY() == bpro2.m_cLocation.Y))
+    {
+        player->setHealth(player->getHealth() - 10);
+        bpro2.m_bActive = false;
+        bpro2.m_cLocation.X = bossParticles[1].m_cLocation.X;
+        bpro2.m_cLocation.Y = bossParticles[1].m_cLocation.Y;
+
+    }
+}
+
+void checkerY1(int i, int n) // y--
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getY() < stalkers[i].m_cLocation.Y)
+        if((map[y + n][x] != '#') &&
+            (map[y + n][x] != '=') &&
+            (map[y + n][x] != '[') &&
+            (map[y + n][x] != ']') &&
+            (map[y + n][x] != ')') &&
+            (map[y + n][x] != '(') &&
+            (map[y + n][x] != '*') &&
+            (map[y + n][x] != '`') &&
+            (map[y + n][x] != 'S'))
+            {
+                stalkers[i].m_cLocation.Y+=n;
+            }
+}
+
+void checkerY2(int i, int n) // y++
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if(player->getY() > stalkers[i].m_cLocation.Y)
+        if ((map[y + n][x] != '#') &&
+            (map[y + n][x] != '=') &&
+            (map[y + n][x] != '[') &&
+            (map[y + n][x] != ']') &&
+            (map[y + n][x] != ')') &&
+            (map[y + n][x] != '(') &&
+            (map[y + n][x] != '*') &&
+            (map[y + n][x] != '`') &&
+            (map[y + n][x] != 'S'))
+        {
+            stalkers[i].m_cLocation.Y+=n;
+        }
+}
+
+void checkerX1(int i, int n) // x--
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getX() < stalkers[i].m_cLocation.X)
+        if ((map[y][x + n] != '#') &&
+            (map[y][x + n] != '=') &&
+            (map[y][x + n] != '[') &&
+            (map[y][x + n] != ']') &&
+            (map[y][x + n] != ')') &&
+            (map[y][x + n] != '(') &&
+            (map[y][x + n] != '*') &&
+            (map[y][x + n] != '`') &&
+            (map[y][x + n] != 'S'))
+        {
+            stalkers[i].m_cLocation.X += n;
+        }
 }
 
 
-void stalkerMovement(SGameChar EArr[10])
+void checkerX2(int i, int n)// x++
+{
+    int x = stalkers[i].m_cLocation.X;
+    int y = stalkers[i].m_cLocation.Y;
+    if (player->getX() > stalkers[i].m_cLocation.X)
+        if ((map[y][x + n] != '#') &&
+            (map[y][x + n] != '=') &&
+            (map[y][x + n] != '[') &&
+            (map[y][x + n] != ']') &&
+            (map[y][x + n] != ')') &&
+            (map[y][x + n] != '(') &&
+            (map[y][x + n] != '*') &&
+            (map[y][x + n] != '`') &&
+            (map[y][x + n] != 'S'))
+        {
+            stalkers[i].m_cLocation.X += n;
+        }
+}
+
+void stalkerMovement(SGameChar EArr[12])
 {
     int dir = (rand() % 4) + 1;
     int x, y;
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
     {
         x = EArr[i].m_cLocation.X;
         y = EArr[i].m_cLocation.Y;
@@ -1246,7 +1467,7 @@ void stalkerMovement(SGameChar EArr[10])
             switch (dir)
             {
                 //Down
-            case 4:
+            case 2:
                 if ((EArr[i].m_cLocation.Y < g_Console.getConsoleSize().Y - 1) &&
                     (map[y + 1][x] != '#') &&
                     (map[y + 1][x] != '=') &&
@@ -1255,21 +1476,15 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y + 1][x] != ')') &&
                     (map[y + 1][x] != '(') &&
                     (map[y + 1][x] != '*') &&
-                    (map[y + 1][x] != '`'))
+                    (map[y + 1][x] != '`') &&
+                    (map[y + 1][x] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y + 1][x] != EArr[i - 1].m_cLocation.Y)
-                        {
-                            EArr[i].m_cLocation.Y ++;
-                            break;
-                        }
-                    }
+                    
                     EArr[i].m_cLocation.Y++;
                 }
                 break;
                 //Right
-            case 3:
+            case 4:
                 if ((EArr[i].m_cLocation.X < g_Console.getConsoleSize().X - 1) &&
                     (map[y][x - 1] != '#') &&
                     (map[y][x - 1] != '=') &&
@@ -1278,63 +1493,45 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y][x - 1] != ')') &&
                     (map[y][x - 1] != '(') &&
                     (map[y][x - 1] != '*') &&
-                    (map[y][x - 1] != '`'))
+                    (map[y][x - 1] != '`') &&
+                    (map[y][x - 1] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y][x - 1] != EArr[i - 1].m_cLocation.X)
-                        {
-                            EArr[i].m_cLocation.X --;
-                            break;
-                        }
-                    }
+                    
                     EArr[i].m_cLocation.X--;
                 }
                 break;
                 //Up
-            case 2:
+            case 3:
                 if ((EArr[i].m_cLocation.Y > 0) &&
-                    (map[y - 2][x] != '#') &&
-                    (map[y - 2][x] != '=') &&
-                    (map[y - 2][x] != '[') &&
-                    (map[y - 2][x] != ']') &&
-                    (map[y - 2][x] != ')') &&
-                    (map[y - 2][x] != '(') &&
-                    (map[y - 2][x] != '*') &&
-                    (map[y - 2][x] != '`'))
+                    (map[y - 1][x] != '#') &&
+                    (map[y - 1][x] != '=') &&
+                    (map[y - 1][x] != '[') &&
+                    (map[y - 1][x] != ']') &&
+                    (map[y - 1][x] != ')') &&
+                    (map[y - 1][x] != '(') &&
+                    (map[y - 1][x] != '*') &&
+                    (map[y - 1][x] != '`') &&
+                    (map[y - 1][x] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y - 2][x] != EArr[i - 1].m_cLocation.Y)
-                        {
-                            EArr[i].m_cLocation.Y -= 2;
-                            break;
-                        }
-                    }
-                    EArr[i].m_cLocation.Y -= 2;
+                   
+                    EArr[i].m_cLocation.Y--;
                 }
                 break;
                 //Left
             case 1:
                 if ((EArr[i].m_cLocation.X > 0) &&
-                    (map[y][x + 2] != '#') &&
-                    (map[y][x + 2] != '=') &&
-                    (map[y][x + 2] != '[') &&
-                    (map[y][x + 2] != ']') &&
-                    (map[y][x + 2] != ')') &&
-                    (map[y][x + 2] != '(') &&
-                    (map[y][x + 2] != '*') &&
-                    (map[y][x + 2] != '`'))
+                    (map[y][x + 1] != '#') &&
+                    (map[y][x + 1] != '=') &&
+                    (map[y][x + 1] != '[') &&
+                    (map[y][x + 1] != ']') &&
+                    (map[y][x + 1] != ')') &&
+                    (map[y][x + 1] != '(') &&
+                    (map[y][x + 1] != '*') &&
+                    (map[y][x + 1] != '`') &&
+                    (map[y][x + 1] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y][x + 2] != EArr[i - 1].m_cLocation.X)
-                        {
-                            EArr[i].m_cLocation.X += 2;
-                            break;
-                        }
-                    }
-                    EArr[i].m_cLocation.X += 2;
+                   
+                    EArr[i].m_cLocation.X++;
                 }
 
                 break;
@@ -1354,16 +1551,10 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y - 1][x] != ')') &&
                     (map[y - 1][x] != '(') &&
                     (map[y - 1][x] != '*') &&
-                    (map[y - 1][x] != '`'))
+                    (map[y - 1][x] != '`') &&
+                    (map[y - 1][x] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y - 1][x] != EArr[i - 1].m_cLocation.Y)
-                        {
-                            EArr[i].m_cLocation.Y--;
-                            break;
-                        }
-                    }
+                    
                     EArr[i].m_cLocation.Y--;
                 }
 
@@ -1378,19 +1569,12 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y][x - 1] != ')') &&
                     (map[y][x - 1] != '(') &&
                     (map[y][x - 1] != '*') &&
-                    (map[y][x - 1] != '`'))
+                    (map[y][x - 1] != '`') &&
+                    (map[y][x - 1] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y][x - 1] != EArr[i - 1].m_cLocation.X)
-                        {
-                            EArr[i].m_cLocation.X--;
-                            break;
-                        }
-                    }
+                    
                     EArr[i].m_cLocation.X--;
                 }
-
 
                 break;
                 //Down
@@ -1403,16 +1587,10 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y + 1][x] != ')') &&
                     (map[y + 1][x] != '(') &&
                     (map[y + 1][x] != '*') &&
-                    (map[y + 1][x] != '`'))
+                    (map[y + 1][x] != '`') &&
+                    (map[y + 1][x] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y + 1][x] != EArr[i - 1].m_cLocation.Y)
-                        {
-                            EArr[i].m_cLocation.Y++;
-                            break;
-                        }
-                    }
+                    
                     EArr[i].m_cLocation.Y++;
                 }
 
@@ -1427,47 +1605,75 @@ void stalkerMovement(SGameChar EArr[10])
                     (map[y][x + 1] != ')') &&
                     (map[y][x + 1] != '(') &&
                     (map[y][x + 1] != '*') &&
-                    (map[y][x + 1] != '`'))
+                    (map[y][x + 1] != '`') &&
+                    (map[y][x + 1] != 'S'))
                 {
-                    if (i > 0)
-                    {
-                        if (map[y][x + 1] != EArr[i - 1].m_cLocation.X)
-                        {
-                            EArr[i].m_cLocation.X++;
-                            break;
-                        }
-                    }
+                    
                     EArr[i].m_cLocation.X++;
                 }
                 break;
             }
         }
-        stalkerSearchPlayer(stalkers);
-        stalkerChasePlayer(stalkers);
+        stalkerSearchPlayer();
+        stalkerChasePlayer();
     }
 }
 
-bool stalkerSearchPlayer(SGameChar EArr[10])
+char stalkerSearchPlayer()
 {
-    // Assume a 5x5 grid radius of range
     int x_final, y_final;
     int maxNumOfSteps = 0;
     // check if the player and enemy are in the same lane
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
     {
-        if ((player->getY() == EArr[i].m_cLocation.Y + 5) ||
-            (player->getX() == EArr[i].m_cLocation.X + 5))
+        if ((player->getY() == stalkers[i].m_cLocation.Y) ||
+            (player->getX() == stalkers[i].m_cLocation.X))
+            if(player->getX() - stalkers[i].m_cLocation.X <= 2)
         {
-            if (player->getX() - EArr[i].m_cLocation.X <= 2)
+            switch (i)
             {
-                return true;
+            case 0:
+                return 'a';
+                break;
+            case 1:
+                return 'b';
+                break;
+            case 2:
+                return 'c';
+                break;
+            case 3:
+                return 'd';
+                break;
+            case 4:
+                return 'e';
+                break;
+            case 5:
+                return 'f';
+                break;
+            case 6:
+                return 'g';
+                break;
+            case 7:
+                return 'h';
+                break;
+            case 8:
+                return 'i';
+            case 9:
+                return 'j';
+                break;
+            case 10:
+                return 'k';
+                break;
+            case 11:
+                return 'l';
+                break;
             }
         }
         // check for other possibilities
         else
         {
-            x_final = player->getX() - EArr[i].m_cLocation.X;
-            y_final = player->getY() - EArr[i].m_cLocation.Y;
+            x_final = player->getX() - stalkers[i].m_cLocation.X;
+            y_final = player->getY() - stalkers[i].m_cLocation.Y;
             // remove negative val
             if (x_final < 0)
             {
@@ -1481,81 +1687,163 @@ bool stalkerSearchPlayer(SGameChar EArr[10])
             maxNumOfSteps += x_final += y_final;
             if (maxNumOfSteps <= 4)
             {
-                return true;
+                switch (i)
+                {
+                case 0:
+                    return 'a';
+                    break;
+                case 1:
+                    return 'b';
+                    break;
+                case 2:
+                    return 'c';
+                    break;
+                case 3:
+                    return 'd';
+                    break;
+                case 4:
+                    return 'e';
+                    break;
+                case 5:
+                    return 'f';
+                    break;
+                case 6:
+                    return 'g';
+                    break;
+                case 7:
+                    return 'h';
+                    break;
+                case 8:
+                    return 'i';
+                    break;
+                case 9:
+                    return 'j';
+                    break;
+                case 10:
+                    return 'k';
+                    break;
+                case 11:
+                    return 'l';
+                    break;
+                }
             }
         }
     }
-    return false;
+    return 'n';
     // if both conditions not met, 
     // player not in range of enemy
 }
 
-void stalkerChasePlayer(SGameChar EArr[10]) 
+void stalkerChasePlayer() 
 {
-    for (int i = 0; i < 10; i++)
-    {
-        if (stalkerSearchPlayer(stalkers) == true)
+    if(stalkerSearchPlayer() != 'n')
+        switch (stalkerSearchPlayer())
         {
-            // After 10 steps stop chasing or else all will chase
-            if ((player->getX() - 5 <= EArr[i].m_cLocation.X) ||
-                (player->getY() - 5 <= EArr[i].m_cLocation.Y))
-            {
-                if (i % 2 == 0)
-                {
-                    if (player->getX() > EArr[i].m_cLocation.X)
-                    {
-                        EArr[i].m_cLocation.X+=2;
-                    }
-                    else if (player->getX() < EArr[i].m_cLocation.X)
-                    {
-                        EArr[i].m_cLocation.X-=2;
-                    }
-                    else if (player->getY() > EArr[i].m_cLocation.Y)
-                    {
-                        EArr[i].m_cLocation.Y+=2;
-                    }
-                    else if (player->getY() < EArr[i].m_cLocation.Y)
-                    {
-                        EArr[i].m_cLocation.Y-=2;
-                    }
-                }
-                else
-                {
-                    if (player->getX() > EArr[i].m_cLocation.X)
-                    {
-                        EArr[i].m_cLocation.X++;
-                    }
-                    else if (player->getX() < EArr[i].m_cLocation.X)
-                    {
-                        EArr[i].m_cLocation.X--;
-                    }
-                    else if (player->getY() > EArr[i].m_cLocation.Y)
-                    {
-                        EArr[i].m_cLocation.Y++;
-                    }
-                    else if (player->getY() < EArr[i].m_cLocation.Y)
-                    {
-                        EArr[i].m_cLocation.Y--;
-                    }
-                }
-            }
-        }
-    }
+        case 'a':
+            checkerX1(0, -1);
+            checkerX2(0, 1);
+            checkerY1(0, -1);
+            checkerY2(0, 1);
+            break;  
+        case 'b':
+            checkerX1(1, -1);
+            checkerX2(1, 1);
+            checkerY1(1, -1);
+            checkerY2(1, 1);
+            break;
+        case 'c':
+            checkerX1(2, -1);
+            checkerX2(2, 1);
+            checkerY1(2, -1);
+            checkerY2(2, 1);
+            break;
+        case 'd':
+            checkerX1(3, -1);
+            checkerX2(3, 1);
+            checkerY1(3, -1);
+            checkerY2(3, 1);
+            break;
+        case 'e':
+            checkerX1(4, -1);
+            checkerX2(4, 1);
+            checkerY1(4, -1);
+            checkerY2(4, 1);
+            break;
+        case 'f':
+            checkerX1(5, -1);
+            checkerX2(5, 1);
+            checkerY1(5, -1);
+            checkerY2(5, 1);
+            break;
+        case 'g':
+            checkerX1(6, -1);
+            checkerX2(6, 1);
+            checkerY1(6, -1);
+            checkerY2(6, 1);
+                break;
+        case 'h':
+            checkerX1(7, -1);
+            checkerX2(7, 1);
+            checkerY1(7, -1);
+            checkerY2(7, 1);
+            break;
+        case 'i':
+            checkerX1(8, -1);
+            checkerX2(8, 1);
+            checkerY1(8, -1);
+            checkerY2(8, 1);
+            break;
+
+        case 'j':
+            checkerX1(9, -1);
+            checkerX2(9, 1);
+            checkerY1(9, -1);
+            checkerY2(9, 1);
+            break;
+        case 'k':
+            checkerX1(10, -1);
+            checkerX2(10, 1);
+            checkerY1(10, -1);
+            checkerY2(10, 1);
+            break;
+        case 'l':
+            checkerX1(11, -1);
+            checkerX2(11, 1);
+            checkerY1(11, -1);
+            checkerY2(11, 1);
+            break;
+
+   }
 }
 
-void stalkerReachPlayer(SGameChar EArr[10])
+void stalkerReachPlayer()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
     {
-        if ((player->getX() == EArr[i].m_cLocation.X) && (player->getY() == EArr[i].m_cLocation.Y))
+        if ((player->getX() == stalkers[i].m_cLocation.X) && (player->getY() == stalkers[i].m_cLocation.Y))
         {
-            player->setHealth(player->getHealth() - 1);
+            if(stalkers[i].m_bActive == true)
+                player->setHealth(player->getHealth() - 1);
+                stalkers[i].m_cLocation.X = player->getX() + 1;
         }
     }
 }
 
 void startInput()
 {
+    // (100 - 123, 28)
+    for (int x = 100; x <= 123; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 120, 31)
+    for (int x = 100; x <= 120; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
     if (g_skKeyEvent[K_SPACE].keyDown)
         g_eGameState = S_GAME;
     if (g_skKeyEvent[K_ESCAPE].keyDown)
@@ -1565,16 +1853,46 @@ void startInput()
 
 void pauseInput()
 {
+    // (100 - 124, 27)
+    for (int x = 100; x <= 124; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 27 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 118, 30)
+    for (int x = 100; x <= 118; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 30 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
     if (g_skKeyEvent[K_Q].keyDown)
         g_bQuitGame = true;
 }
 
 void lossInput()
 {
+    // (30 - 53, 28)
+    for (int x = 30; x <= 53; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        {
+            gameInit();
+            g_eGameState = S_GAME;
+        }
+    }
+    // (30 - 48, 31)
+    for (int x = 30; x <= 48; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
     if (g_skKeyEvent[K_Q].keyDown)
         g_bQuitGame = true;
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        map1Clear = false;
         gameInit();
         g_eGameState = S_GAME;
     }
@@ -1621,9 +1939,11 @@ void render()
         break;
     case S_LOSS: renderLoss();
         break;
+    case S_VICTORY: renderVictory();
+        break;
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
-    renderInputEvents();    // renders status of input events
+    //renderInputEvents();    // renders status of input events
     renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
 }
 
@@ -1699,22 +2019,14 @@ void renderToScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
-    loadStartmap();
-
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
-
     //render's BG
     COORD size = g_Console.getConsoleSize();
-    /*while (g_dElapsedTime)
-    {
-
-    }*/
-    for (int pos = 0; pos < 40; pos++)
-    {
+    
+    //if (g_dElapsedTime < 4)
+    //{
         g_Console.clearBuffer();
+        if (dis < 51)
+            dis++;
         for (int i = 0; i < size.Y; i++)
         {
             for (int x = 0; x < size.X; x++)
@@ -1722,14 +2034,36 @@ void renderSplashScreen()  // renders the splash screen
                 g_Console.writeToBuffer(x, i, " ", 0x80);
             }
         }
-        renderTitle(100,65 - pos);
+        renderTitle(100, 65 - dis);
+        //renderIntroText(100, -dis);
+    //}
+    //else 
+    /*
+    {
+        for (int i = 0; i < size.Y; i++)
+        {
+            for (int x = 0; x < size.X; x++)
+            {
+                g_Console.writeToBuffer(x, i, " ", 0x80);
+            }
+        }
+        renderTitle(100, 20);
     }
+    */
     
+}
+
+void renderIntroText()
+{
+}
+
+void renderEndText()
+{
 }
 
 void renderStart()
 {
-    
+    loadStartmap();
     renderStartmap();
     renderTitle(30,10);
     renderStartOptions();
@@ -1740,15 +2074,16 @@ void renderGame()
     loadmap();
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
+    renderBullets();
+    renderInteractions();
+    renderGUI();        // renders game user interface
 
     renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
-    //renderEnemies(phantoms, pnum, pcolor);
-    //renderEnemies(projectiles, projnum, projColor);
-    //renderBossParticles(bossParticles);
-    //renderBoss(bossParticles);
-    renderBullets();
-
-    renderGUI();        // renders game user interface
+    if (map1Clear == true)  // renders boss in 2nd map
+    {
+        renderBoss();
+        renderBossBullet();
+    }
 }
 
 void renderPauseScreen()
@@ -1761,6 +2096,11 @@ void renderPauseScreen()
 void renderLoss()
 {
     renderLossOptions();
+}
+
+void renderVictory()
+{
+    renderEndText();
 }
 
 void loadStartmap()
@@ -1778,6 +2118,42 @@ void loadStartmap()
         }
         y++;
     }
+}
+
+void loadLosescreen()
+{
+    std::ifstream losescreen("LoseScreen.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(losescreen, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '#') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)219, 0x80);
+            }
+            else if (map[y][x] == '=') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)178, 0x80);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
+        }
+    }
+
 }
 
 void renderStartmap()
@@ -1849,7 +2225,7 @@ void bulletInteraction()
                 bulletArray[i] = nullptr;
             }
             // detect enemies
-            for (int l = 0; l < 10; l++)
+            for (int l = 0; l < 12; l++)
             {
                 if ((stalkers[l].m_cLocation.X == x) && (stalkers[l].m_cLocation.Y == y))
                 {
@@ -1858,15 +2234,64 @@ void bulletInteraction()
                     bulletArray[i] = nullptr;
                     return;
                 }
-                
             }
-            
+            // detect boss
+            for (int j = 0; j < 9; j++)
+            {
+                if (j == 0 || j == 2 || j == 6 || j == 8)
+                {
+                    if ((bossParticles[j].m_cLocation.X == x) && (bossParticles[j].m_cLocation.Y == y))
+                    {
+                        bossHp.hp -= 10;
+                        delete bulletArray[i];
+                        bulletArray[i] = nullptr;
+                        return;
+                    }
+                }
+            }
+            // detect parry for boss bullets
+            if ((x == bpro.m_cLocation.X) && (y == bpro.m_cLocation.Y))
+            {
+                for (int n = 0; n < 9; n++)
+                {
+                    if (bpro.m_cLocation.X < bossParticles[n].m_cLocation.X)
+                    {
+                        bpro.m_cLocation.X++;
+                        if ((bpro.m_cLocation.X == bossParticles[3].m_cLocation.X) &&
+                            (bpro.m_cLocation.Y == bossParticles[3].m_cLocation.Y))
+                        {
+                            bossHp.hp -= 5;
+                            bpro.m_bActive = false;
+                        }
+                    }
+                }
+                delete bulletArray[i];
+                bulletArray[i] = nullptr;
+                return;
+            }
+            else if((x == bpro2.m_cLocation.X) && (y == bpro2.m_cLocation.Y))
+            {
+                for (int n = 0; n < 9; n++)
+                {
+                    if (bpro2.m_cLocation.X < bossParticles[n].m_cLocation.X)
+                    {
+                        bpro2.m_cLocation.X++;
+                        if ((bpro2.m_cLocation.X == bossParticles[3].m_cLocation.X) &&
+                            (bpro2.m_cLocation.Y == bossParticles[3].m_cLocation.Y))
+                        {
+                            bossHp.hp -= 5;
+                            bpro2.m_bActive = false;
+                        }
+                    }
+                }
+                delete bulletArray[i];
+                bulletArray[i] = nullptr;
+                return;
+            }
+
         }
     }
 }
-
-
-
 
 void renderBullets()
 {
@@ -1965,7 +2390,7 @@ void renderMap()
             {
                 g_Console.writeToBuffer(x, y, (char)177, 0x8C);
             }
-            else if (map[y][x] == '$') //Dungeon gate, cannot pass
+            else if (map[y][x] == '$') //Dungeon gate, can pass
             {
                 g_Console.writeToBuffer(x, y, (char)215, 0x86);
             }
@@ -2013,6 +2438,10 @@ void renderMap()
             {
                 g_Console.writeToBuffer(x, y, (char)237, 0x8B);
             }
+            else if (map[y][x] == '"') //book, ends game
+            {
+                g_Console.writeToBuffer(x, y, (char)240, 0x8B);
+            }
             else //empty space
             {
                 g_Console.writeToBuffer(x, y, ' ', 0x80);
@@ -2031,11 +2460,25 @@ void renderStartOptions()
     COORD cSTART = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string START = "PRESS SPACE TO START";
-    std::string QUIT = "PRESS ESC TO QUIT";
+    WORD STARTcolour = 0x0F;
+    WORD QUITcolour = 0x0F;
 
-    g_Console.writeToBuffer(cSTART, START, 0x0c, START.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    std::string START = "> PRESS SPACE TO START <";
+    std::string QUIT = "> PRESS ESC TO QUIT <";
+
+    for (int x = cSTART.X; x < cSTART.X + START.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cSTART.Y)
+            STARTcolour = 0x0c;
+    }
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cSTART, START, STARTcolour, START.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderPauseBase()
@@ -2048,7 +2491,7 @@ void renderPauseBase()
     {
         for (int i = 0; i < c.X; i++)
         {
-            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0x33);
+            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0);
         }
         c.Y++;
     }
@@ -2060,47 +2503,124 @@ void renderPauseOptions()
     c.Y = (c.Y / 25);
     c.X = c.X / 3;
 
+    WORD CONTINUEcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
     COORD cCONTINUE = { c.X, c.Y + 25 };
     COORD cQUIT = { c.X, c.Y + 28 };
 
-    std::string CONTINUE = "PRESS ESC TO CONTINUE";
-    std::string QUIT = "PRESS Q TO QUIT";
+    std::string CONTINUE = "> PRESS ESC TO CONTINUE <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
 
-    g_Console.writeToBuffer(cCONTINUE, CONTINUE, 0x0c, CONTINUE.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    for (int x = cCONTINUE.X; x < cCONTINUE.X + CONTINUE.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cCONTINUE.Y)
+            CONTINUEcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cCONTINUE, CONTINUE, CONTINUEcolour, CONTINUE.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderLossOptions()
 {
+    /*for (int y = 0; y < 65; y++) // renders bg
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            g_Console.writeToBuffer(x, y, ' ', 0);
+        }
+    }*/
+    loadLosescreen();
     COORD c = g_Console.getConsoleSize();
     c.Y = (c.Y / 20);
     c.X = c.X / 10;
 
-    COORD cLOST = { c.X, c.Y + 22 };
-    COORD cRETRY = { c.X, c.Y + 25 };
-    COORD cQUIT = { c.X, c.Y + 28 };
+    WORD RETRYcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
 
-    std::string LOST = "YOU LOST";
-    std::string RETRY = "PRESS SPACE TO RETRY";
-    std::string QUIT = "PRESS Q TO QUIT";
+    COORD cLOST = { c.X + 80, c.Y + 48 };
+    COORD cRETRY = { c.X + 80, c.Y + 51 };
+    COORD cQUIT = { c.X + 80, c.Y + 54 };
 
-    g_Console.writeToBuffer(cLOST, LOST, 0x0c, LOST.length());
-    g_Console.writeToBuffer(cRETRY, RETRY, 0x0c, RETRY.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, 0x0c, QUIT.length());
+    std::string LOST = "YOU LOST :(";
+    std::string RETRY = "> PRESS SPACE TO RETRY <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
+
+    for (int x = cRETRY.X; x < cRETRY.X + RETRY.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cRETRY.Y)
+            RETRYcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cLOST, LOST, 0x0f, LOST.length());
+    g_Console.writeToBuffer(cRETRY, RETRY, RETRYcolour, RETRY.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
 }
 
 void renderGUI() // render game user inferface
 {
-    std::string objective = "Objective: Escape the Dungeon";
+    std::string currentObjective = "Escape the Dungeon";
+    if (player->getX() > 20)
+        currentObjective = "Get to the portal";
+    if (map1Clear)
+        currentObjective = "Kill the boss";
+
+    for (int i = 0; i < 9; i++)
+    {
+        if (!bossParticles[i].m_bActive)
+            currentObjective = "Read the diary";
+    }
+
+    std::string objective = "Objective: " + currentObjective;
     std::string lifeBar = "Lives: " + std::to_string(player->getLives());
     std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
     std::string inventoryList = "Inventory: ";
     std::string tempStr;
 
-    g_Console.writeToBuffer(1, 1, objective, 0x0C, objective.length());
-    g_Console.writeToBuffer(1, 2, lifeBar, 0x0C, lifeBar.length());
-    g_Console.writeToBuffer(1, 3, healthBar, 0x0C, healthBar.length());
-    g_Console.writeToBuffer(1, 6, inventoryList, 0x0C, inventoryList.length());
+    WORD healthColour = 0xAF;
+    WORD healthBarColor = 0xAA;
+
+    if (player->getHealth() <= 75)
+    {
+        healthColour = 14;
+        healthBarColor = 0xEE;
+    }
+    if (player->getHealth() <= 50)
+    {
+        healthColour = 12;
+        healthBarColor = 0xCC;
+    }
+        
+    if (player->getHealth() <= 25)
+    {
+        healthColour = 4;
+        healthBarColor = 0x44;
+    }
+        
+    // yellow = 14, light red = 12, red = 4
+    g_Console.writeToBuffer(1, 1, objective, 0x0f, objective.length());
+    g_Console.writeToBuffer(1, 2, lifeBar, 0x0f, lifeBar.length());
+    g_Console.writeToBuffer(50, 1, healthBar, healthColour, healthBar.length());
+    // health bar
+    for (int i = 0;i < player->getHealth(); i++)
+    {
+        g_Console.writeToBuffer(70 + i, 1, ' ', healthBarColor);
+    }
+
+    g_Console.writeToBuffer(1, 6, inventoryList, 0x0f, inventoryList.length());
 
     for (int i = 0; i < 5; i++) // print inventory contents
     {
@@ -2109,9 +2629,10 @@ void renderGUI() // render game user inferface
         else
             tempStr = std::to_string(i + 1) + ".";
 
-        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0C, tempStr.length());
+        g_Console.writeToBuffer(1, 7 + i, tempStr, 0x0f, tempStr.length());
     }
 }
+
 
 void playerInteractions()
 {
@@ -2127,6 +2648,7 @@ void playerInteractions()
                     if (player->getInventory(j) == nullptr)
                     {
                         int randNum = (rand() % 4) + 1; // randomise consumable gift
+                        delete chest[i];
                         chest[i] = nullptr;
                         switch (randNum)
                         {
@@ -2165,7 +2687,7 @@ void playerInteractions()
     }
 
     //Enemy interaction
-    stalkerReachPlayer(stalkers);
+    stalkerReachPlayer();
     projReachPlayer();
 
     if ((map[player->getY()][player->getX()] == '0') ||
@@ -2188,6 +2710,38 @@ void playerInteractions()
         g_Console.clearBuffer();
         gameInit();
     }
+
+    //book
+    if (map[player->getY()][player->getX()] == '"')
+    {
+        g_eGameState = S_VICTORY;
+    }
+}
+
+void renderInteractions()
+{
+    // trap interaction
+    if (map[player->getY()][player->getX()] == '!')
+    {
+        g_Console.writeToBuffer(player->getX() - 5, player->getY() - 1, "Wah Pain Lah!");
+    }
+    // checkpoint
+    if (map[player->getY()][player->getX()] == '&')
+    {
+        g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "YAY Checkpoint!!!");
+    }
+    // chests
+    for (int i = 0; i < 10; i++) // player interacts with a chest
+    {
+        if (chest[i] != nullptr)
+        {
+            if (player->getX() - chest[i]->getX() <= 1 && player->getX() - chest[i]->getX() >= -1 &&
+                player->getY() - chest[i]->getY() <= 1 && player->getY() - chest[i]->getY() >= -1) // check for close proximity
+            {
+                g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "WOW A CHEST COOL!!!");
+            }
+        }
+    }
 }
 
 void renderCharacter()
@@ -2196,10 +2750,10 @@ void renderCharacter()
     g_Console.writeToBuffer(player->getPosition(), 'P', player->getCharColour());
 }
 
-void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
+void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
 {
     
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
     {
        if (EArr[i].m_bActive == true)
         {
@@ -2236,32 +2790,101 @@ void renderEnemies(SGameChar EArr[10], int charnum, WORD Colour)
 
     if (pro5.m_bActive == true)
         g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
+
 }
 
-void renderBossParticles(SGameChar BArr[15])
+void renderBossBullet()
 {
-    WORD bossColor = 0x0A;
-    for (int i = 0; i < 15; i++)
-    {
-        g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossColor);
-    }
+        if (bpro.m_bActive == true)
+        {
+            int y = bpro.m_cLocation.Y;
+            int x = bpro.m_cLocation.X;
+            g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
+            if (player->getX() < bpro.m_cLocation.X)
+            {
+                if(map[y][x - 1] != '#')
+                    bpro.m_cLocation.X--;
+            }
+            else if (player->getX() > bpro.m_cLocation.X)
+            {
+                if (map[y][x + 1] != '#')
+                    bpro.m_cLocation.X++;
+            }
+            else if (player->getY() < bpro.m_cLocation.Y)
+            {
+                if (map[y - 1][x] != '#')
+                    bpro.m_cLocation.Y--;
+            }
+            else if (player->getY() > bpro.m_cLocation.Y)
+            {
+                if (map[y - 1][x] != '#')
+                    bpro.m_cLocation.Y++;
+            }
+        }
+        if (bpro2.m_bActive == true)
+        {
+            int y = bpro2.m_cLocation.Y;
+            int x = bpro2.m_cLocation.X;
+            g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
+            if (player->getX() < bpro2.m_cLocation.X)
+            {
+                if (map[y][x - 1] != '#')
+                    bpro2.m_cLocation.X--;
+            }
+            else if (player->getX() > bpro2.m_cLocation.X)
+            {
+                if (map[y][x + 1] != '#')
+                    bpro2.m_cLocation.X++;
+            }
+            else if (player->getY() < bpro2.m_cLocation.Y)
+            {
+                if (map[y - 1][x] != '#')
+                    bpro2.m_cLocation.Y--;
+            }
+            else if (player->getY() > bpro2.m_cLocation.Y)
+            {
+                if (map[y + 1][x] != '#')
+                    bpro2.m_cLocation.Y++;
+            }
+        }
 }
 
-void renderBoss(SGameChar BArr[15])
+void renderBoss()
 {
     WORD bossColor = 0x5E;
     WORD bossCorner = 0x4D;
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 9; i++)
     {
-        if (i == 0 || i == 4 || i == 10 || i == 14)
-        {
-            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)43, bossCorner);
-        }
-        else
-        {
-            g_Console.writeToBuffer(BArr[i].m_cLocation, (char)1, bossColor);
-        } 
-    }
+        if(bossParticles[i].m_bActive == true)
+            if (i == 0 || i == 2 || i == 6 || i == 8)
+            {
+                g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossCorner);
+                switch (i)
+                {
+                case 0:
+                    if (bossHp.hp <= 180)
+                        g_Console.writeToBuffer(bossParticles[0].m_cLocation, (char)43, bossColor);
+                    break;
+                case 2:
+                    if (bossHp.hp <= 120)
+                        g_Console.writeToBuffer(bossParticles[2].m_cLocation, (char)43, bossColor);
+                    break;
+                case 6:
+                    if(bossHp.hp <= 60)
+                    g_Console.writeToBuffer(bossParticles[6].m_cLocation, (char)43, bossColor);
+                    break;
+                case 8:
+                    if(bossHp.hp <= 0)
+                    g_Console.writeToBuffer(bossParticles[8].m_cLocation, (char)43, bossColor);
+                    break;
+                }
+            }   
+            else
+            {
+                g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossColor);
+            }
+     }
+    
 }
 
 char renderProj()
@@ -2355,7 +2978,7 @@ void renderInputEvents()
     // keyboard events
     // W, A ,S, D text show position
     //COORD startPos = {50, 2};
-
+    
     COORD startPos = { 210, 2 };
 
     std::ostringstream ss;
@@ -2426,4 +3049,5 @@ void renderInputEvents()
     default:
         break;
     }
+    
 }
