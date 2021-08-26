@@ -1199,6 +1199,7 @@ void renderIntroText(int x, int y)
 // Purpose  : function is to render the ending text
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderEndText(int x, int y)
 {
@@ -1262,7 +1263,7 @@ void renderPauseScreen()
 }
 
 //--------------------------------------------------------------
-// Purpose  : function is to render the losing screen options
+// Purpose  : function is to call the funct rendering losing screen options
 // Input    : void
 // Output   : void
 //--------------------------------------------------------------
@@ -1275,6 +1276,7 @@ void renderLoss()
 // Purpose  : function is to render the winning screen
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderVictory()
 {
@@ -1323,6 +1325,7 @@ void loadStartmap()
 // 
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void loadLosescreen()
 {
@@ -1471,6 +1474,7 @@ void loadmap()
 // Purpose  : function is to render the map according to the symbols
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderMap()
 {
@@ -1790,6 +1794,7 @@ void renderGUI() // render game user inferface
 // Purpose  : function is to check for player interactions
 // Input    : void
 // Output   : void
+// Tze Ting, Luke, Myron
 //--------------------------------------------------------------
 void playerInteractions()
 {
@@ -1879,6 +1884,7 @@ void playerInteractions()
 // Purpose  : function is to render the map after interaction
 // Input    : void
 // Output   : void
+// Luke
 //--------------------------------------------------------------
 void renderInteractions()
 {
