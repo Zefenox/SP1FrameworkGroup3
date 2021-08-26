@@ -76,7 +76,7 @@ void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
-void splashScreenWait();    // waits for time to pass in splash screen
+void updateSplashScreen();    // waits for time to pass in splash screen
 void updateStart();         // updates start menu
 void updateGame();          // gameplay logic
 void updatePause();
@@ -93,6 +93,8 @@ void renderInteractions();
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderTitle(int x,int y);
 void renderSplashScreen();  // renders the splash screen
+void renderIntroText();
+void renderEndText();
 void renderStart();
 void renderGame();          // renders the game stuff
 void renderPauseScreen();   // renders the pause screen

@@ -492,7 +492,7 @@ void update(double dt)
 
     switch (g_eGameState)
     {
-    case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
+    case S_SPLASHSCREEN: updateSplashScreen(); // game logic for the splash screen
         break;
     case S_STARTSCREEN: updateStart();
         break;
@@ -506,21 +506,22 @@ void update(double dt)
 }
 
 
-void splashScreenWait()    // waits for time to pass in splash screen
+void updateSplashScreen()    // waits for time to pass in splash screen
 {
+    /*
     if (g_dElapsedTime > 5.0)
     {
         g_eGameState = S_STARTSCREEN;
     }
     else {
-        /*if (g_dElapsedTime < 2.0)
+        if (g_dElapsedTime < 2.0)
         {
             renderSplashScreen();
-        }*/
+        }
         
 
     }
-    
+    */
      // wait for 3 seconds to switch to start screen, else do nothing
         
 
@@ -530,6 +531,11 @@ void splashScreenWait()    // waits for time to pass in splash screen
     {
         g_eGameState = S_GAME;
     }*/
+
+    if (g_dElapsedTime > 6.0)
+    {
+        g_eGameState = S_STARTSCREEN;
+    }
 }
 
 void updateStart()
@@ -1979,16 +1985,14 @@ void renderToScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
-
-    
-
     //render's BG
     COORD size = g_Console.getConsoleSize();
     
-    if (g_dElapsedTime < 4)
-    {
+    //if (g_dElapsedTime < 4)
+    //{
         g_Console.clearBuffer();
-        dis++;
+        if (dis < 51)
+            dis++;
         for (int i = 0; i < size.Y; i++)
         {
             for (int x = 0; x < size.X; x++)
@@ -1997,8 +2001,10 @@ void renderSplashScreen()  // renders the splash screen
             }
         }
         renderTitle(100, 65 - dis);
-    }
-    else
+        //renderIntroText(100, -dis);
+    //}
+    //else 
+    /*
     {
         for (int i = 0; i < size.Y; i++)
         {
@@ -2009,7 +2015,16 @@ void renderSplashScreen()  // renders the splash screen
         }
         renderTitle(100, 20);
     }
+    */
     
+}
+
+void renderIntroText()
+{
+}
+
+void renderEndText()
+{
 }
 
 void renderStart()
@@ -2500,7 +2515,19 @@ void renderLossOptions()
 
 void renderGUI() // render game user inferface
 {
-    std::string objective = "Objective: Escape the Dungeon";
+    std::string currentObjective = "Escape the Dungeon";
+    if (player->getX() > 20)
+        currentObjective = "Get to the portal";
+    if (map1Clear)
+        currentObjective = "Kill the boss";
+
+    for (int i = 0; i < 9; i++)
+    {
+        if (!bossParticles[i].m_bActive)
+            currentObjective = "Read the diary";
+    }
+
+    std::string objective = "Objective: " + currentObjective;
     std::string lifeBar = "Lives: " + std::to_string(player->getLives());
     std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
     std::string inventoryList = "Inventory: ";
@@ -2640,14 +2667,17 @@ void renderInteractions()
         g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "YAY Checkpoint!!!");
     }
     // chests
-    //for (int i = 0; i < 10; i++) // player interacts with a chest
-
-    //{
-    //    if (player->getX() == chest[i]->getX() && player->getY() == chest[i]->getY()) // check for same position
-    //    {
-    //        g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "WOW A CHEST COOL!!!");
-    //    }
-    //}
+    for (int i = 0; i < 10; i++) // player interacts with a chest
+    {
+        if (chest[i] != nullptr)
+        {
+            if (player->getX() - chest[i]->getX() <= 1 && player->getX() - chest[i]->getX() >= -1 &&
+                player->getY() - chest[i]->getY() <= 1 && player->getY() - chest[i]->getY() >= -1) // check for close proximity
+            {
+                g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "WOW A CHEST COOL!!!");
+            }
+        }
+    }
 }
 
 void renderCharacter()
@@ -2884,7 +2914,7 @@ void renderInputEvents()
     // keyboard events
     // W, A ,S, D text show position
     //COORD startPos = {50, 2};
-
+    
     COORD startPos = { 210, 2 };
 
     std::ostringstream ss;
@@ -2955,4 +2985,5 @@ void renderInputEvents()
     default:
         break;
     }
+    
 }
