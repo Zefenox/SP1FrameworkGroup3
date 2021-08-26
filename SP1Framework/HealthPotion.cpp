@@ -1,4 +1,4 @@
-#include "HealthPotion.h"
+#include "HealthPotion.h" // coded by: Sze Ting
 
 HealthPotion::HealthPotion()
 {

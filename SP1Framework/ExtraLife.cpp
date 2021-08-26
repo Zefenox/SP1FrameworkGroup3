@@ -1,4 +1,4 @@
-#include "ExtraLife.h"
+#include "ExtraLife.h" // coded by: Sze Ting
 
 ExtraLife::ExtraLife()
 {
