@@ -590,7 +590,7 @@ void updateSplashScreen()    // waits for time to pass in splash screen
         g_eGameState = S_GAME;
     }*/
 
-    if (g_dElapsedTime > 6.0)
+    if (g_dElapsedTime > 10.0)
     {
         g_eGameState = S_STARTSCREEN;
         dis = 0;
@@ -2063,7 +2063,7 @@ void renderSplashScreen()  // renders the splash screen
     //if (g_dElapsedTime < 4)
     //{
         g_Console.clearBuffer();
-        if (dis < 51)
+        if (dis < 61)
             dis++;
         for (int i = 0; i < size.Y; i++)
         {
@@ -2073,6 +2073,7 @@ void renderSplashScreen()  // renders the splash screen
             }
         }
         renderTitle(100, 65 - dis);
+        renderIntroText(300 + dis, 30);
         //renderIntroText(100, -dis);
     //}
     //else 
@@ -2091,8 +2092,24 @@ void renderSplashScreen()  // renders the splash screen
     
 }
 
-void renderIntroText()
+void renderIntroText(int x, int y)
 {
+    g_Console.writeToBuffer(x+5, y+1, "You feel the stagnant wind flow over your body as you open your eyes, lying down on the stone floor. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+2, "As you get up, you try to recall the moments that happened before you lost consciousness. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+3, "Enduring the headache as you think hard, a memory appeared before your mind. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+4, "Though a fragment of what you’re not yet able to remember,", 0x0F);
+    g_Console.writeToBuffer(x+5, y+5, "it is something that nudged you into the goal that you have set for yourself: to escape the Dungeon.", 0x0F);
+    g_Console.writeToBuffer(x+5 + 30, y+7, "What Dungeon?", 0x0F);
+    g_Console.writeToBuffer(x+5, y+9, "Then it became apparent the place where you woke up in was the same place that you have remembered trying to get out of, ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+10, "a cold and wet labyrinth with dimly lit torches illuminating its hallways. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+11, "There is a weathered steel door right in front of you that was decorated with intricate patterns and a symbol of a nondescript man walking through a doorway,", 0x0F);
+    g_Console.writeToBuffer(x+5, y+12, "and it was only a stone’s throw away from where you standing. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+10, "Seeing this door as an obvious way out, you walk over to the door and tug onto its handle, but the door refuses to open. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+11, "Then you press your hands against it, and the same result occurs. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+12, "After a moment of trial and error getting through the stubborn door, it refuses to budge. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+13, "Frustrated, you decide to turn around and tread carefully in the opposite direction,", 0x0F);
+    g_Console.writeToBuffer(x+5, y+13, "curious of what this so-called Dungeon has to offer but hoping for another way out of here.", 0x0F);
+
 }
 
 void renderEndText(int x,int y)
@@ -2148,7 +2165,6 @@ void renderLoss()
 
 void renderVictory()
 {
-    
     COORD size = g_Console.getConsoleSize();
 
     //if (g_dElapsedTime < 4)
@@ -2750,10 +2766,6 @@ void playerInteractions()
         player->setHealth(player->getHealth() - 2);
     }
 
-    //Enemy interaction
-    stalkerReachPlayer();
-    projReachPlayer();
-
     if ((map[player->getY()][player->getX()] == '0') ||
         (map[player->getY()][player->getX()] == '1') || 
         (map[player->getY()][player->getX()] == '2') || 
@@ -2761,6 +2773,10 @@ void playerInteractions()
     {
         player->setHealth(player->getHealth() - 5);
     }
+    //Enemy interaction
+    stalkerReachPlayer();
+    projReachPlayer();
+
     // checkpoint
     if (map[player->getY()][player->getX()] == '&')
     {
