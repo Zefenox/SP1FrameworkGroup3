@@ -1429,9 +1429,13 @@ void renderBullets()
 //--------------------------------------------------------------
 void loadmap()
 {
+    //check whether the map has been cleared to decide whether to load the next map
     if (map1Clear != true)
     {
+        //Input stream class to operate on files.
+        //Objects of this class maintain a filebuf object as their internal stream buffer, which performs input / output operations on the file they are associated with
         std::ifstream Lv1("MapLv1.txt");
+        //make a string var to hold the chars
         std::string line;
         // Init and store Map
         int y = 0;
@@ -1470,7 +1474,7 @@ void loadmap()
 //--------------------------------------------------------------
 void renderMap()
 {
-    //render Map
+    //render Map according to the chars inside the text file
     for (int y = 0; y < 65; y++)
     {
         for (int x = 0; x < 300; x++)
