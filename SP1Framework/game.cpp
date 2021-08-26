@@ -783,6 +783,1179 @@ void shootInput()
         shoot();
 }
 
+void startInput()
+{
+    // (100 - 123, 28)
+    for (int x = 100; x <= 123; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 120, 31)
+    for (int x = 100; x <= 120; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
+    if (g_skKeyEvent[K_SPACE].keyDown)
+        g_eGameState = S_GAME;
+    if (g_skKeyEvent[K_ESCAPE].keyDown)
+        g_bQuitGame = true;
+
+}
+
+void pauseInput()
+{
+    // (100 - 124, 27)
+    for (int x = 100; x <= 124; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 27 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_eGameState = S_GAME;
+    }
+    // (100 - 118, 30)
+    for (int x = 100; x <= 118; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 30 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
+    if (g_skKeyEvent[K_Q].keyDown)
+        g_bQuitGame = true;
+}
+
+void lossInput()
+{
+    // (30 - 53, 28)
+    for (int x = 30; x <= 53; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        {
+            gameInit();
+            g_eGameState = S_GAME;
+        }
+    }
+    // (30 - 48, 31)
+    for (int x = 30; x <= 48; x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            g_bQuitGame = true;
+    }
+
+    if (g_skKeyEvent[K_Q].keyDown)
+        g_bQuitGame = true;
+    if (g_skKeyEvent[K_SPACE].keyDown)
+    {
+        map1Clear = false;
+        gameInit();
+        g_eGameState = S_GAME;
+    }
+}
+
+void processUserInput()
+{
+    // quits the game if player hits the escape key
+    if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
+    {
+        if (g_eGameState == S_GAME)
+        {
+            g_eGameState = S_PAUSESCREEN;
+            return;
+        }
+        if (g_eGameState == S_PAUSESCREEN)
+        {
+            g_eGameState = S_GAME;
+            return;
+        }
+    }
+
+    if (g_skKeyEvent[K_H].keyReleased)
+        g_eGameState = S_HELP;
+}
+
+//--------------------------------------------------------------
+// Purpose  : Render function is to update the console screen
+//            At this point, you should know exactly what to draw onto the screen.
+//            Just draw it!
+//            To get an idea of the values for colours, look at console.h and the URL listed there
+// Input    : void
+// Output   : void
+//--------------------------------------------------------------
+void render()
+{
+    clearScreen();      // clears the current screen and draw from scratch 
+    switch (g_eGameState)
+    {
+    case S_SPLASHSCREEN: renderSplashScreen();
+        break;
+    case S_STARTSCREEN: renderStart();
+        break;
+    case S_HELP: renderHelp();
+        break;
+    case S_GAME: renderGame();
+        break;
+    case S_PAUSESCREEN: renderPauseScreen();
+        break;
+    case S_LOSS: renderLoss();
+        break;
+    case S_VICTORY: renderVictory();
+        break;
+    }
+    renderFramerate();      // renders debug information, frame rate, elapsed time, etc
+    //renderInputEvents();    // renders status of input events
+    renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
+}
+
+void clearScreen()
+{
+    // Clears the buffer with this colour attribute
+    g_Console.clearBuffer(0x1F);
+}
+
+void renderTitle(int x,int y) // function to render title
+{
+    const WORD colors[] = {
+        0x0F, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    };
+    COORD c = g_Console.getConsoleSize();
+    c.Y = y;
+    c.X = x;
+
+    // ESCAPE
+    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  / ____       ", colors[0]);
+    c.X += 15;
+    g_Console.writeToBuffer(c, (char)92, colors[0]);
+    c.X += 1;
+    g_Console.writeToBuffer(c, (char)92, colors[0]);
+    c.X += 1;
+    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", colors[0]);
+    c.X -= 17;
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", colors[0]);
+
+
+    // THE
+    c.Y += 2;
+    c.X += 15;
+    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " / /    //    / / //          ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", colors[0]);
+
+
+    // DUNGEON
+    c.Y += 2;
+    c.X -= 20;
+    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", colors[0]);
+    c.Y += 1;
+    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", colors[0]);
+    c.Y += 1;
+}
+
+void renderToScreen()
+{
+    // Writes the buffer to the console, hence you will see what you have written
+    g_Console.flushBufferToConsole();
+}
+
+void renderSplashScreen()  // renders the splash screen
+{
+    //render's BG
+    COORD size = g_Console.getConsoleSize();
+    
+    //if (g_dElapsedTime < 4)
+    //{
+        g_Console.clearBuffer();
+        if (dis < 61)
+            dis++;
+        for (int i = 0; i < size.Y; i++)
+        {
+            for (int x = 0; x < size.X; x++)
+            {
+                g_Console.writeToBuffer(x, i, " ", 0x80);
+            }
+        }
+        renderTitle(100, 65 - dis);
+        renderIntroText(300 + dis, 30);
+        //renderIntroText(100, -dis);
+    //}
+    //else 
+    /*
+    {
+        for (int i = 0; i < size.Y; i++)
+        {
+            for (int x = 0; x < size.X; x++)
+            {
+                g_Console.writeToBuffer(x, i, " ", 0x80);
+            }
+        }
+        renderTitle(100, 20);
+    }
+    */
+    
+}
+
+void renderIntroText(int x, int y)
+{
+    g_Console.writeToBuffer(x+5, y+1, "You feel the stagnant wind flow over your body as you open your eyes, lying down on the stone floor. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+2, "As you get up, you try to recall the moments that happened before you lost consciousness. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+3, "Enduring the headache as you think hard, a memory appeared before your mind. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+4, "Though a fragment of what you’re not yet able to remember,", 0x0F);
+    g_Console.writeToBuffer(x+5, y+5, "it is something that nudged you into the goal that you have set for yourself: to escape the Dungeon.", 0x0F);
+    g_Console.writeToBuffer(x+5 + 30, y+7, "What Dungeon?", 0x0F);
+    g_Console.writeToBuffer(x+5, y+9, "Then it became apparent the place where you woke up in was the same place that you have remembered trying to get out of, ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+10, "a cold and wet labyrinth with dimly lit torches illuminating its hallways. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+11, "There is a weathered steel door right in front of you that was decorated with intricate patterns and a symbol of a nondescript man walking through a doorway,", 0x0F);
+    g_Console.writeToBuffer(x+5, y+12, "and it was only a stone’s throw away from where you standing. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+10, "Seeing this door as an obvious way out, you walk over to the door and tug onto its handle, but the door refuses to open. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+11, "Then you press your hands against it, and the same result occurs. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+12, "After a moment of trial and error getting through the stubborn door, it refuses to budge. ", 0x0F);
+    g_Console.writeToBuffer(x+5, y+13, "Frustrated, you decide to turn around and tread carefully in the opposite direction,", 0x0F);
+    g_Console.writeToBuffer(x+5, y+13, "curious of what this so-called Dungeon has to offer but hoping for another way out of here.", 0x0F);
+
+}
+
+void renderEndText(int x,int y)
+{
+
+    g_Console.writeToBuffer(x, y, "Sweating from both the heat of the underground and the last battle against a body of bodies,",0x0F);
+    g_Console.writeToBuffer(x, y+1, "you stroll into the deepest unknown and press on forward through the darkness before coming across an old desk with a lone lamp. ",0x0F);
+    g_Console.writeToBuffer(x,y +2,"The light cast by the lamp brings your attention to the worn but intact book resting on the table surface.", 0x0F);
+    g_Console.writeToBuffer(x + 50,y+3,"On its cover read, “My Diary”.", 0x0F);
+    g_Console.writeToBuffer(x,y+4,"Intrigued by the content which lies within the book, you walk over to the desk and turn the book to its first page:", 0x0F);
+    g_Console.writeToBuffer(x,y+5,"“Dear diary, my best friend ف̵̌̈́ф̶̈́̃#̸̧͂φ̸̓̄$̴̝͐و̴͋̏א̵͙̽ and I have been close friends for a few years, but I can’t believe he forgot my birthday!", 0x0F);
+    g_Console.writeToBuffer(x,y+6,"So to prank him back, I decided to build an elaborate dungeon filled with traps and monsters and all that to scare the pants out of him and teach him a lesson!", 0x0F);
+    g_Console.writeToBuffer(x,y+7,"Once I’m done building this dungeon, I’ll visit П̶̤̒о̶̖̃л̸͓̈ and then invite П̵̹̇о̵͋̋л̶͙̈́ to this place. And then...”", 0x0F);
+    
+}
+
+void renderStart()
+{
+    loadStartmap();
+    renderStartmap();
+    renderTitle(30,10);
+    renderStartOptions();
+}
+
+void renderGame()
+{
+    loadmap();
+    renderMap();        // renders the map to the buffer first
+    renderCharacter();  // renders the character into the buffer
+    renderBullets();
+    renderInteractions();
+    renderGUI();        // renders game user interface
+
+    renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
+    if (map1Clear == true)  // renders boss in 2nd map
+    {
+        renderBoss();
+        renderBossBullet();
+    }
+}
+
+void renderPauseScreen()
+{
+    renderGame();
+    renderPauseBase();
+    renderPauseOptions();
+}
+
+void renderLoss()
+{
+    renderLossOptions();
+}
+
+void renderVictory()
+{
+    COORD size = g_Console.getConsoleSize();
+
+    //if (g_dElapsedTime < 4)
+    //{
+    g_Console.clearBuffer();
+    if (dis < 51)
+        dis++;
+    for (int i = 0; i < size.Y; i++)
+    {
+        for (int x = 0; x < size.X; x++)
+        {
+            g_Console.writeToBuffer(x, i, " ", 0x00);
+        }
+    }
+    renderEndText(50,65 - dis);
+    endtimer++;
+}
+
+void loadStartmap()
+{
+    std::ifstream startscreen("Startscreen.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(startscreen, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+}
+
+void loadLosescreen()
+{
+    std::ifstream losescreen("LoseScreen.txt");
+    std::string line;
+    // Init and store Map
+    int y = 0;
+    while (getline(losescreen, line)) {
+        // Output the text from the file
+        for (unsigned i = 0; i < line.length(); ++i)
+        {
+            map[y][i] = line.at(i);
+
+        }
+        y++;
+    }
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '#') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)219, 0x80);
+            }
+            else if (map[y][x] == '=') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)178, 0x80);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
+        }
+    }
+
+}
+
+void renderStartmap()
+{
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '=')
+            {
+                g_Console.writeToBuffer(x, y, (char)186, 0x00);
+            }
+            else if (map[y][x] == '#')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
+            else if (map[y][x] == '+')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x22);
+            }
+            else if (map[y][x] == '~')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x00);
+            }
+            else if (map[y][x] == '!')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0xCC);
+            }
+            else if (map[y][x] == '"')
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x44);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x77);
+            }
+        }
+    }
+}
+
+void renderBullets()
+{
+    for (int i = 0; i < 100; i++)
+    {
+        if (bulletArray[i] != nullptr)
+        {
+            if (map[bulletArray[i]->Y][bulletArray[i]->X] != '#')
+            {
+                bulletArray[i]->print();
+            }
+        }
+    }
+}
+
+void loadmap()
+{
+    if (map1Clear != true)
+    {
+        std::ifstream Lv1("MapLv1.txt");
+        std::string line;
+        // Init and store Map
+        int y = 0;
+        while (getline(Lv1, line))
+        {
+            // Output the text from the file
+            for (unsigned i = 0; i < line.length(); ++i)
+            {
+                map[y][i] = line.at(i);
+            }
+            y++;
+        }
+    }
+    else
+    {
+        std::ifstream Lv2("MapLv2.txt");
+        std::string line;
+        // Init and store Map
+        int y = 0;
+        while (getline(Lv2, line))
+        {
+            // Output the text from the file
+            for (unsigned i = 0; i < line.length(); ++i)
+            {
+                map[y][i] = line.at(i);
+            }
+            y++;
+        }
+    }
+}
+
+void renderMap()
+{
+    //render Map
+    for (int y = 0; y < 65; y++)
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            if (map[y][x] == '|') //torch stick, can pass thru
+            {
+                g_Console.writeToBuffer(x, y, (char)186, 0x80);
+            }
+            else if (map[y][x] == '#') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)219, 0x80);
+            }
+            else if (map[y][x] == '+') //torch fire, pass thru
+            {
+                g_Console.writeToBuffer(x, y, (char)178, 0x84);
+            }
+            else if (map[y][x] == '[') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)222, 0x80);
+            }
+            else if (map[y][x] == ']') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)221, 0x80);
+            }
+            else if (map[y][x] == '(') //trap firing block, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)204, 0x84);
+            }
+            else if (map[y][x] == ')') //trap firing block, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)185, 0x84);
+            }
+            else if (map[y][x] == '=') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)254, 0x80);
+            }
+            else if (map[y][x] == '%') //chest, can pass and gives item
+            {
+                g_Console.writeToBuffer(x, y, (char)233, 0x8E);
+            }
+            else if (map[y][x] == '!') //lava trap, can pass with DoT (2/s)
+            {
+                g_Console.writeToBuffer(x, y, (char)177, 0x8C);
+            }
+            else if (map[y][x] == '$') //Dungeon gate, can pass
+            {
+                g_Console.writeToBuffer(x, y, (char)215, 0x86);
+            }
+            else if (map[y][x] == '-') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)205, 0x84);
+            }
+            else if (map[y][x] == '`') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)254, 0x84);
+            }
+            else if (map[y][x] == '*') //wall, cannot pass
+            {
+                g_Console.writeToBuffer(x, y, (char)206, 0x84);
+            }
+            else if (map[y][x] == '<') //tp gate step, pass thru
+            {
+                g_Console.writeToBuffer(x, y, (char)243, 0x8B);
+            }
+            else if (map[y][x] == '>') //tp gate step, pass thru
+            {
+                g_Console.writeToBuffer(x, y, (char)242, 0x8B);
+            }
+            else if (map[y][x] == '~') //tp gate, teleports to next room
+            {
+                g_Console.writeToBuffer(x, y, (char)234, 0x8B);
+            }
+            else if (map[y][x] == '0') //firetrap's fire, pass with DoT (10/s)
+            {
+                g_Console.writeToBuffer(x, y, '-', 0x84);
+            }
+            else if (map[y][x] == '1') //firetrap's fire, pass with DoT (10/s)
+            {
+                g_Console.writeToBuffer(x, y, '=', 0x84);
+            }
+            else if (map[y][x] == '2') //firetrap's fire, pass with DoT (10/s)
+            {
+                g_Console.writeToBuffer(x, y, '#', 0x84);
+            }
+            else if (map[y][x] == '3') //firetrap's fire, pass with DoT (10/s)
+            {
+                g_Console.writeToBuffer(x, y, '@', 0x84);
+            }
+            else if (map[y][x] == '&') //Checkpoint, sets player spawn pos
+            {
+                g_Console.writeToBuffer(x, y, (char)237, 0x8B);
+            }
+            else if (map[y][x] == '"') //book, ends game
+            {
+                g_Console.writeToBuffer(x, y, (char)240, 0x8B);
+            }
+            else //empty space
+            {
+                g_Console.writeToBuffer(x, y, ' ', 0x80);
+            }
+        }
+    }
+}
+
+void renderStartOptions()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y = (c.Y / 20);
+    c.X = c.X / 3;
+
+    COORD cSTART = { c.X, c.Y + 25 };
+    COORD cQUIT = { c.X, c.Y + 28 };
+
+    WORD STARTcolour = 0x0F;
+    WORD QUITcolour = 0x0F;
+
+    std::string START = "> PRESS SPACE TO START <";
+    std::string QUIT = "> PRESS ESC TO QUIT <";
+
+    for (int x = cSTART.X; x < cSTART.X + START.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cSTART.Y)
+            STARTcolour = 0x0c;
+    }
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cSTART, START, STARTcolour, START.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
+}
+
+void renderPauseBase()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.X = c.X / 4;
+    c.Y = c.Y / 3;
+
+    for (int i = 0; i < 15; i++)
+    {
+        for (int i = 0; i < c.X; i++)
+        {
+            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0);
+        }
+        c.Y++;
+    }
+}
+
+void renderPauseOptions()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y = (c.Y / 25);
+    c.X = c.X / 3;
+
+    WORD CONTINUEcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
+    COORD cCONTINUE = { c.X, c.Y + 25 };
+    COORD cQUIT = { c.X, c.Y + 28 };
+
+    std::string CONTINUE = "> PRESS ESC TO CONTINUE <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
+
+    for (int x = cCONTINUE.X; x < cCONTINUE.X + CONTINUE.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cCONTINUE.Y)
+            CONTINUEcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cCONTINUE, CONTINUE, CONTINUEcolour, CONTINUE.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
+}
+
+void renderLossOptions()
+{
+    /*for (int y = 0; y < 65; y++) // renders bg
+    {
+        for (int x = 0; x < 300; x++)
+        {
+            g_Console.writeToBuffer(x, y, ' ', 0);
+        }
+    }*/
+    loadLosescreen();
+    COORD c = g_Console.getConsoleSize();
+    c.Y = (c.Y / 20);
+    c.X = c.X / 10;
+
+    WORD RETRYcolour = 0x0f;
+    WORD QUITcolour = 0x0f;
+
+    COORD cLOST = { c.X + 80, c.Y + 48 };
+    COORD cRETRY = { c.X + 80, c.Y + 51 };
+    COORD cQUIT = { c.X + 80, c.Y + 54 };
+
+    std::string LOST = "YOU LOST :(";
+    std::string RETRY = "> PRESS SPACE TO RETRY <";
+    std::string QUIT = "> PRESS Q TO QUIT <";
+
+    for (int x = cRETRY.X; x < cRETRY.X + RETRY.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cRETRY.Y)
+            RETRYcolour = 0x0c;
+    }
+
+    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
+    {
+        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
+            QUITcolour = 0x0c;
+    }
+
+    g_Console.writeToBuffer(cLOST, LOST, 0x0f, LOST.length());
+    g_Console.writeToBuffer(cRETRY, RETRY, RETRYcolour, RETRY.length());
+    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
+}
+
+void renderGUI() // render game user inferface
+{
+    std::string currentObjective = "Escape the Dungeon";
+    if (player->getX() > 20)
+        currentObjective = "Get to the portal";
+    if (map1Clear)
+        currentObjective = "Kill the boss";
+
+    for (int i = 0; i < 9; i++)
+    {
+        if (!bossParticles[i].m_bActive)
+            currentObjective = "Read the diary";
+    }
+
+    std::string objective = "Objective: " + currentObjective;
+    std::string lifeBar = "Lives: " + std::to_string(player->getLives());
+    std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
+    std::string inventoryList = "Inventory: ";
+    std::string tempStr;
+
+    WORD healthColour = 0xAF;
+    WORD healthBarColor = 0xAA;
+
+    if (player->getHealth() <= 75)
+    {
+        healthColour = 14;
+        healthBarColor = 0xEE;
+    }
+    if (player->getHealth() <= 50)
+    {
+        healthColour = 12;
+        healthBarColor = 0xCC;
+    }
+        
+    if (player->getHealth() <= 25)
+    {
+        healthColour = 4;
+        healthBarColor = 0x44;
+    }
+        
+    // yellow = 14, light red = 12, red = 4
+    g_Console.writeToBuffer(1, 1, objective, 0x0f, objective.length());
+    g_Console.writeToBuffer(1, 2, lifeBar, 0x0f, lifeBar.length());
+    g_Console.writeToBuffer(50, 1, healthBar, healthColour, healthBar.length());
+    // health bar
+    for (int i = 0;i < player->getHealth(); i++)
+    {
+        g_Console.writeToBuffer(70 + i, 1, ' ', healthBarColor);
+    }
+
+    g_Console.writeToBuffer(1, 4, inventoryList, 0x0f, inventoryList.length());
+
+    for (int i = 0; i < 5; i++) // print inventory contents
+    {
+        if (player->getInventory(i) != nullptr)
+            tempStr = std::to_string(i + 1) + ". " + player->getInventory(i)->getName();
+        else
+            tempStr = std::to_string(i + 1) + ".";
+
+        g_Console.writeToBuffer(1, 5 + i, tempStr, 0x0f, tempStr.length());
+    }
+}
+
+void playerInteractions()
+{
+    for (int i = 0; i < 10; i++) // player interacts with a chest
+
+    {
+        if (chest[i] != nullptr)
+        {
+            if (player->getX() == chest[i]->getX() && player->getY() == chest[i]->getY()) // check for same position
+            {
+                for (int j = 0; j < 5; j++) // loop through inventory to check which is free
+                {
+                    if (player->getInventory(j) == nullptr)
+                    {
+                        int randNum = (rand() % 4) + 1; // randomise consumable gift
+                        delete chest[i];
+                        chest[i] = nullptr;
+                        switch (randNum)
+                        {
+                            case 1:
+                            {
+                                player->setInventory(j, new HealthPotion);
+                                break;
+                            }
+                            case 2:
+                            {
+                                player->setInventory(j, new ExtraLife);
+                                break;
+                            }
+                            case 3:
+                            {
+                                player->setInventory(j, new OddPotion);
+                                break;
+                            }
+                            case 4:
+                            {
+                                player->setInventory(j, new Cheese);
+                                break;
+                            }
+                        }
+                        break; // no need for further check
+                    }
+                }
+            }
+        }
+    }
+    
+    //trap interaction
+    if (map[player->getY()][player->getX()] == '!')
+    {
+        player->setHealth(player->getHealth() - 2);
+    }
+
+    if ((map[player->getY()][player->getX()] == '0') ||
+        (map[player->getY()][player->getX()] == '1') || 
+        (map[player->getY()][player->getX()] == '2') || 
+        (map[player->getY()][player->getX()] == '3'))
+    {
+        player->setHealth(player->getHealth() - 5);
+    }
+    //Enemy interaction
+    stalkerReachPlayer();
+    projReachPlayer();
+
+    // checkpoint
+    if (map[player->getY()][player->getX()] == '&')
+    {
+        player->setSpawnPoint(player->getX(), player->getY());
+    }
+
+    //portal
+    if (map[player->getY()][player->getX()] == '~')
+    {
+        map1Clear = true;
+        g_Console.clearBuffer();
+        gameInit();
+    }
+
+    //book
+    if (map[player->getY()][player->getX()] == '"')
+    {
+        g_eGameState = S_VICTORY;
+    }
+}
+
+void renderInteractions()
+{
+    // trap interaction
+    if (map[player->getY()][player->getX()] == '!')
+    {
+        g_Console.writeToBuffer(player->getX() - 5, player->getY() - 1, "Wah Pain Lah!");
+    }
+    // checkpoint
+    if (map[player->getY()][player->getX()] == '&')
+    {
+        g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "YAY Checkpoint!!!");
+    }
+    // chests
+    for (int i = 0; i < 10; i++) // player interacts with a chest
+    {
+        if (chest[i] != nullptr)
+        {
+            if (player->getX() - chest[i]->getX() <= 1 && player->getX() - chest[i]->getX() >= -1 &&
+                player->getY() - chest[i]->getY() <= 1 && player->getY() - chest[i]->getY() >= -1) // check for close proximity
+            {
+                g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "WOW A CHEST COOL!!!");
+            }
+        }
+    }
+}
+
+void renderCharacter()
+{
+    // Draw the location of the character // was 1 for char
+    g_Console.writeToBuffer(player->getPosition(), (char)146, player->getCharColour());
+}
+
+void renderHelp()
+{
+}
+
+void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
+{
+    
+    for (int i = 0; i < 12; i++)
+    {
+       if (EArr[i].m_bActive == true)
+        {
+                g_Console.writeToBuffer(EArr[i].m_cLocation, (char)charnum, Colour);
+        }
+    }
+        
+    if (p1.m_bActive == true)
+        g_Console.writeToBuffer(p1.m_cLocation, (char)pnum, pcolor);
+
+    if (p2.m_bActive == true)
+        g_Console.writeToBuffer(p2.m_cLocation, (char)pnum, pcolor);
+
+    if (p3.m_bActive == true)
+        g_Console.writeToBuffer(p3.m_cLocation, (char)pnum, pcolor);
+
+    if (p4.m_bActive == true)
+        g_Console.writeToBuffer(p4.m_cLocation, (char)pnum, pcolor);
+
+    if (p5.m_bActive == true)
+        g_Console.writeToBuffer(p5.m_cLocation, (char)pnum, pcolor);
+
+    if (pro1.m_bActive == true)
+        g_Console.writeToBuffer(pro1.m_cLocation, (char)projnum, projColor);
+
+    if (pro2.m_bActive == true)
+        g_Console.writeToBuffer(pro2.m_cLocation, (char)projnum, projColor);
+
+    if(pro3.m_bActive == true)
+        g_Console.writeToBuffer(pro3.m_cLocation, (char)projnum, projColor);
+
+    if(pro4.m_bActive == true)
+        g_Console.writeToBuffer(pro4.m_cLocation, (char)projnum, projColor);
+
+    if (pro5.m_bActive == true)
+        g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
+
+}
+
+void renderBossBullet()
+{
+        if (bpro.m_bActive == true)
+        {
+            int y = bpro.m_cLocation.Y;
+            int x = bpro.m_cLocation.X;
+            g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
+            if (player->getX() < bpro.m_cLocation.X)
+            {
+                if(map[y][x - 1] != '#')
+                    bpro.m_cLocation.X--;
+            }
+            else if (player->getX() > bpro.m_cLocation.X)
+            {
+                if (map[y][x + 1] != '#')
+                    bpro.m_cLocation.X++;
+            }
+            else if (player->getY() < bpro.m_cLocation.Y)
+            {
+                if (map[y - 1][x] != '#')
+                    bpro.m_cLocation.Y--;
+            }
+            else if (player->getY() > bpro.m_cLocation.Y)
+            {
+                if (map[y - 1][x] != '#')
+                    bpro.m_cLocation.Y++;
+            }
+        }
+        if (bpro2.m_bActive == true)
+        {
+            int y = bpro2.m_cLocation.Y;
+            int x = bpro2.m_cLocation.X;
+            g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
+            if (player->getX() < bpro2.m_cLocation.X)
+            {
+                if (map[y][x - 1] != '#')
+                    bpro2.m_cLocation.X--;
+            }
+            else if (player->getX() > bpro2.m_cLocation.X)
+            {
+                if (map[y][x + 1] != '#')
+                    bpro2.m_cLocation.X++;
+            }
+            else if (player->getY() < bpro2.m_cLocation.Y)
+            {
+                if (map[y - 1][x] != '#')
+                    bpro2.m_cLocation.Y--;
+            }
+            else if (player->getY() > bpro2.m_cLocation.Y)
+            {
+                if (map[y + 1][x] != '#')
+                    bpro2.m_cLocation.Y++;
+            }
+        }
+}
+
+void renderBoss()
+{
+    WORD bossColor = 0x5E;
+    WORD bossCorner = 0x4D;
+    for (int i = 0; i < 9; i++)
+    {
+        if(bossParticles[i].m_bActive == true)
+            if (i == 0 || i == 2 || i == 6 || i == 8)
+            {
+                g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossCorner);
+                switch (i)
+                {
+                case 0:
+                    if (bossHp.hp <= 180)
+                        g_Console.writeToBuffer(bossParticles[0].m_cLocation, (char)43, bossColor);
+                    break;
+                case 2:
+                    if (bossHp.hp <= 120)
+                        g_Console.writeToBuffer(bossParticles[2].m_cLocation, (char)43, bossColor);
+                    break;
+                case 6:
+                    if(bossHp.hp <= 60)
+                    g_Console.writeToBuffer(bossParticles[6].m_cLocation, (char)43, bossColor);
+                    break;
+                case 8:
+                    if(bossHp.hp <= 0)
+                    g_Console.writeToBuffer(bossParticles[8].m_cLocation, (char)43, bossColor);
+                    break;
+                }
+            }   
+            else
+            {
+                g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossColor);
+            }
+     }
+    
+}
+
+char renderProj()
+{
+    // spawn proj in the matched direction
+    switch (phantomSearchPlayer())
+    {
+    case 'r':
+        pro1.m_bActive = true;
+        pro1.m_cLocation.X = p1.m_cLocation.X;
+        pro1.m_cLocation.Y = p1.m_cLocation.Y - 1;
+        return 't';
+        break; // right
+    }
+}
+
+char renderProj2()
+{
+    switch (phantomSearchPlayer2())
+    {
+    case 'r':
+        pro2.m_bActive = true;
+        pro2.m_cLocation.X = p2.m_cLocation.X;
+        pro2.m_cLocation.Y = p2.m_cLocation.Y - 1;
+        return 't';
+        break; // right
+    }
+}
+
+char renderProj3()
+{
+    switch (phantomSearchPlayer3())
+    {
+    case 'r':
+        pro3.m_bActive = true;
+        pro3.m_cLocation.X = p3.m_cLocation.X;
+        pro3.m_cLocation.Y = p3.m_cLocation.Y - 1;
+        return 't';
+        break; // right
+    }
+}
+
+char renderProj4()
+{
+    switch (phantomSearchPlayer4())
+    {
+    case 'r':
+        pro4.m_bActive = true;
+        pro4.m_cLocation.X = p4.m_cLocation.X;
+        pro4.m_cLocation.Y = p4.m_cLocation.Y - 1;
+        return 't';
+        break; // right
+    }
+}
+
+char renderProj5()
+{
+    switch (phantomSearchPlayer5())
+    {
+    case 'r':
+        pro5.m_bActive = true;
+        pro5.m_cLocation.X = p5.m_cLocation.X;
+        pro5.m_cLocation.Y = p5.m_cLocation.Y - 1;
+        return 't';
+        break; // right
+    }
+}
+
+void renderFramerate()
+{
+    COORD c;
+    // displays the framerate
+    std::ostringstream ss;
+    ss << std::fixed << std::setprecision(3);
+    ss << 1.0 / g_dDeltaTime << "fps";
+    c.X = g_Console.getConsoleSize().X - 9;
+    c.Y = 0;
+    g_Console.writeToBuffer(c, ss.str());
+
+    // displays the elapsed time
+    ss.str("");
+    ss << g_dElapsedTime << "secs";
+    c.X = 0;
+    c.Y = 0;
+    g_Console.writeToBuffer(c, ss.str(), 0x59);
+}
+
+// this is an example of how you would use the input events
+void renderInputEvents()
+{
+    // keyboard events
+    // W, A ,S, D text show position
+    //COORD startPos = {50, 2};
+    
+    COORD startPos = { 210, 2 };
+
+    std::ostringstream ss;
+    std::string key;
+    for (int i = 0; i < K_COUNT; ++i)
+    {
+        ss.str("");
+        switch (i)
+        {
+        case K_W: key = "W";
+            break;
+        case K_S: key = "S";
+            break;
+        case K_A: key = "A";
+            break;
+        case K_D: key = "D";
+            break;
+        case K_SPACE: key = "SPACE";
+            break;
+        default: continue;
+        }
+        if (g_skKeyEvent[i].keyDown)
+            ss << key << " pressed";
+        else if (g_skKeyEvent[i].keyReleased)
+            ss << key << " released";
+        else
+            ss << key << " not pressed";
+
+        COORD c = { startPos.X, startPos.Y + i };
+        g_Console.writeToBuffer(c, ss.str(), 0x17);
+    }
+
+    // mouse events    
+    ss.str("");
+    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
+    g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
+    ss.str("");
+    switch (g_mouseEvent.eventFlags)
+    {
+    case 0:
+        if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+        {
+            ss.str("Left Button Pressed");
+            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 1, ss.str(), 0x59);
+        }
+        else if (g_mouseEvent.buttonState == RIGHTMOST_BUTTON_PRESSED)
+        {
+            ss.str("Right Button Pressed");
+            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 2, ss.str(), 0x59);
+        }
+        else
+        {
+            ss.str("Some Button Pressed");
+            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 3, ss.str(), 0x59);
+        }
+        break;
+    case DOUBLE_CLICK:
+        ss.str("Double Clicked");
+        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
+        break;
+    case MOUSE_WHEELED:
+        if (g_mouseEvent.buttonState & 0xFF000000)
+            ss.str("Mouse wheeled down");
+        else
+            ss.str("Mouse wheeled up");
+        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
+        break;
+    default:
+        break;
+    }
+    
+}
+
 void setStalkerCoords(SGameChar EArr[12])
 {
 
@@ -1856,418 +3029,6 @@ void stalkerReachPlayer()
     }
 }
 
-void startInput()
-{
-    // (100 - 123, 28)
-    for (int x = 100; x <= 123; x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-            g_eGameState = S_GAME;
-    }
-    // (100 - 120, 31)
-    for (int x = 100; x <= 120; x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-            g_bQuitGame = true;
-    }
-
-    if (g_skKeyEvent[K_SPACE].keyDown)
-        g_eGameState = S_GAME;
-    if (g_skKeyEvent[K_ESCAPE].keyDown)
-        g_bQuitGame = true;
-
-}
-
-void pauseInput()
-{
-    // (100 - 124, 27)
-    for (int x = 100; x <= 124; x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 27 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-            g_eGameState = S_GAME;
-    }
-    // (100 - 118, 30)
-    for (int x = 100; x <= 118; x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 30 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-            g_bQuitGame = true;
-    }
-
-    if (g_skKeyEvent[K_Q].keyDown)
-        g_bQuitGame = true;
-}
-
-void lossInput()
-{
-    // (30 - 53, 28)
-    for (int x = 30; x <= 53; x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 28 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-        {
-            gameInit();
-            g_eGameState = S_GAME;
-        }
-    }
-    // (30 - 48, 31)
-    for (int x = 30; x <= 48; x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == 31 && g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-            g_bQuitGame = true;
-    }
-
-    if (g_skKeyEvent[K_Q].keyDown)
-        g_bQuitGame = true;
-    if (g_skKeyEvent[K_SPACE].keyDown)
-    {
-        map1Clear = false;
-        gameInit();
-        g_eGameState = S_GAME;
-    }
-}
-
-void processUserInput()
-{
-    // quits the game if player hits the escape key
-    if (g_skKeyEvent[K_ESCAPE].keyReleased) // toggle menu/pause screen
-    {
-        if (g_eGameState == S_GAME)
-        {
-            g_eGameState = S_PAUSESCREEN;
-            return;
-        }
-        if (g_eGameState == S_PAUSESCREEN)
-        {
-            g_eGameState = S_GAME;
-            return;
-        }
-    }
-
-    if (g_skKeyEvent[K_H].keyReleased)
-        g_eGameState = S_HELP;
-}
-
-//--------------------------------------------------------------
-// Purpose  : Render function is to update the console screen
-//            At this point, you should know exactly what to draw onto the screen.
-//            Just draw it!
-//            To get an idea of the values for colours, look at console.h and the URL listed there
-// Input    : void
-// Output   : void
-//--------------------------------------------------------------
-void render()
-{
-    clearScreen();      // clears the current screen and draw from scratch 
-    switch (g_eGameState)
-    {
-    case S_SPLASHSCREEN: renderSplashScreen();
-        break;
-    case S_STARTSCREEN: renderStart();
-        break;
-    case S_HELP: renderHelp();
-        break;
-    case S_GAME: renderGame();
-        break;
-    case S_PAUSESCREEN: renderPauseScreen();
-        break;
-    case S_LOSS: renderLoss();
-        break;
-    case S_VICTORY: renderVictory();
-        break;
-    }
-    renderFramerate();      // renders debug information, frame rate, elapsed time, etc
-    //renderInputEvents();    // renders status of input events
-    renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
-}
-
-void clearScreen()
-{
-    // Clears the buffer with this colour attribute
-    g_Console.clearBuffer(0x1F);
-}
-
-void renderTitle(int x,int y) // function to render title
-{
-    const WORD colors[] = {
-        0x0F, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
-    COORD c = g_Console.getConsoleSize();
-    c.Y = y;
-    c.X = x;
-
-    // ESCAPE
-    g_Console.writeToBuffer(c, "    //   / /  //   ) )  //   ) )  // | |     //   ) ) //   / / ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "   //____    ((        //        //__| |    //___/ / //____    ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "  / ____       ", colors[0]);
-    c.X += 15;
-    g_Console.writeToBuffer(c, (char)92, colors[0]);
-    c.X += 1;
-    g_Console.writeToBuffer(c, (char)92, colors[0]);
-    c.X += 1;
-    g_Console.writeToBuffer(c, "     //        / ___  |   / ____ / / ____     ", colors[0]);
-    c.X -= 17;
-    c.Y += 1;
-    g_Console.writeToBuffer(c, " //              ) ) //        //    | |  //       //          ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "//____/ / ((___ / / ((____/ / //     | | //       //____/ /    ", colors[0]);
-
-
-    // THE
-    c.Y += 2;
-    c.X += 15;
-    g_Console.writeToBuffer(c, " /__  ___/ //    / / //   / / ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "   / /    //___ / / //____    ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "  / /    / ___   / / ____     ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, " / /    //    / / //          ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "/ /    //    / / //____/ /    ", colors[0]);
-
-
-    // DUNGEON
-    c.Y += 2;
-    c.X -= 20;
-    g_Console.writeToBuffer(c, "    //    ) ) //   / / /|    / / //   ) )  //   / /  //   ) ) /|    / / ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "   //    / / //   / / //|   / / //        //____    //   / / //|   / /  ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "  //    / / //   / / // |  / / //  ____  / ____    //   / / // |  / /   ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, " //    / / //   / / //  | / / //    / / //        //   / / //  | / /    ", colors[0]);
-    c.Y += 1;
-    g_Console.writeToBuffer(c, "//____/ / ((___/ / //   |/ / ((____/ / //____/ / ((___/ / //   |/ /     ", colors[0]);
-    c.Y += 1;
-}
-
-void renderToScreen()
-{
-    // Writes the buffer to the console, hence you will see what you have written
-    g_Console.flushBufferToConsole();
-}
-
-void renderSplashScreen()  // renders the splash screen
-{
-    //render's BG
-    COORD size = g_Console.getConsoleSize();
-    
-    //if (g_dElapsedTime < 4)
-    //{
-        g_Console.clearBuffer();
-        if (dis < 61)
-            dis++;
-        for (int i = 0; i < size.Y; i++)
-        {
-            for (int x = 0; x < size.X; x++)
-            {
-                g_Console.writeToBuffer(x, i, " ", 0x80);
-            }
-        }
-        renderTitle(100, 65 - dis);
-        renderIntroText(300 + dis, 30);
-        //renderIntroText(100, -dis);
-    //}
-    //else 
-    /*
-    {
-        for (int i = 0; i < size.Y; i++)
-        {
-            for (int x = 0; x < size.X; x++)
-            {
-                g_Console.writeToBuffer(x, i, " ", 0x80);
-            }
-        }
-        renderTitle(100, 20);
-    }
-    */
-    
-}
-
-void renderIntroText(int x, int y)
-{
-    g_Console.writeToBuffer(x+5, y+1, "You feel the stagnant wind flow over your body as you open your eyes, lying down on the stone floor. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+2, "As you get up, you try to recall the moments that happened before you lost consciousness. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+3, "Enduring the headache as you think hard, a memory appeared before your mind. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+4, "Though a fragment of what you’re not yet able to remember,", 0x0F);
-    g_Console.writeToBuffer(x+5, y+5, "it is something that nudged you into the goal that you have set for yourself: to escape the Dungeon.", 0x0F);
-    g_Console.writeToBuffer(x+5 + 30, y+7, "What Dungeon?", 0x0F);
-    g_Console.writeToBuffer(x+5, y+9, "Then it became apparent the place where you woke up in was the same place that you have remembered trying to get out of, ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+10, "a cold and wet labyrinth with dimly lit torches illuminating its hallways. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+11, "There is a weathered steel door right in front of you that was decorated with intricate patterns and a symbol of a nondescript man walking through a doorway,", 0x0F);
-    g_Console.writeToBuffer(x+5, y+12, "and it was only a stone’s throw away from where you standing. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+10, "Seeing this door as an obvious way out, you walk over to the door and tug onto its handle, but the door refuses to open. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+11, "Then you press your hands against it, and the same result occurs. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+12, "After a moment of trial and error getting through the stubborn door, it refuses to budge. ", 0x0F);
-    g_Console.writeToBuffer(x+5, y+13, "Frustrated, you decide to turn around and tread carefully in the opposite direction,", 0x0F);
-    g_Console.writeToBuffer(x+5, y+13, "curious of what this so-called Dungeon has to offer but hoping for another way out of here.", 0x0F);
-
-}
-
-void renderEndText(int x,int y)
-{
-
-    g_Console.writeToBuffer(x, y, "Sweating from both the heat of the underground and the last battle against a body of bodies,",0x0F);
-    g_Console.writeToBuffer(x, y+1, "you stroll into the deepest unknown and press on forward through the darkness before coming across an old desk with a lone lamp. ",0x0F);
-    g_Console.writeToBuffer(x,y +2,"The light cast by the lamp brings your attention to the worn but intact book resting on the table surface.", 0x0F);
-    g_Console.writeToBuffer(x + 50,y+3,"On its cover read, “My Diary”.", 0x0F);
-    g_Console.writeToBuffer(x,y+4,"Intrigued by the content which lies within the book, you walk over to the desk and turn the book to its first page:", 0x0F);
-    g_Console.writeToBuffer(x,y+5,"“Dear diary, my best friend ف̵̌̈́ф̶̈́̃#̸̧͂φ̸̓̄$̴̝͐و̴͋̏א̵͙̽ and I have been close friends for a few years, but I can’t believe he forgot my birthday!", 0x0F);
-    g_Console.writeToBuffer(x,y+6,"So to prank him back, I decided to build an elaborate dungeon filled with traps and monsters and all that to scare the pants out of him and teach him a lesson!", 0x0F);
-    g_Console.writeToBuffer(x,y+7,"Once I’m done building this dungeon, I’ll visit П̶̤̒о̶̖̃л̸͓̈ and then invite П̵̹̇о̵͋̋л̶͙̈́ to this place. And then...”", 0x0F);
-    
-}
-
-void renderStart()
-{
-    loadStartmap();
-    renderStartmap();
-    renderTitle(30,10);
-    renderStartOptions();
-}
-
-void renderGame()
-{
-    loadmap();
-    renderMap();        // renders the map to the buffer first
-    renderCharacter();  // renders the character into the buffer
-    renderBullets();
-    renderInteractions();
-    renderGUI();        // renders game user interface
-
-    renderEnemies(stalkers, snum, sColor);    // renders the enemies into the buffer 
-    if (map1Clear == true)  // renders boss in 2nd map
-    {
-        renderBoss();
-        renderBossBullet();
-    }
-}
-
-void renderPauseScreen()
-{
-    renderGame();
-    renderPauseBase();
-    renderPauseOptions();
-}
-
-void renderLoss()
-{
-    renderLossOptions();
-}
-
-void renderVictory()
-{
-    COORD size = g_Console.getConsoleSize();
-
-    //if (g_dElapsedTime < 4)
-    //{
-    g_Console.clearBuffer();
-    if (dis < 51)
-        dis++;
-    for (int i = 0; i < size.Y; i++)
-    {
-        for (int x = 0; x < size.X; x++)
-        {
-            g_Console.writeToBuffer(x, i, " ", 0x00);
-        }
-    }
-    renderEndText(50,65 - dis);
-    endtimer++;
-}
-
-void loadStartmap()
-{
-    std::ifstream startscreen("Startscreen.txt");
-    std::string line;
-    // Init and store Map
-    int y = 0;
-    while (getline(startscreen, line)) {
-        // Output the text from the file
-        for (unsigned i = 0; i < line.length(); ++i)
-        {
-            map[y][i] = line.at(i);
-
-        }
-        y++;
-    }
-}
-
-void loadLosescreen()
-{
-    std::ifstream losescreen("LoseScreen.txt");
-    std::string line;
-    // Init and store Map
-    int y = 0;
-    while (getline(losescreen, line)) {
-        // Output the text from the file
-        for (unsigned i = 0; i < line.length(); ++i)
-        {
-            map[y][i] = line.at(i);
-
-        }
-        y++;
-    }
-    for (int y = 0; y < 65; y++)
-    {
-        for (int x = 0; x < 300; x++)
-        {
-            if (map[y][x] == '#') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)219, 0x80);
-            }
-            else if (map[y][x] == '=') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)178, 0x80);
-            }
-            else //empty space
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x80);
-            }
-        }
-    }
-
-}
-
-void renderStartmap()
-{
-    for (int y = 0; y < 65; y++)
-    {
-        for (int x = 0; x < 300; x++)
-        {
-            if (map[y][x] == '=')
-            {
-                g_Console.writeToBuffer(x, y, (char)186, 0x00);
-            }
-            else if (map[y][x] == '#')
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x80);
-            }
-            else if (map[y][x] == '+')
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x22);
-            }
-            else if (map[y][x] == '~')
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x00);
-            }
-            else if (map[y][x] == '!')
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0xCC);
-            }
-            else if (map[y][x] == '"')
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x44);
-            }
-            else //empty space
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x77);
-            }
-        }
-    }
-}
-
 void shoot()
 {
     for (int i = 0; i < 100; i++)
@@ -2367,763 +3128,3 @@ void bulletInteraction()
     }
 }
 
-void renderBullets()
-{
-    for (int i = 0; i < 100; i++)
-    {
-        if (bulletArray[i] != nullptr)
-        {
-            if (map[bulletArray[i]->Y][bulletArray[i]->X] != '#')
-            {
-                bulletArray[i]->print();
-            }
-        }
-    }
-}
-
-void loadmap()
-{
-    if (map1Clear != true)
-    {
-        std::ifstream Lv1("MapLv1.txt");
-        std::string line;
-        // Init and store Map
-        int y = 0;
-        while (getline(Lv1, line))
-        {
-            // Output the text from the file
-            for (unsigned i = 0; i < line.length(); ++i)
-            {
-                map[y][i] = line.at(i);
-            }
-            y++;
-        }
-    }
-    else
-    {
-        std::ifstream Lv2("MapLv2.txt");
-        std::string line;
-        // Init and store Map
-        int y = 0;
-        while (getline(Lv2, line))
-        {
-            // Output the text from the file
-            for (unsigned i = 0; i < line.length(); ++i)
-            {
-                map[y][i] = line.at(i);
-            }
-            y++;
-        }
-    }
-}
-
-void renderMap()
-{
-    //render Map
-    for (int y = 0; y < 65; y++)
-    {
-        for (int x = 0; x < 300; x++)
-        {
-            if (map[y][x] == '|') //torch stick, can pass thru
-            {
-                g_Console.writeToBuffer(x, y, (char)186, 0x80);
-            }
-            else if (map[y][x] == '#') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)219, 0x80);
-            }
-            else if (map[y][x] == '+') //torch fire, pass thru
-            {
-                g_Console.writeToBuffer(x, y, (char)178, 0x84);
-            }
-            else if (map[y][x] == '[') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)222, 0x80);
-            }
-            else if (map[y][x] == ']') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)221, 0x80);
-            }
-            else if (map[y][x] == '(') //trap firing block, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)204, 0x84);
-            }
-            else if (map[y][x] == ')') //trap firing block, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)185, 0x84);
-            }
-            else if (map[y][x] == '=') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)254, 0x80);
-            }
-            else if (map[y][x] == '%') //chest, can pass and gives item
-            {
-                g_Console.writeToBuffer(x, y, (char)233, 0x8E);
-            }
-            else if (map[y][x] == '!') //lava trap, can pass with DoT (2/s)
-            {
-                g_Console.writeToBuffer(x, y, (char)177, 0x8C);
-            }
-            else if (map[y][x] == '$') //Dungeon gate, can pass
-            {
-                g_Console.writeToBuffer(x, y, (char)215, 0x86);
-            }
-            else if (map[y][x] == '-') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)205, 0x84);
-            }
-            else if (map[y][x] == '`') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)254, 0x84);
-            }
-            else if (map[y][x] == '*') //wall, cannot pass
-            {
-                g_Console.writeToBuffer(x, y, (char)206, 0x84);
-            }
-            else if (map[y][x] == '<') //tp gate step, pass thru
-            {
-                g_Console.writeToBuffer(x, y, (char)243, 0x8B);
-            }
-            else if (map[y][x] == '>') //tp gate step, pass thru
-            {
-                g_Console.writeToBuffer(x, y, (char)242, 0x8B);
-            }
-            else if (map[y][x] == '~') //tp gate, teleports to next room
-            {
-                g_Console.writeToBuffer(x, y, (char)234, 0x8B);
-            }
-            else if (map[y][x] == '0') //firetrap's fire, pass with DoT (10/s)
-            {
-                g_Console.writeToBuffer(x, y, '-', 0x84);
-            }
-            else if (map[y][x] == '1') //firetrap's fire, pass with DoT (10/s)
-            {
-                g_Console.writeToBuffer(x, y, '=', 0x84);
-            }
-            else if (map[y][x] == '2') //firetrap's fire, pass with DoT (10/s)
-            {
-                g_Console.writeToBuffer(x, y, '#', 0x84);
-            }
-            else if (map[y][x] == '3') //firetrap's fire, pass with DoT (10/s)
-            {
-                g_Console.writeToBuffer(x, y, '@', 0x84);
-            }
-            else if (map[y][x] == '&') //Checkpoint, sets player spawn pos
-            {
-                g_Console.writeToBuffer(x, y, (char)237, 0x8B);
-            }
-            else if (map[y][x] == '"') //book, ends game
-            {
-                g_Console.writeToBuffer(x, y, (char)240, 0x8B);
-            }
-            else //empty space
-            {
-                g_Console.writeToBuffer(x, y, ' ', 0x80);
-            }
-        }
-    }
-}
-
-void renderStartOptions()
-{
-    COORD c = g_Console.getConsoleSize();
-    c.Y = (c.Y / 20);
-    c.X = c.X / 3;
-
-    COORD cSTART = { c.X, c.Y + 25 };
-    COORD cQUIT = { c.X, c.Y + 28 };
-
-    WORD STARTcolour = 0x0F;
-    WORD QUITcolour = 0x0F;
-
-    std::string START = "> PRESS SPACE TO START <";
-    std::string QUIT = "> PRESS ESC TO QUIT <";
-
-    for (int x = cSTART.X; x < cSTART.X + START.length(); x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cSTART.Y)
-            STARTcolour = 0x0c;
-    }
-    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
-            QUITcolour = 0x0c;
-    }
-
-    g_Console.writeToBuffer(cSTART, START, STARTcolour, START.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
-}
-
-void renderPauseBase()
-{
-    COORD c = g_Console.getConsoleSize();
-    c.X = c.X / 4;
-    c.Y = c.Y / 3;
-
-    for (int i = 0; i < 15; i++)
-    {
-        for (int i = 0; i < c.X; i++)
-        {
-            g_Console.writeToBuffer(c.X + i, c.Y, ' ', 0);
-        }
-        c.Y++;
-    }
-}
-
-void renderPauseOptions()
-{
-    COORD c = g_Console.getConsoleSize();
-    c.Y = (c.Y / 25);
-    c.X = c.X / 3;
-
-    WORD CONTINUEcolour = 0x0f;
-    WORD QUITcolour = 0x0f;
-
-    COORD cCONTINUE = { c.X, c.Y + 25 };
-    COORD cQUIT = { c.X, c.Y + 28 };
-
-    std::string CONTINUE = "> PRESS ESC TO CONTINUE <";
-    std::string QUIT = "> PRESS Q TO QUIT <";
-
-    for (int x = cCONTINUE.X; x < cCONTINUE.X + CONTINUE.length(); x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cCONTINUE.Y)
-            CONTINUEcolour = 0x0c;
-    }
-
-    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
-            QUITcolour = 0x0c;
-    }
-
-    g_Console.writeToBuffer(cCONTINUE, CONTINUE, CONTINUEcolour, CONTINUE.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
-}
-
-void renderLossOptions()
-{
-    /*for (int y = 0; y < 65; y++) // renders bg
-    {
-        for (int x = 0; x < 300; x++)
-        {
-            g_Console.writeToBuffer(x, y, ' ', 0);
-        }
-    }*/
-    loadLosescreen();
-    COORD c = g_Console.getConsoleSize();
-    c.Y = (c.Y / 20);
-    c.X = c.X / 10;
-
-    WORD RETRYcolour = 0x0f;
-    WORD QUITcolour = 0x0f;
-
-    COORD cLOST = { c.X + 80, c.Y + 48 };
-    COORD cRETRY = { c.X + 80, c.Y + 51 };
-    COORD cQUIT = { c.X + 80, c.Y + 54 };
-
-    std::string LOST = "YOU LOST :(";
-    std::string RETRY = "> PRESS SPACE TO RETRY <";
-    std::string QUIT = "> PRESS Q TO QUIT <";
-
-    for (int x = cRETRY.X; x < cRETRY.X + RETRY.length(); x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cRETRY.Y)
-            RETRYcolour = 0x0c;
-    }
-
-    for (int x = cQUIT.X; x < cQUIT.X + QUIT.length(); x++)
-    {
-        if (g_mouseEvent.mousePosition.X == x && g_mouseEvent.mousePosition.Y == cQUIT.Y)
-            QUITcolour = 0x0c;
-    }
-
-    g_Console.writeToBuffer(cLOST, LOST, 0x0f, LOST.length());
-    g_Console.writeToBuffer(cRETRY, RETRY, RETRYcolour, RETRY.length());
-    g_Console.writeToBuffer(cQUIT, QUIT, QUITcolour, QUIT.length());
-}
-
-void renderGUI() // render game user inferface
-{
-    std::string currentObjective = "Escape the Dungeon";
-    if (player->getX() > 20)
-        currentObjective = "Get to the portal";
-    if (map1Clear)
-        currentObjective = "Kill the boss";
-
-    for (int i = 0; i < 9; i++)
-    {
-        if (!bossParticles[i].m_bActive)
-            currentObjective = "Read the diary";
-    }
-
-    std::string objective = "Objective: " + currentObjective;
-    std::string lifeBar = "Lives: " + std::to_string(player->getLives());
-    std::string healthBar = "Health: " + std::to_string(player->getHealth()) + "/" + std::to_string(player->getMaxHealth());
-    std::string inventoryList = "Inventory: ";
-    std::string tempStr;
-
-    WORD healthColour = 0xAF;
-    WORD healthBarColor = 0xAA;
-
-    if (player->getHealth() <= 75)
-    {
-        healthColour = 14;
-        healthBarColor = 0xEE;
-    }
-    if (player->getHealth() <= 50)
-    {
-        healthColour = 12;
-        healthBarColor = 0xCC;
-    }
-        
-    if (player->getHealth() <= 25)
-    {
-        healthColour = 4;
-        healthBarColor = 0x44;
-    }
-        
-    // yellow = 14, light red = 12, red = 4
-    g_Console.writeToBuffer(1, 1, objective, 0x0f, objective.length());
-    g_Console.writeToBuffer(1, 2, lifeBar, 0x0f, lifeBar.length());
-    g_Console.writeToBuffer(50, 1, healthBar, healthColour, healthBar.length());
-    // health bar
-    for (int i = 0;i < player->getHealth(); i++)
-    {
-        g_Console.writeToBuffer(70 + i, 1, ' ', healthBarColor);
-    }
-
-    g_Console.writeToBuffer(1, 4, inventoryList, 0x0f, inventoryList.length());
-
-    for (int i = 0; i < 5; i++) // print inventory contents
-    {
-        if (player->getInventory(i) != nullptr)
-            tempStr = std::to_string(i + 1) + ". " + player->getInventory(i)->getName();
-        else
-            tempStr = std::to_string(i + 1) + ".";
-
-        g_Console.writeToBuffer(1, 5 + i, tempStr, 0x0f, tempStr.length());
-    }
-}
-
-void playerInteractions()
-{
-    for (int i = 0; i < 10; i++) // player interacts with a chest
-
-    {
-        if (chest[i] != nullptr)
-        {
-            if (player->getX() == chest[i]->getX() && player->getY() == chest[i]->getY()) // check for same position
-            {
-                for (int j = 0; j < 5; j++) // loop through inventory to check which is free
-                {
-                    if (player->getInventory(j) == nullptr)
-                    {
-                        int randNum = (rand() % 4) + 1; // randomise consumable gift
-                        delete chest[i];
-                        chest[i] = nullptr;
-                        switch (randNum)
-                        {
-                            case 1:
-                            {
-                                player->setInventory(j, new HealthPotion);
-                                break;
-                            }
-                            case 2:
-                            {
-                                player->setInventory(j, new ExtraLife);
-                                break;
-                            }
-                            case 3:
-                            {
-                                player->setInventory(j, new OddPotion);
-                                break;
-                            }
-                            case 4:
-                            {
-                                player->setInventory(j, new Cheese);
-                                break;
-                            }
-                        }
-                        break; // no need for further check
-                    }
-                }
-            }
-        }
-    }
-    
-    //trap interaction
-    if (map[player->getY()][player->getX()] == '!')
-    {
-        player->setHealth(player->getHealth() - 2);
-    }
-
-    if ((map[player->getY()][player->getX()] == '0') ||
-        (map[player->getY()][player->getX()] == '1') || 
-        (map[player->getY()][player->getX()] == '2') || 
-        (map[player->getY()][player->getX()] == '3'))
-    {
-        player->setHealth(player->getHealth() - 5);
-    }
-    //Enemy interaction
-    stalkerReachPlayer();
-    projReachPlayer();
-
-    // checkpoint
-    if (map[player->getY()][player->getX()] == '&')
-    {
-        player->setSpawnPoint(player->getX(), player->getY());
-    }
-
-    //portal
-    if (map[player->getY()][player->getX()] == '~')
-    {
-        map1Clear = true;
-        g_Console.clearBuffer();
-        gameInit();
-    }
-
-    //book
-    if (map[player->getY()][player->getX()] == '"')
-    {
-        g_eGameState = S_VICTORY;
-    }
-}
-
-void renderInteractions()
-{
-    // trap interaction
-    if (map[player->getY()][player->getX()] == '!')
-    {
-        g_Console.writeToBuffer(player->getX() - 5, player->getY() - 1, "Wah Pain Lah!");
-    }
-    // checkpoint
-    if (map[player->getY()][player->getX()] == '&')
-    {
-        g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "YAY Checkpoint!!!");
-    }
-    // chests
-    for (int i = 0; i < 10; i++) // player interacts with a chest
-    {
-        if (chest[i] != nullptr)
-        {
-            if (player->getX() - chest[i]->getX() <= 1 && player->getX() - chest[i]->getX() >= -1 &&
-                player->getY() - chest[i]->getY() <= 1 && player->getY() - chest[i]->getY() >= -1) // check for close proximity
-            {
-                g_Console.writeToBuffer(player->getX() - 10, player->getY() - 1, "WOW A CHEST COOL!!!");
-            }
-        }
-    }
-}
-
-void renderCharacter()
-{
-    // Draw the location of the character // was 1 for char
-    g_Console.writeToBuffer(player->getPosition(), (char)146, player->getCharColour());
-}
-
-void renderHelp()
-{
-}
-
-void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
-{
-    
-    for (int i = 0; i < 12; i++)
-    {
-       if (EArr[i].m_bActive == true)
-        {
-                g_Console.writeToBuffer(EArr[i].m_cLocation, (char)charnum, Colour);
-        }
-    }
-        
-    if (p1.m_bActive == true)
-        g_Console.writeToBuffer(p1.m_cLocation, (char)pnum, pcolor);
-
-    if (p2.m_bActive == true)
-        g_Console.writeToBuffer(p2.m_cLocation, (char)pnum, pcolor);
-
-    if (p3.m_bActive == true)
-        g_Console.writeToBuffer(p3.m_cLocation, (char)pnum, pcolor);
-
-    if (p4.m_bActive == true)
-        g_Console.writeToBuffer(p4.m_cLocation, (char)pnum, pcolor);
-
-    if (p5.m_bActive == true)
-        g_Console.writeToBuffer(p5.m_cLocation, (char)pnum, pcolor);
-
-    if (pro1.m_bActive == true)
-        g_Console.writeToBuffer(pro1.m_cLocation, (char)projnum, projColor);
-
-    if (pro2.m_bActive == true)
-        g_Console.writeToBuffer(pro2.m_cLocation, (char)projnum, projColor);
-
-    if(pro3.m_bActive == true)
-        g_Console.writeToBuffer(pro3.m_cLocation, (char)projnum, projColor);
-
-    if(pro4.m_bActive == true)
-        g_Console.writeToBuffer(pro4.m_cLocation, (char)projnum, projColor);
-
-    if (pro5.m_bActive == true)
-        g_Console.writeToBuffer(pro5.m_cLocation, (char)projnum, projColor);
-
-}
-
-void renderBossBullet()
-{
-        if (bpro.m_bActive == true)
-        {
-            int y = bpro.m_cLocation.Y;
-            int x = bpro.m_cLocation.X;
-            g_Console.writeToBuffer(bpro.m_cLocation, (char)projnum, projColor);
-            if (player->getX() < bpro.m_cLocation.X)
-            {
-                if(map[y][x - 1] != '#')
-                    bpro.m_cLocation.X--;
-            }
-            else if (player->getX() > bpro.m_cLocation.X)
-            {
-                if (map[y][x + 1] != '#')
-                    bpro.m_cLocation.X++;
-            }
-            else if (player->getY() < bpro.m_cLocation.Y)
-            {
-                if (map[y - 1][x] != '#')
-                    bpro.m_cLocation.Y--;
-            }
-            else if (player->getY() > bpro.m_cLocation.Y)
-            {
-                if (map[y - 1][x] != '#')
-                    bpro.m_cLocation.Y++;
-            }
-        }
-        if (bpro2.m_bActive == true)
-        {
-            int y = bpro2.m_cLocation.Y;
-            int x = bpro2.m_cLocation.X;
-            g_Console.writeToBuffer(bpro2.m_cLocation, (char)projnum, projColor);
-            if (player->getX() < bpro2.m_cLocation.X)
-            {
-                if (map[y][x - 1] != '#')
-                    bpro2.m_cLocation.X--;
-            }
-            else if (player->getX() > bpro2.m_cLocation.X)
-            {
-                if (map[y][x + 1] != '#')
-                    bpro2.m_cLocation.X++;
-            }
-            else if (player->getY() < bpro2.m_cLocation.Y)
-            {
-                if (map[y - 1][x] != '#')
-                    bpro2.m_cLocation.Y--;
-            }
-            else if (player->getY() > bpro2.m_cLocation.Y)
-            {
-                if (map[y + 1][x] != '#')
-                    bpro2.m_cLocation.Y++;
-            }
-        }
-}
-
-void renderBoss()
-{
-    WORD bossColor = 0x5E;
-    WORD bossCorner = 0x4D;
-    for (int i = 0; i < 9; i++)
-    {
-        if(bossParticles[i].m_bActive == true)
-            if (i == 0 || i == 2 || i == 6 || i == 8)
-            {
-                g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossCorner);
-                switch (i)
-                {
-                case 0:
-                    if (bossHp.hp <= 180)
-                        g_Console.writeToBuffer(bossParticles[0].m_cLocation, (char)43, bossColor);
-                    break;
-                case 2:
-                    if (bossHp.hp <= 120)
-                        g_Console.writeToBuffer(bossParticles[2].m_cLocation, (char)43, bossColor);
-                    break;
-                case 6:
-                    if(bossHp.hp <= 60)
-                    g_Console.writeToBuffer(bossParticles[6].m_cLocation, (char)43, bossColor);
-                    break;
-                case 8:
-                    if(bossHp.hp <= 0)
-                    g_Console.writeToBuffer(bossParticles[8].m_cLocation, (char)43, bossColor);
-                    break;
-                }
-            }   
-            else
-            {
-                g_Console.writeToBuffer(bossParticles[i].m_cLocation, (char)43, bossColor);
-            }
-     }
-    
-}
-
-char renderProj()
-{
-    // spawn proj in the matched direction
-    switch (phantomSearchPlayer())
-    {
-    case 'r':
-        pro1.m_bActive = true;
-        pro1.m_cLocation.X = p1.m_cLocation.X;
-        pro1.m_cLocation.Y = p1.m_cLocation.Y - 1;
-        return 't';
-        break; // right
-    }
-}
-
-char renderProj2()
-{
-    switch (phantomSearchPlayer2())
-    {
-    case 'r':
-        pro2.m_bActive = true;
-        pro2.m_cLocation.X = p2.m_cLocation.X;
-        pro2.m_cLocation.Y = p2.m_cLocation.Y - 1;
-        return 't';
-        break; // right
-    }
-}
-
-char renderProj3()
-{
-    switch (phantomSearchPlayer3())
-    {
-    case 'r':
-        pro3.m_bActive = true;
-        pro3.m_cLocation.X = p3.m_cLocation.X;
-        pro3.m_cLocation.Y = p3.m_cLocation.Y - 1;
-        return 't';
-        break; // right
-    }
-}
-
-char renderProj4()
-{
-    switch (phantomSearchPlayer4())
-    {
-    case 'r':
-        pro4.m_bActive = true;
-        pro4.m_cLocation.X = p4.m_cLocation.X;
-        pro4.m_cLocation.Y = p4.m_cLocation.Y - 1;
-        return 't';
-        break; // right
-    }
-}
-
-char renderProj5()
-{
-    switch (phantomSearchPlayer5())
-    {
-    case 'r':
-        pro5.m_bActive = true;
-        pro5.m_cLocation.X = p5.m_cLocation.X;
-        pro5.m_cLocation.Y = p5.m_cLocation.Y - 1;
-        return 't';
-        break; // right
-    }
-}
-
-void renderFramerate()
-{
-    COORD c;
-    // displays the framerate
-    std::ostringstream ss;
-    ss << std::fixed << std::setprecision(3);
-    ss << 1.0 / g_dDeltaTime << "fps";
-    c.X = g_Console.getConsoleSize().X - 9;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str());
-
-    // displays the elapsed time
-    ss.str("");
-    ss << g_dElapsedTime << "secs";
-    c.X = 0;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str(), 0x59);
-}
-
-// this is an example of how you would use the input events
-void renderInputEvents()
-{
-    // keyboard events
-    // W, A ,S, D text show position
-    //COORD startPos = {50, 2};
-    
-    COORD startPos = { 210, 2 };
-
-    std::ostringstream ss;
-    std::string key;
-    for (int i = 0; i < K_COUNT; ++i)
-    {
-        ss.str("");
-        switch (i)
-        {
-        case K_W: key = "W";
-            break;
-        case K_S: key = "S";
-            break;
-        case K_A: key = "A";
-            break;
-        case K_D: key = "D";
-            break;
-        case K_SPACE: key = "SPACE";
-            break;
-        default: continue;
-        }
-        if (g_skKeyEvent[i].keyDown)
-            ss << key << " pressed";
-        else if (g_skKeyEvent[i].keyReleased)
-            ss << key << " released";
-        else
-            ss << key << " not pressed";
-
-        COORD c = { startPos.X, startPos.Y + i };
-        g_Console.writeToBuffer(c, ss.str(), 0x17);
-    }
-
-    // mouse events    
-    ss.str("");
-    ss << "Mouse position (" << g_mouseEvent.mousePosition.X << ", " << g_mouseEvent.mousePosition.Y << ")";
-    g_Console.writeToBuffer(g_mouseEvent.mousePosition, ss.str(), 0x59);
-    ss.str("");
-    switch (g_mouseEvent.eventFlags)
-    {
-    case 0:
-        if (g_mouseEvent.buttonState == FROM_LEFT_1ST_BUTTON_PRESSED)
-        {
-            ss.str("Left Button Pressed");
-            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 1, ss.str(), 0x59);
-        }
-        else if (g_mouseEvent.buttonState == RIGHTMOST_BUTTON_PRESSED)
-        {
-            ss.str("Right Button Pressed");
-            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 2, ss.str(), 0x59);
-        }
-        else
-        {
-            ss.str("Some Button Pressed");
-            g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 3, ss.str(), 0x59);
-        }
-        break;
-    case DOUBLE_CLICK:
-        ss.str("Double Clicked");
-        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 4, ss.str(), 0x59);
-        break;
-    case MOUSE_WHEELED:
-        if (g_mouseEvent.buttonState & 0xFF000000)
-            ss.str("Mouse wheeled down");
-        else
-            ss.str("Mouse wheeled up");
-        g_Console.writeToBuffer(g_mouseEvent.mousePosition.X, g_mouseEvent.mousePosition.Y + 5, ss.str(), 0x59);
-        break;
-    default:
-        break;
-    }
-    
-}
