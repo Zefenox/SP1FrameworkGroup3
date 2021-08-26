@@ -1199,6 +1199,7 @@ void renderIntroText(int x, int y)
 // Purpose  : function is to render the ending text
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderEndText(int x, int y)
 {
@@ -1262,7 +1263,7 @@ void renderPauseScreen()
 }
 
 //--------------------------------------------------------------
-// Purpose  : function is to render the losing screen options
+// Purpose  : function is to call the funct rendering losing screen options
 // Input    : void
 // Output   : void
 //--------------------------------------------------------------
@@ -1275,6 +1276,7 @@ void renderLoss()
 // Purpose  : function is to render the winning screen
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderVictory()
 {
@@ -1323,6 +1325,7 @@ void loadStartmap()
 // 
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void loadLosescreen()
 {
@@ -1429,9 +1432,13 @@ void renderBullets()
 //--------------------------------------------------------------
 void loadmap()
 {
+    //check whether the map has been cleared to decide whether to load the next map
     if (map1Clear != true)
     {
+        //Input stream class to operate on files.
+        //Objects of this class maintain a filebuf object as their internal stream buffer, which performs input / output operations on the file they are associated with
         std::ifstream Lv1("MapLv1.txt");
+        //make a string var to hold the chars
         std::string line;
         // Init and store Map
         int y = 0;
@@ -1467,10 +1474,11 @@ void loadmap()
 // Purpose  : function is to render the map according to the symbols
 // Input    : void
 // Output   : void
+// Myron
 //--------------------------------------------------------------
 void renderMap()
 {
-    //render Map
+    //render Map according to the chars inside the text file
     for (int y = 0; y < 65; y++)
     {
         for (int x = 0; x < 300; x++)
@@ -1786,6 +1794,7 @@ void renderGUI() // render game user inferface
 // Purpose  : function is to check for player interactions
 // Input    : void
 // Output   : void
+// Tze Ting, Luke, Myron
 //--------------------------------------------------------------
 void playerInteractions()
 {
@@ -1875,6 +1884,7 @@ void playerInteractions()
 // Purpose  : function is to render the map after interaction
 // Input    : void
 // Output   : void
+// Luke
 //--------------------------------------------------------------
 void renderInteractions()
 {
