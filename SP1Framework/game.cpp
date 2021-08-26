@@ -2747,7 +2747,7 @@ void renderInteractions()
 void renderCharacter()
 {
     // Draw the location of the character // was 1 for char
-    g_Console.writeToBuffer(player->getPosition(), 'P', player->getCharColour());
+    g_Console.writeToBuffer(player->getPosition(), (char)146, player->getCharColour());
 }
 
 void renderEnemies(SGameChar EArr[12], int charnum, WORD Colour)
