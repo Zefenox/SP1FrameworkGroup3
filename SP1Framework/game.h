@@ -107,20 +107,18 @@ void renderLoss(); // renders the loss screen
 void renderVictory(); // renders the victory screen                       //Coded by: Myron
 void renderMap(); // renders the map to the buffer first
 
-<<<<<<< HEAD
-void loadmap(); // store map                   //luke{
-void loadStartmap(); //store startscreen
-void loadLosescreen(); //store lose screen
-=======
+
+
+
 void loadmap();                                                           //Coded by: Myron
 void loadStartmap();                                                      
 void loadLosescreen();                                                    //Coded by: Myron    
->>>>>>> 0af782d4de71488922aded93d005f54044e3ff44
+
 void renderStartmap();
 void loadWin();
 void renderWin();
 
-void shootInput(); // check input to shoot
+void shootInput(); // check input to shoot            //luke
 void shoot(); //create bullet
 void bulletInteraction(); 
 void renderBullets();                                 //}
