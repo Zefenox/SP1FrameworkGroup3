@@ -460,6 +460,15 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+//--------------------------------------------------------------
+// Purpose  : This is the mouse handler in the start state. Whenever there is a mouse event in the game state, this function will be called.
+//            
+//            If mouse clicks are detected, the corresponding bit for that mouse button will be set.
+//            mouse wheel, 
+//            
+// Input    : const KEY_EVENT_RECORD& keyboardEvent
+// Output   : void
+//--------------------------------------------------------------
 
 void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
@@ -470,6 +479,15 @@ void startMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+//--------------------------------------------------------------
+// Purpose  : This is the mouse handler in the guide page state. Whenever there is a mouse event in the game state, this function will be called.
+//            
+//            If mouse clicks are detected, the corresponding bit for that mouse button will be set.
+//            mouse wheel, 
+//            
+// Input    : const KEY_EVENT_RECORD& keyboardEvent
+// Output   : void
+//--------------------------------------------------------------
 
 void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
@@ -480,6 +498,15 @@ void helpMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+//--------------------------------------------------------------
+// Purpose  : This is the mouse handler in the pause page state. Whenever there is a mouse event in the game state, this function will be called.
+//            
+//            If mouse clicks are detected, the corresponding bit for that mouse button will be set.
+//            mouse wheel, 
+//            
+// Input    : const KEY_EVENT_RECORD& keyboardEvent
+// Output   : void
+//--------------------------------------------------------------
 
 void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
@@ -490,6 +517,15 @@ void pauseMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+//--------------------------------------------------------------
+// Purpose  : This is the mouse handler in the lose page state. Whenever there is a mouse event in the game state, this function will be called.
+//            
+//            If mouse clicks are detected, the corresponding bit for that mouse button will be set.
+//            mouse wheel, 
+//            
+// Input    : const KEY_EVENT_RECORD& keyboardEvent
+// Output   : void
+//--------------------------------------------------------------
 
 void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
@@ -500,6 +536,15 @@ void lossMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.buttonState = mouseEvent.dwButtonState;
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
+//--------------------------------------------------------------
+// Purpose  : This is the mouse handler in the win page state. Whenever there is a mouse event in the game state, this function will be called.
+//            
+//            If mouse clicks are detected, the corresponding bit for that mouse button will be set.
+//            mouse wheel, 
+//            
+// Input    : const KEY_EVENT_RECORD& keyboardEvent
+// Output   : void
+//--------------------------------------------------------------
 
 void victoryMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 {
